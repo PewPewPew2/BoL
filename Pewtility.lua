@@ -120,7 +120,7 @@ end
 -- end)
 
 AddLoadCallback(function()
-	local Version = 5.241
+	local Version = 5.242
 	HookPackets()
 	TEAM_ALLY, TEAM_ENEMY = myHero.team, 300 - myHero.team
 	MainMenu = scriptConfig('Pewtility', 'Pewtility')
@@ -743,13 +743,13 @@ function MISS:__init()
 			)
 		end
 	end
-	if not FileExist(SPRITE_PATH..'mapIcons/Kindred.png') then
+	if not FileExist(SPRITE_PATH..'mapIcons/Illaoi.png') then
 		AwareUpdate(
 			'isSprite',
 			'i.imgur.com',
 			nil, 
-			'/mNjw1sC.png', 
-			SPRITE_PATH..'mapIcons/Kindred.png', 
+			'/D2mdvwd.png',
+			SPRITE_PATH..'mapIcons/Illaoi.png', 
 			function() Print('Sprite Download complete') end, 
 			function() return end, 
 			function() return end, 
