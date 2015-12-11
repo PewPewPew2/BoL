@@ -120,7 +120,7 @@ end
 -- end)
 
 AddLoadCallback(function()
-	local Version = 5.242
+	local Version = 5.243
 	HookPackets()
 	TEAM_ALLY, TEAM_ENEMY = myHero.team, 300 - myHero.team
 	MainMenu = scriptConfig('Pewtility', 'Pewtility')
@@ -400,21 +400,28 @@ class 'WARD'
 
 function WARD:__init()
 	self.Types = {
-		['YellowTrinket'] 		 = { ['color'] = COLOR_YELLOW,			 	['duration'] = 60,   ['isWard'] = true,  },
-		['YellowTrinketUpgrade'] = { ['color'] = COLOR_YELLOW,				['duration'] = 120,  ['isWard'] = true,  },
-		['SightWard'] 			 = { ['color'] = ARGB(255,0,255,0),			['duration'] = 180,  ['isWard'] = true,  },
-		['VisionWard']  		 = { ['color'] = ARGB(255, 255, 50, 255), 	['duration'] = huge, ['isWard'] = true,  },
-		['TeemoMushroom'] 		 = { ['color'] = COLOR_RED,					['duration'] = 600,  ['isWard'] = false, },
-		['CaitlynTrap'] 		 = { ['color'] = COLOR_RED,					['duration'] = 240,  ['isWard'] = false, },
-		['Nidalee_Spear'] 		 = { ['color'] = COLOR_RED,					['duration'] = 120,  ['isWard'] = false, },
-		['ShacoBox'] 			 = { ['color'] = COLOR_RED,					['duration'] = 60, 	 ['isWard'] = false, },
-		['DoABarrelRoll'] 		 = { ['color'] = COLOR_RED,					['duration'] = 35, 	 ['isWard'] = false, },
+		['YellowTrinket'] 		= { ['color'] = COLOR_YELLOW,			 	['duration'] = 60,   ['isWard'] = true,  },
+		['BlueTrinket'] 		= { ['color'] = 0xFF0000BB,			 		['duration'] = huge, ['isWard'] = false, },
+		['SightWard'] 			= { ['color'] = ARGB(255,0,255,0),			['duration'] = 150,  ['isWard'] = true,  },
+		['VisionWard']  		= { ['color'] = ARGB(255, 255, 50, 255), 	['duration'] = huge, ['isWard'] = true,  },
+		['TeemoMushroom'] 		= { ['color'] = COLOR_RED,					['duration'] = 600,  ['isWard'] = false, },
+		['CaitlynTrap'] 		= { ['color'] = COLOR_RED,					['duration'] = 90,   ['isWard'] = false, },
+		['Nidalee_Spear'] 		= { ['color'] = COLOR_RED,					['duration'] = 120,  ['isWard'] = false, },
+		['ShacoBox'] 			= { ['color'] = COLOR_RED,					['duration'] = 60, 	 ['isWard'] = false, },
+		['DoABarrelRoll'] 		= { ['color'] = COLOR_RED,					['duration'] = 35, 	 ['isWard'] = false, },
 	}
 	self.OnSpell = {
-		['sightward'] = self.Types['SightWard'], ['visionward'] = self.Types['VisionWard'], ['itemghostward'] = self.Types['SightWard'], ['trinkettotemlvl2'] =  self.Types['YellowTrinketUpgrade'],
-		['trinkettotemlvl1'] = self.Types['YellowTrinket'], ['trinkettotemlvl3'] = self.Types['SightWard'], ['trinkettotemlvl3b'] = self.Types['VisionWard'], ['bantamtrap'] = self.Types['TeemoMushroom'],
-		['caitlynyordletrap'] = self.Types['CaitlynTrap'], ['bushwhack'] = self.Types['Nidalee_Spear'], ['jackinthebox'] = self.Types['ShacoBox'], ['maokaisapling'] = self.Types['DoABarrelRoll'],
+		['trinkettotemlvl1'] 	= { ['color'] = COLOR_YELLOW,			 	['duration'] = 60,   ['isWard'] = true,  },
+		['trinketorblvl3'] 		= { ['color'] = 0xFF0000BB,			 		['duration'] = huge, ['isWard'] = false, },
+		['itemghostward'] 		= { ['color'] = ARGB(255,0,255,0),			['duration'] = 150,  ['isWard'] = true,  },
+		['visionward']  		= { ['color'] = ARGB(255, 255, 50, 255), 	['duration'] = huge, ['isWard'] = true,  },
+		['bantamtrap'] 		 	= { ['color'] = COLOR_RED,					['duration'] = 600,  ['isWard'] = false, },
+		['caitlynyordletrap']	= { ['color'] = COLOR_RED,					['duration'] = 90,   ['isWard'] = false, },
+		['bushwhack'] 		 	= { ['color'] = COLOR_RED,					['duration'] = 120,  ['isWard'] = false, },
+		['jackinthebox'] 		= { ['color'] = COLOR_RED,					['duration'] = 60, 	 ['isWard'] = false, },
+		['maokaisapling'] 		= { ['color'] = COLOR_RED,					['duration'] = 35, 	 ['isWard'] = false, },
 	}
+	
 	self.BGColor = ARGB(100, 0, 0, 0)
 	self.Anchor = {
 		['x'] = GlobalAnchors.WardTracker and GlobalAnchors.WardTracker.x or 40,
@@ -649,14 +656,16 @@ end
 
 function WARD:ProcessSpell(u, s)
 	if u.valid and self.OnSpell[s.name:lower()] then
+		local name = s.name:lower()
 		if u.team == TEAM_ENEMY then
+			local duration = name == 'trinketorblvl3' and 56.5 + (u.level * 3.5) or self.OnSpell[name].duration
 			self.Known[#self.Known+1] = {
 				['pos'] 	 = Vector(s.endPos),
 				['mapPos']   = GetMinimap(Vector(s.endPos)),
-				['color'] 	 = self.OnSpell[s.name:lower()].color,
-				['endTime']  = clock()+self.OnSpell[s.name:lower()].duration,
+				['color'] 	 = self.OnSpell[name].color,
+				['endTime']  = clock()+duration,
 				['charName'] = u.charName or 'Unknown',
-				['isWard']   = self.OnSpell[s.name:lower()].isWard,
+				['isWard']   = self.OnSpell[name].isWard,
 			}
 		end
 	end
@@ -686,9 +695,10 @@ function WARD:RecvPacket(p)
 				if source.isMe and self.Types[str].isWard then
 					if self.Types[str].duration then								
 						if self.Types[str].duration ~= huge then
+							local duration = str == 'YellowTrinket' and 56.5 + (source.level * 3.5) or self.Types[str].duration
 							table.insert(self.Active, 1, {
 								['wardID'] = wardID,
-								['endTime'] = clock() + self.Types[str].duration,
+								['endTime'] = clock() + duration,
 								['startTime'] = clock(),
 							})
 							if self.Active[4] then table.remove(self.Active, 4) end
@@ -697,9 +707,10 @@ function WARD:RecvPacket(p)
 						end
 					end
 				elseif source.team == TEAM_ENEMY then
+					local duration = str == 'YellowTrinket' and 56.5 + (source.level * 3.5) or self.Types[str].duration
 					self.Known[#self.Known + 1] = {
 						['color']	 = self.Types[str].color, 
-						['endTime']	 = self.Types[str].duration == huge and huge or clock() + self.Types[str].duration,
+						['endTime']	 = self.Types[str].duration == huge and huge or clock() + duration,
 						['charName'] = source.charName,
 						['isWard']   = self.Types[str].isWard,
 						['wardID']	 = wardID,
@@ -934,8 +945,10 @@ function MISS:RecvPacket(p)
 			else
 				self.missing[o.networkID] = {
 					['pos'] = GetMinimap(Vector(o.pos)),
+					['pos2'] = Vector(o.pos),
 					['name'] = o.charName, 
 					['mTime'] = clock(),
+					['unit'] = o,
 				}
 				if GetDistance(o, o.endPath) > 100 then
 					self.missing[o.networkID].direction = GetMinimap(Vector(o) + (Vector(o.endPath) - Vector(o)):normalized() * 1200)
@@ -1094,15 +1107,29 @@ function MISS:Draw()
 	local mCount = 1
 	for _, info in pairs(self.missing) do
 		if info then
-			local scale = (self.Sprites[_].scale * self.Sprites[_].width) / 2
+			local scale = (self.Sprites[_].scale * self.Sprites[_].width) * 0.5
 			if info.direction then
 				DrawLine(info.direction.x,info.direction.y,info.pos.x,info.pos.y,3,COLOR_RED)
 			end
-			self.Sprites[_]:SetScale(self.Menu.SpriteSize / 100, self.Menu.SpriteSize / 100)
+			self.Sprites[_]:SetScale(self.Menu.SpriteSize * 0.01, self.Menu.SpriteSize * 0.01)
 			self.Sprites[_]:Draw(info.pos.x-scale, info.pos.y-scale, 255)
 			local t = ('%d'):format(clock()-info.mTime)
 			local ta = GetTextArea(t, self.Menu.TextSize)
-			DrawText(t, self.Menu.TextSize, info.pos.x-(ta.x/2), info.pos.y-(ta.y/2)+scale, COLOR_RED)
+			DrawText(t, self.Menu.TextSize, info.pos.x-(ta.x*0.5), info.pos.y-(ta.y*0.5)+scale, COLOR_RED)
+			if info.pos2 then
+				local wts = WorldToScreen(D3DXVECTOR3(info.pos2.x,info.pos2.y,info.pos2.z))
+				if wts.x>-100 and wts.x<WINDOW_W+100 and wts.y>-100 and wts.y<WINDOW_H+100 then
+					self.Sprites[_]:SetScale(1, 1)
+					self.Sprites[_]:Draw(wts.x, wts.y, 255)
+					local text = ('%u / %u'):format(info.unit.health, info.unit.maxHealth)
+					local textArea = GetTextArea(text, 16).x * 0.5
+					DrawLine(wts.x+23-textArea,wts.y+62,wts.x+31+textArea,wts.y+62,18,0x99888888)
+					local width = (wts.x+31+textArea) - (wts.x+23-textArea)
+					DrawLine(wts.x+24-textArea,wts.y+62,wts.x+23-textArea + (width * (info.unit.health / info.unit.maxHealth))-1,wts.y+62,16,0x99008800)
+					DrawText(text,16,wts.x+27-textArea,wts.y+54,0xFFFFFFFF)
+					DrawText(t, 30, wts.x+27-(GetTextArea(t, 30).x * 0.5), wts.y-12, 0xFFFF0000)					
+				end
+			end
 		end
 	end
 	if self.Menu.EnableRecall then		
@@ -1924,7 +1951,7 @@ function TRINKET:RecvPacket(p)
 					return
 				end
 			end
-			if myHero.level >= 9 then
+			if myHero.level >= 9 and self.trM.upgrade then
 				if currentTrinket.name == 'TrinketTotemLvl1' then
 					self:BuyItem(3363)
 				elseif currentTrinket.name == 'TrinketSweeperLvl1' then
