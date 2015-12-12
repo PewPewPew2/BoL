@@ -1,0 +1,4 @@
+--0.70@
+-Rewrote the update function@
+-Fixed occasional error spam caused by unique minions@
+-Removed minion bonus calculations for users still using 5.23@
