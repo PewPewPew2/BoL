@@ -1,2 +1,10 @@
+--0.07@
+-Reworked functions that check for auto-attack availability, thanks to the gagong@
+-Fixed some error spam caused by certain minions
+-Removed minion bonus damage calcs for users still on 5.23@
+-Improved extended soldier AA targeting (attacking enemies that are out of targeting range through minions)@
+-More improvements to soldier placement@
+-Dash to mouse has been reworked again@
+-Added four new automated dash locations@
 --0.06@
 -Rewrote Update functions@
