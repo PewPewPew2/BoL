@@ -1,3 +1,10 @@
+--0.73@
+-Fixed load errors for certain users@
+-Improved load timing in general@
+-Fixed Brand W timings (cuz fck brand)@
+-Improved movement block timings@
+-Fixed error spam from Zeds Shadow@
+-Should no longer stop moving, occurred occasionally@
 --0.72@
 -Fixed another timing bug that I created in 0.71@
 --0.71@
