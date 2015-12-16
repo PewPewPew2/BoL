@@ -1,3 +1,21 @@
+--0.71@
+-Made some improvements to auto attacks@
+-Added/Reworked the following AutoW on dashes:@
+    -Ahri R - Will only cast on the third dash.@
+    -Akali R - Will only cast when the target is a hero.@
+    -Ezreal E - Added.@
+    -Kassadin R - Added.@
+    -Fizz Q - Will only cast when the target is a hero.@
+    -Fizz E - Will only cast on the second activation.@
+    -Irelia Q - Will only cast when the target is a hero.@
+    -Kalista Passive - Will no longer cast, was wasted too often.@
+    -Ekko E - Will only cast on the empowered auto attack.@
+    -Leblanc W - Now casts on the return position.@
+    -Master Yi Q - Added, only on hero targets.@
+    -Quinn E - Now casts on the return position.@
+    -Riven Q - Will only cast on the third dash.@
+    -Talon E - Added.@
+    -Yasuo E - Will only cast when the target is a hero.@
 --0.70@
 -Rewrote the update function@
 -Fixed occasional error spam caused by unique minions@
