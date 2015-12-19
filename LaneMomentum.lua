@@ -17,7 +17,7 @@ local momentum_Value = {
 	['SRU_ChaosMinionRanged'] = 0.35,
 	['SRU_ChaosMinionSiege']  = 1.5,
 	['SRU_ChaosMinionSuper']  = 4,
-}
+} 
 
 AddLoadCallback(function()
 	if GetMap().shortName ~= 'summonerRift' then return end
