@@ -1,3 +1,11 @@
+--0.08@
+-Each drawing can now be toggled on/off via the menu@
+-Dash to Mouse has been completely rewritten@
+-Dash to Target key has been added, default key is 'X'@
+-Insec has been rewritten, greatly improved response time@
+-R hit probability option added to R menu@
+-Soldier auto attacks improved@
+-All hotkeys can now individually be set to toggle@
 --0.07@
 -Reworked functions that check for auto-attack availability, thanks to the gagong@
 -Fixed some error spam caused by certain minions@
