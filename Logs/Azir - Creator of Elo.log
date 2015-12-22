@@ -1,3 +1,8 @@
+--0.09@
+-Fixed Automated Dashes (oops), improved the timings as well@
+-Added Q Prediction drawing@
+-More improvements to Q casting@
+-More improvements to soldier placement@
 --0.08@
 -Each drawing can now be toggled on/off via the menu@
 -Dash to Mouse has been completely rewritten@
