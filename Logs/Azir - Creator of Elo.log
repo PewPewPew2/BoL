@@ -1,5 +1,6 @@
 --0.10@
 -Fixed potential bugsplat@
+-Implemented DivinePred, though this is mostly untested so I don't recommend using ATM, I would have tested more before release though I wanted to push this update to fix the bugsplats@
 --0.09@
 -Fixed Automated Dashes (oops), improved the timings as well@
 -Added Q Prediction drawing@
