@@ -1,3 +1,7 @@
+--0.11@
+-Polished Divine Prediction implementation@
+-Some small Q positional changes@
+-Various performance enhancements (improved FPS)@
 --0.10@
 -Fixed potential bugsplat@
 -Implemented DivinePred, though this is mostly untested so I don't recommend using ATM, I would have tested more before release though I wanted to push this update to fix the bugsplats@
