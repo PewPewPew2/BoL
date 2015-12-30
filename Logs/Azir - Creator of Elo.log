@@ -1,3 +1,5 @@
+--0.12@
+-Fixed a bug that was causing manual E casts to be blocked@
 --0.11@
 -Polished Divine Prediction implementation@
 -Some small Q positional changes@
