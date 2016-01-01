@@ -1,3 +1,9 @@
+--0.74@
+-Fixed a bunch of Illaoi errors@
+-Rewrote much of the evasion algorithm@
+-Free user movement/spell block improved@
+-Fixed a bunch of FoW spells@
+-Revised Profiles Menu@
 --0.73@
 -Fixed load errors for certain users@
 -Improved load timing in general@
