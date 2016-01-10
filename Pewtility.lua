@@ -113,6 +113,10 @@ local function GetScale(int, scl)
 	return floor((scl / 100) * int)
 end
 
+local function GetScale2(int, scl)
+	return (scl / 100) * int
+end
+
 -- AddDrawCallback(function()
 	-- local v = GetMinimap(myHero)
 	-- DrawLine(v.x-10,v.y,v.x+10,v.y,1,ARGB(255,255,255,255))
@@ -120,9 +124,9 @@ end
 -- end)
 
 AddLoadCallback(function()
-	local Version = 5.243
+	local Version = 5.244
 	HookPackets()
-	TEAM_ALLY, TEAM_ENEMY = myHero.team, 300 - myHero.team
+	TEAM_ALLY, TEAM_ENEMY = myHero.team, 300-myHero.team
 	MainMenu = scriptConfig('Pewtility', 'Pewtility')
 	MainMenu:addParam('update', 'Enable AutoUpdate', SCRIPT_PARAM_ONOFF, true)
 	IDBytes = GetGameVersion():sub(1,4) == '5.23' and {[0x00] = 0xFC, [0x01] = 0x41, [0x02] = 0xC1, [0x03] = 0x51, [0x04] = 0xD1, [0x05] = 0x61, [0x06] = 0xE1, [0x07] = 0x71, [0x08] = 0xF1, [0x09] = 0x45, [0x0A] = 0xC5, [0x0B] = 0x55, [0x0C] = 0xD5, [0x0D] = 0x65, [0x0E] = 0xE5, [0x0F] = 0x75, [0x10] = 0xF5, [0x11] = 0x49, [0x12] = 0xC9, [0x13] = 0x59, [0x14] = 0xD9, [0x15] = 0x69, [0x16] = 0xE9, [0x17] = 0x79, [0x18] = 0xF9, [0x19] = 0x4D, [0x1A] = 0xCD, [0x1B] = 0x5D, [0x1C] = 0xDD, [0x1D] = 0x6D, [0x1E] = 0xED, [0x1F] = 0x7D, [0x20] = 0xFD, [0x21] = 0x42, [0x22] = 0xC2, [0x23] = 0x52, [0x24] = 0xD2, [0x25] = 0x62, [0x26] = 0xE2, [0x27] = 0x72, [0x28] = 0xF2, [0x29] = 0x46, [0x2A] = 0xC6, [0x2B] = 0x56, [0x2C] = 0xD6, [0x2D] = 0x66, [0x2E] = 0xE6, [0x2F] = 0x76, [0x30] = 0xF6, [0x31] = 0x4A, [0x32] = 0xCA, [0x33] = 0x5A, [0x34] = 0xDA, [0x35] = 0x6A, [0x36] = 0xEA, [0x37] = 0x7A, [0x38] = 0xFA, [0x39] = 0x4E, [0x3A] = 0xCE, [0x3B] = 0x5E, [0x3C] = 0xDE, [0x3D] = 0x6E, [0x3E] = 0xEE, [0x3F] = 0x7E, [0x40] = 0xFE, [0x41] = 0x43, [0x42] = 0xC3, [0x43] = 0x53, [0x44] = 0xD3, [0x45] = 0x63, [0x46] = 0xE3, [0x47] = 0x73, [0x48] = 0xF3, [0x49] = 0x47, [0x4A] = 0xC7, [0x4B] = 0x57, [0x4C] = 0xD7, [0x4D] = 0x67, [0x4E] = 0xE7, [0x4F] = 0x77, [0x50] = 0xF7, [0x51] = 0x4B, [0x52] = 0xCB, [0x53] = 0x5B, [0x54] = 0xDB, [0x55] = 0x6B, [0x56] = 0xEB, [0x57] = 0x7B, [0x58] = 0xFB, [0x59] = 0x4F, [0x5A] = 0xCF, [0x5B] = 0x5F, [0x5C] = 0xDF, [0x5D] = 0x6F, [0x5E] = 0xEF, [0x5F] = 0x7F, [0x60] = 0xFF, [0x61] = 0x00, [0x62] = 0x80, [0x63] = 0x10, [0x64] = 0x90, [0x65] = 0x20, [0x66] = 0xA0, [0x67] = 0x30, [0x68] = 0xB0, [0x69] = 0x04, [0x6A] = 0x84, [0x6B] = 0x14, [0x6C] = 0x94, [0x6D] = 0x24, [0x6E] = 0xA4, [0x6F] = 0x34, [0x70] = 0xB4, [0x71] = 0x08, [0x72] = 0x88, [0x73] = 0x18, [0x74] = 0x98, [0x75] = 0x28, [0x76] = 0xA8, [0x77] = 0x38, [0x78] = 0xB8, [0x79] = 0x0C, [0x7A] = 0x8C, [0x7B] = 0x1C, [0x7C] = 0x9C, [0x7D] = 0x2C, [0x7E] = 0xAC, [0x7F] = 0x3C, [0x80] = 0xBC, [0x81] = 0x01, [0x82] = 0x81, [0x83] = 0x11, [0x84] = 0x91, [0x85] = 0x21, [0x86] = 0xA1, [0x87] = 0x31, [0x88] = 0xB1, [0x89] = 0x05, [0x8A] = 0x85, [0x8B] = 0x15, [0x8C] = 0x95, [0x8D] = 0x25, [0x8E] = 0xA5, [0x8F] = 0x35, [0x90] = 0xB5, [0x91] = 0x09, [0x92] = 0x89, [0x93] = 0x19, [0x94] = 0x99, [0x95] = 0x29, [0x96] = 0xA9, [0x97] = 0x39, [0x98] = 0xB9, [0x99] = 0x0D, [0x9A] = 0x8D, [0x9B] = 0x1D, [0x9C] = 0x9D, [0x9D] = 0x2D, [0x9E] = 0xAD, [0x9F] = 0x3D, [0xA0] = 0xBD, [0xA1] = 0x02, [0xA2] = 0x82, [0xA3] = 0x12, [0xA4] = 0x92, [0xA5] = 0x22, [0xA6] = 0xA2, [0xA7] = 0x32, [0xA8] = 0xB2, [0xA9] = 0x06, [0xAA] = 0x86, [0xAB] = 0x16, [0xAC] = 0x96, [0xAD] = 0x26, [0xAE] = 0xA6, [0xAF] = 0x36, [0xB0] = 0xB6, [0xB1] = 0x0A, [0xB2] = 0x8A, [0xB3] = 0x1A, [0xB4] = 0x9A, [0xB5] = 0x2A, [0xB6] = 0xAA, [0xB7] = 0x3A, [0xB8] = 0xBA, [0xB9] = 0x0E, [0xBA] = 0x8E, [0xBB] = 0x1E, [0xBC] = 0x9E, [0xBD] = 0x2E, [0xBE] = 0xAE, [0xBF] = 0x3E, [0xC0] = 0xBE, [0xC1] = 0x03, [0xC2] = 0x83, [0xC3] = 0x13, [0xC4] = 0x93, [0xC5] = 0x23, [0xC6] = 0xA3, [0xC7] = 0x33, [0xC8] = 0xB3, [0xC9] = 0x07, [0xCA] = 0x87, [0xCB] = 0x17, [0xCC] = 0x97, [0xCD] = 0x27, [0xCE] = 0xA7, [0xCF] = 0x37, [0xD0] = 0xB7, [0xD1] = 0x0B, [0xD2] = 0x8B, [0xD3] = 0x1B, [0xD4] = 0x9B, [0xD5] = 0x2B, [0xD6] = 0xAB, [0xD7] = 0x3B, [0xD8] = 0xBB, [0xD9] = 0x0F, [0xDA] = 0x8F, [0xDB] = 0x1F, [0xDC] = 0x9F, [0xDD] = 0x2F, [0xDE] = 0xAF, [0xDF] = 0x3F, [0xE0] = 0xBF, [0xE1] = 0x40, [0xE2] = 0xC0, [0xE3] = 0x50, [0xE4] = 0xD0, [0xE5] = 0x60, [0xE6] = 0xE0, [0xE7] = 0x70, [0xE8] = 0xF0, [0xE9] = 0x44, [0xEA] = 0xC4, [0xEB] = 0x54, [0xEC] = 0xD4, [0xED] = 0x64, [0xEE] = 0xE4, [0xEF] = 0x74, [0xF0] = 0xF4, [0xF1] = 0x48, [0xF2] = 0xC8, [0xF3] = 0x58, [0xF4] = 0xD8, [0xF5] = 0x68, [0xF6] = 0xE8, [0xF7] = 0x78, [0xF8] = 0xF8, [0xF9] = 0x4C, [0xFA] = 0xCC, [0xFB] = 0x5C, [0xFC] = 0xDC, [0xFD] = 0x6C, [0xFE] = 0xEC, [0xFF] = 0x7C,} 
@@ -154,11 +158,11 @@ AddLoadCallback(function()
 	
 	WARD()
 	MISS()
-	SKILLS()
 	TIMERS()
 	TRINKET()
 	OTHER()
 	MAGWARDS()
+	SKILLS()
 	AwareUpdate(
 		Version,
 		'raw.githubusercontent.com', 
@@ -546,16 +550,13 @@ function WARD:Draw()
 	end
 	if self.Menu.EnableSelf then
 		local isMenuOpen = IsKeyDown(menuKey) 
-		DrawLines2(
-			{
-				D3DXVECTOR2(self.Anchor.x - GetScale(8, self.Menu.Scale), 	self.Anchor.y-GetScale(47.5, self.Menu.Scale)),
-				D3DXVECTOR2(self.Anchor.x - GetScale(8, self.Menu.Scale), 	self.Anchor.y+GetScale(47.5, self.Menu.Scale)),
-				D3DXVECTOR2(self.Anchor.x + GetScale(181, self.Menu.Scale), self.Anchor.y+GetScale(47.5, self.Menu.Scale)),
-				D3DXVECTOR2(self.Anchor.x + GetScale(181, self.Menu.Scale), self.Anchor.y-GetScale(47.5, self.Menu.Scale)),
-				D3DXVECTOR2(self.Anchor.x - GetScale(8, self.Menu.Scale), 	self.Anchor.y-GetScale(47.5, self.Menu.Scale)),				
-			},
-			GetScale(3, self.Menu.Scale),
-			COLOR_GREY
+		DrawLine( --Background
+			self.Anchor.x - GetScale(8, self.Menu.Scale) - 2, 
+			self.Anchor.y, 
+			self.Anchor.x + GetScale(181, self.Menu.Scale) + 2, 
+			self.Anchor.y, 
+			GetScale(95, self.Menu.Scale) + 4, 
+			0x55FFFFFF
 		)
 		DrawLine( --Background
 			self.Anchor.x - GetScale(8, self.Menu.Scale), 
@@ -658,7 +659,7 @@ function WARD:ProcessSpell(u, s)
 	if u.valid and self.OnSpell[s.name:lower()] then
 		local name = s.name:lower()
 		if u.team == TEAM_ENEMY then
-			local duration = name == 'trinketorblvl3' and 56.5 + (u.level * 3.5) or self.OnSpell[name].duration
+			local duration = name == 'trinkettotemlvl1' and 56.5 + (u.level * 3.5) or self.OnSpell[name].duration
 			self.Known[#self.Known+1] = {
 				['pos'] 	 = Vector(s.endPos),
 				['mapPos']   = GetMinimap(Vector(s.endPos)),
@@ -783,6 +784,7 @@ function MISS:__init()
 		['odinrecallimproved'] = 3.9,
 		['recallimproved'] = 6.9,
 		['superrecall'] = 3.9,
+		['teleport'] = 3.15,
 	}
 	self.Allies = {}
 	self.Enemies = {}
@@ -802,7 +804,13 @@ function MISS:__init()
 			self.Enemies[#self.Enemies + 1] = hero
 			self.VisibleSince[hero.networkID] = clock()
 			self.missing[hero.networkID] = nil
-            self.Sprites[hero.networkID] = createSprite(io.open(SPRITE_PATH..'mapIcons/'..hero.charName..'.png', 'r') and "mapIcons/".. hero.charName ..".png" or 'Generic.png')
+			if FileExist(SPRITE_PATH..'mapIcons/'..hero.charName..'.png') then
+				self.Sprites[hero.networkID] = createSprite('mapIcons/'.. hero.charName ..'.png')
+			elseif FileExist(SPRITE_PATH..'Pewtility/CharacterIcons'..hero.charName..'.png') then
+				self.Sprites[hero.networkID] = createSprite(SPRITE_PATH..'Pewtility/CharacterIcons'..hero.charName..'.png')			
+			else
+				self.Sprites[hero.networkID] = createSprite('Generic.png')
+			end
             self.Sprites[hero.networkID]:SetScale(0.45, 0.45)
 			self.Sprites[hero.networkID].scale = 0.45
 		else
@@ -816,7 +824,7 @@ function MISS:__init()
 	self.Packets = GetGameVersion():sub(1, 4) == '5.23' and {
 		['LoseVision'] = { ['Header'] = 0x0108, ['pos'] = 2, },
 		['GainVision'] = { ['Header'] = 0x00E9, ['pos'] = 2, },
-		['Recall'] = { ['Header'] = 0x0152, ['pos'] = 79, ['stringPos'] = 54, },
+		['Recall'] = { ['Header'] = 0x0152, ['pos'] = 79, ['stringPos'] = 54, ['tpPos'] = 22, ['isTP'] = 0x08,},
 		['Aggro'] = { ['Header'] = 0x00E2, ['pos'] = 2, },
 		['Reset'] = { ['Header'] = 0x0117, ['pos'] = 2, ['pos2'] = 10, },
 		['Missile'] = { ['Header'] = 0x0104, ['pos'] = 2, },
@@ -854,7 +862,7 @@ function MISS:__init()
 	} or GetGameVersion():sub(1, 4) == '5.24' and {
 		['LoseVision'] = { ['Header'] = 0x0106, ['pos'] = 2, },
 		['GainVision'] = { ['Header'] = 0x0063, ['pos'] = 2, },
-		['Recall'] = { ['Header'] = 0x011A, ['pos'] = 80, ['stringPos'] = 56, },
+		['Recall'] = { ['Header'] = 0x011A, ['pos'] = 80, ['stringPos'] = 56, ['tpPos'] = 22, ['isTP'] = 0x08, },
 		['Reset'] = { ['Header'] = 0x00AE, ['pos'] = 2, ['pos2'] = 10, },
 		['Aggro'] = { ['Header'] = 0X0148, ['pos'] = 2, },
 		['Missile'] = { ['Header'] = 0x00F5, ['pos'] = 2, },
@@ -975,27 +983,36 @@ function MISS:RecvPacket(p)
 		local netID = bxor(lshift(band(bytes[1],0xFF),24),lshift(band(bytes[2],0xFF),16),lshift(band(bytes[3],0xFF),8),band(bytes[4],0xFF))
 		local o = objManager:GetObjectByNetworkId(DwordToFloat(netID))
 		if o and o.valid and o.type == 'AIHeroClient' and o.team == TEAM_ENEMY then
-			p.pos=self.Packets.Recall.stringPos
+			p.pos = self.Packets.Recall.tpPos
+			local isTP = p:Decode1() == self.Packets.Recall.isTP
 			local str = ''
-			for i=1, p.size do
-				local char = p:Decode1()
-				if char == 0 then break end
-				str=str..string.char(char)
+			if not isTP then
+				p.pos=self.Packets.Recall.stringPos
+				for i=1, p.size do
+					local b = p:Decode1()
+					if b == 0 then break end
+					str=str..string.char(b)
+				end
+			else
+				str = 'teleport'
 			end
 			if self.recallTimes[str:lower()] then
-				local r = {}
-				r.name = o.charName
-				r.startT = clock()
-				r.duration = self.recallTimes[str:lower()]
-				r.endT = r.startT + r.duration
-				self.ActiveRecalls[o.networkID] = r
-				return
+				self.ActiveRecalls[o.networkID] = {
+					name = o.charName,
+					startT = clock(),
+					duration = self.recallTimes[str:lower()],
+					endT = clock() + self.recallTimes[str:lower()],	
+					isTP = isTP
+				}
+				return			
 			elseif self.ActiveRecalls[o.networkID] then
 				if self.ActiveRecalls[o.networkID].endT > clock() then
 					self.ActiveRecalls[o.networkID] = nil
 					return
 				else
-					self.missing[o.networkID] = {pos = self.recallEndPos, name = o.charName, mTime = clock(),}
+					if not self.ActiveRecalls[o.networkID].isTP then
+						self.missing[o.networkID] = {pos = self.recallEndPos, name = o.charName, mTime = clock(),}
+					end
 					self.ActiveRecalls[o.networkID].complete = clock() + 3
 					return
 				end
@@ -1140,14 +1157,14 @@ function MISS:Draw()
 		if isMenuOpen then
 			for i=0, 4 do 
 				local Scale4 = GetScale(i * 30, self.Menu.RecallScale)
-				local Lines = {
-					D3DXVECTOR2(self.Anchor.x - Scale2, 	self.Anchor.y - Scale1 - Scale4),
-					D3DXVECTOR2(self.Anchor.x + Scale3, 	self.Anchor.y - Scale1 - Scale4),
-					D3DXVECTOR2(self.Anchor.x + Scale3, 	self.Anchor.y + Scale1 - Scale4),
-					D3DXVECTOR2(self.Anchor.x - Scale2, 	self.Anchor.y + Scale1 - Scale4),
-					D3DXVECTOR2(self.Anchor.x - Scale2, 	self.Anchor.y - Scale1 - Scale4),
-				}
-				DrawLines2(Lines, Scale2, COLOR_WHITE)
+				DrawLine(
+					self.Anchor.x-2, 
+					self.Anchor.y - Scale4, 
+					self.Anchor.x + Scale3 + 2, 
+					self.Anchor.y - Scale4, 
+					GetScale(16, self.Menu.RecallScale) + 4, 
+					0x77FFFFFF
+				)
 				DrawText(
 					'Recall Bar Position', 
 					Scale0, 
@@ -1172,6 +1189,14 @@ function MISS:Draw()
 				local percent = (info.endT - clock()) / info.duration
 				local x2 = self.Anchor.x + (Scale3 * (percent < 1 and percent or 1))
 				DrawLine(
+					self.Anchor.x-2, 
+					self.Anchor.y - Scale4, 
+					self.Anchor.x + Scale3 + 2, 
+					self.Anchor.y - Scale4, 
+					GetScale(16, self.Menu.RecallScale) + 4, 
+					info.isTP and 0x770099FF or 0x77FFFFFF
+				)
+				DrawLine(
 					self.Anchor.x, 
 					self.Anchor.y - Scale4, 
 					(x2 > self.Anchor.x+1 and x2 or self.Anchor.x), 
@@ -1179,22 +1204,11 @@ function MISS:Draw()
 					GetScale(16, self.Menu.RecallScale), 
 					ARGB(255, 255 * percent, 255 - (255 * percent), 0)
 				)
-				DrawLines2(
-					{
-						D3DXVECTOR2(self.Anchor.x - Scale2, 	self.Anchor.y - Scale1 - Scale4),
-						D3DXVECTOR2(self.Anchor.x + Scale3, 	self.Anchor.y - Scale1 - Scale4),
-						D3DXVECTOR2(self.Anchor.x + Scale3, 	self.Anchor.y + Scale1 - Scale4),
-						D3DXVECTOR2(self.Anchor.x - Scale2, 	self.Anchor.y + Scale1 - Scale4),
-						D3DXVECTOR2(self.Anchor.x - Scale2, 	self.Anchor.y - Scale1 - Scale4),
-					}, 
-					Scale2, 
-					COLOR_WHITE
-				)
 				if info.complete and info.complete < clock() then
 					self.ActiveRecalls[_] = nil
-					return				
+					return
 				end
-				local text = info.complete and info.name..' Completed.' or info.name..' '..ceil(percent * 100)..'%'
+				local text = info.complete and info.name..' Completed.' or info.isTP and info.name..': Teleport '..ceil(percent * 100)..'%' or info.name..' '..ceil(percent * 100)..'%'
 				DrawText(
 					text, 
 					Scale0, 
@@ -1209,19 +1223,9 @@ function MISS:Draw()
 	if self.Menu.EnableJungle then		
 		local Scale0 = GetScale(100, self.Menu.JungleScale)
 		local Scale1 = Scale0 * 0.25
-		if isMenuOpen then
+		if isMenuOpen then			
+			DrawLine(self.Anchor2.x - Scale0-2, self.Anchor2.y, self.Anchor2.x + Scale0+2, self.Anchor2.y, (Scale0 * 0.5) + 4, 0x77FFFFFF)
 			DrawLine(self.Anchor2.x - Scale0, self.Anchor2.y, self.Anchor2.x + Scale0, self.Anchor2.y, Scale0 * 0.5, COLOR_TRANS_RED)
-			DrawLines2(
-				{
-					D3DXVECTOR2(self.Anchor2.x - Scale0, 	self.Anchor2.y-Scale1),
-					D3DXVECTOR2(self.Anchor2.x + Scale0, 	self.Anchor2.y-Scale1),
-					D3DXVECTOR2(self.Anchor2.x + Scale0, 	self.Anchor2.y+Scale1),
-					D3DXVECTOR2(self.Anchor2.x - Scale0, 	self.Anchor2.y+Scale1), 
-					D3DXVECTOR2(self.Anchor2.x - Scale0, 	self.Anchor2.y-Scale1)
-				}, 
-				(Scale0 * 0.02), 
-				COLOR_WHITE
-			)
 			DrawText(
 				'Position', 
 				(Scale0 * 0.32), 
@@ -1254,18 +1258,8 @@ function MISS:Draw()
 				DrawText(string.char(26)..' '..string.char(27),35,camp.pos.x - (self.ArrowsSize.x / 2),camp.pos.y - (self.ArrowsSize.y / 2),COLOR_RED)
 			end
 			if #self.JungleTracker == 1 then
+				DrawLine(self.Anchor2.x - Scale0-2, self.Anchor2.y, self.Anchor2.x + Scale0+2, self.Anchor2.y, (Scale0 * 0.5) + 4, 0x77FFFFFF)
 				DrawLine(self.Anchor2.x - Scale0, self.Anchor2.y, self.Anchor2.x + Scale0, self.Anchor2.y, Scale0 * 0.5, COLOR_TRANS_RED)
-				DrawLines2(
-					{
-						D3DXVECTOR2(self.Anchor2.x - Scale0, 	self.Anchor2.y-Scale1),
-						D3DXVECTOR2(self.Anchor2.x + Scale0, 	self.Anchor2.y-Scale1),
-						D3DXVECTOR2(self.Anchor2.x + Scale0, 	self.Anchor2.y+Scale1),
-						D3DXVECTOR2(self.Anchor2.x - Scale0, 	self.Anchor2.y+Scale1), 
-						D3DXVECTOR2(self.Anchor2.x - Scale0, 	self.Anchor2.y-Scale1)
-					}, 
-					(Scale0 * 0.02), 
-					COLOR_WHITE
-				)
 				DrawText(
 					self.JungleTracker[1].text, 
 					(Scale0 * 0.32), 
@@ -1288,28 +1282,88 @@ end
 class 'SKILLS'
 
 function SKILLS:__init()
-	self.Heroes = {}
-	self.SkillText = {
-		['summonerdot']      		= 'Ignite',
-		['summonerexhaust']  		= 'Exhaust',
-		['summonerflash']    		= 'Flash',
-		['summonerheal']     		= 'Heal',
-		['summonersmite']    		= 'Smite',
-		['summonerbarrier']  		= 'Barrier',
-		['summonerclairvoyance']    = 'Clairvoyance',
-		['summonermana']     		= 'Clarity',
-		['summonerteleport']     	= 'Teleport',
-		['summonerrevive']     		= 'Revive',
-		['summonerhaste']     		= 'Ghost',
-		['summonerboost']     		= 'Cleanse',
+	local pngChecks = {
+		['barTemplate.png'] = {
+			['localPath'] = SPRITE_PATH..'/Pewtility/barTemplate.png',
+			['url'] = '/KwTTvQ4.png',
+		},
+		['summonerbarrier.png'] = {
+			['localPath'] = SPRITE_PATH..'/Pewtility/summonerbarrier.png',
+			['url'] = '/68VUJSl.png',
+		},
+		['summonerboost.png'] = {
+			['localPath'] = SPRITE_PATH..'/Pewtility/summonerboost.png',
+			['url'] = '/CAVVQ9B.png',
+		},
+		['summonerclairvoyance.png'] = {
+			['localPath'] = SPRITE_PATH..'/Pewtility/summonerclairvoyance.png',
+			['url'] = '/gvYFTpu.png',
+		},
+		['summonerdot.png'] = {
+			['localPath'] = SPRITE_PATH..'/Pewtility/summonerdot.png',
+			['url'] = '/kCD3WjZ.png',
+		},
+		['summonerexhaust.png'] = {
+			['localPath'] = SPRITE_PATH..'/Pewtility/summonerexhaust.png',
+			['url'] = '/8EsF90W.png',
+		},
+		['summonerflash.png'] = {
+			['localPath'] = SPRITE_PATH..'/Pewtility/summonerflash.png',
+			['url'] = '/LhnU93g.png',
+		},
+		['summonerhaste.png'] = {
+			['localPath'] = SPRITE_PATH..'/Pewtility/summonerhaste.png',
+			['url'] = '/K4fmF83.png',
+		},
+		['summonerheal.png'] = {
+			['localPath'] = SPRITE_PATH..'/Pewtility/summonerheal.png',
+			['url'] = '/yTwLorm.png',
+		},
+		['summonermana.png'] = {
+			['localPath'] = SPRITE_PATH..'/Pewtility/summonermana.png',
+			['url'] = '/Rt0i7HR.png',
+		},
+		['summonerodingarrison.png'] = {
+			['localPath'] = SPRITE_PATH..'/Pewtility/summonerodingarrison.png',
+			['url'] = '/nCHmZra.png',
+		},
+		['summonersmite.png'] = {
+			['localPath'] = SPRITE_PATH..'/Pewtility/summonersmite.png',
+			['url'] = '/j6XAgXK.png',
+		},
+		['summonersnowball.png'] = {
+			['localPath'] = SPRITE_PATH..'/Pewtility/summonersnowball.png',
+			['url'] = '/D5TIXXe.png',
+		},
+		['summonerteleport.png'] = {
+			['localPath'] = SPRITE_PATH..'/Pewtility/summonerteleport.png',
+			['url'] = '/uY8WKfV.png',
+		},
 	}
+	for k, v in pairs(pngChecks) do
+		if not FileExist(v.localPath) then
+			AwareUpdate(
+				'isSprite', 
+				'i.imgur.com',
+				nil, 
+				v.url,
+				SPRITE_PATH..'Pewtility/'..k, 
+				function() Print('Sprite Download complete') end, 
+				function() return end, 
+				function() return end, 
+				function() Print('An error occured downloading sprite') end
+			)			
+		end
+	end
+	
+	self.Heroes = {}
 	for i=1, heroManager.iCount do
 		local hero = heroManager:getHero(i)
 		if not hero.isMe then
 			self.Heroes[#self.Heroes+1] = {
 				['hero'] = hero,
-				['sum1'] = self.SkillText[hero:GetSpellData(SUMMONER_1).name:lower()],
-				['sum2'] = self.SkillText[hero:GetSpellData(SUMMONER_2).name:lower()],
+				['sum1'] = createSprite('Pewtility/'..hero:GetSpellData(SUMMONER_1).name..'.png'),
+				['sum2'] = createSprite('Pewtility/'..hero:GetSpellData(SUMMONER_2).name..'.png'),
 			}
 		end
 	end
@@ -1320,7 +1374,20 @@ function SKILLS:__init()
 		['Sion'] = -0.05,
 		['Thresh'] = -0.03,
 	}
-	self:Menu()
+	self.ParTypes = {['Ashe'] = 0xFF00AAFF, ['Caitlyn'] = 0xFF00AAFF, ['Corki'] = 0xFF00AAFF, ['Draven'] = 0xFF00AAFF, ['Ezreal'] = 0xFF00AAFF, ['Graves'] = 0xFF00AAFF,	['Jayce'] = 0xFF00AAFF, ['Jinx'] = 0xFF00AAFF, ['Kalista'] = 0xFF00AAFF, ['Kindred'] = 0xFF00AAFF, ['KogMaw'] = 0xFF00AAFF, ['Lucian'] = 0xFF00AAFF, 	['MasterYi'] = 0xFF00AAFF, ['MissFortune'] = 0xFF00AAFF, ['Pantheon'] = 0xFF00AAFF, ['Quinn'] = 0xFF00AAFF,['Shaco'] = 0xFF00AAFF, ['Sivir'] = 0xFF00AAFF, ['Talon'] = 0xFF00AAFF, ['Tristana'] = 0xFF00AAFF, ['Twitch'] = 0xFF00AAFF, ['Urgot'] = 0xFF00AAFF, ['Varus'] = 0xFF00AAFF, ['Vayne'] = 0xFF00AAFF, ['Fiora'] = 0xFF00AAFF, ['Annie'] = 0xFF00AAFF, ['Ahri'] = 0xFF00AAFF, ['Azir'] = 0xFF00AAFF, ['Bard'] = 0xFF00AAFF, ['Anivia'] = 0xFF00AAFF, ['Brand'] = 0xFF00AAFF, ['Cassiopeia'] = 0xFF00AAFF, ['Diana'] = 0xFF00AAFF, ['Ekko'] = 0xFF00AAFF, ['Evelynn'] = 0xFF00AAFF, ['FiddleSticks'] = 0xFF00AAFF, ['Fizz'] = 0xFF00AAFF, ['Heimerdinger'] = 0xFF00AAFF, ['Illaoi'] = 0xFF00AAFF, ['Karthus'] = 0xFF00AAFF, ['Kassadin'] = 0xFF00AAFF, ['Kayle'] = 0xFF00AAFF, ['Leblanc'] = 0xFF00AAFF, ['Lissandra'] = 0xFF00AAFF, ['Lux'] = 0xFF00AAFF, ['Malzahar'] = 0xFF00AAFF, ['Morgana'] = 0xFF00AAFF, ['Nidalee'] = 0xFF00AAFF,	['Orianna'] = 0xFF00AAFF, ['Ryze'] = 0xFF00AAFF, ['Swain'] = 0xFF00AAFF, ['Syndra'] = 0xFF00AAFF, ['Teemo'] = 0xFF00AAFF, ['TwistedFate'] = 0xFF00AAFF, ['Veigar'] = 0xFF00AAFF, ['Viktor'] = 0xFF00AAFF,['Xerath'] = 0xFF00AAFF, ['Ziggs'] = 0xFF00AAFF, ['Zyra'] = 0xFF00AAFF, ['Velkoz'] = 0xFF00AAFF, ['Zilean'] = 0xFF00AAFF, ['Alistar'] = 0xFF00AAFF, ['Blitzcrank'] = 0xFF00AAFF, ['Braum'] = 0xFF00AAFF, ['Galio'] = 0xFF00AAFF, ['Janna'] = 0xFF00AAFF, ['Karma'] = 0xFF00AAFF, ['Leona'] = 0xFF00AAFF, ['Lulu'] = 0xFF00AAFF, ['Nami'] = 0xFF00AAFF, ['Nunu'] = 0xFF00AAFF, ['Sona'] = 0xFF00AAFF, ['Soraka'] = 0xFF00AAFF, ['TahmKench'] = 0xFF00AAFF, ['Taric'] = 0xFF00AAFF, ['Thresh'] = 0xFF00AAFF, ['Darius'] = 0xFF00AAFF, ['Elise'] = 0xFF00AAFF, ['Gangplank'] = 0xFF00AAFF,['Gnar'] = 0xFF00AAFF, ['Gragas'] = 0xFF00AAFF, ['Irelia'] = 0xFF00AAFF, ['JarvanIV'] = 0xFF00AAFF, ['Jax'] = 0xFF00AAFF, ['Khazix'] = 0xFF00AAFF, ['Nocturne'] = 0xFF00AAFF, ['Olaf'] = 0xFF00AAFF, ['Poppy'] = 0xFF00AAFF, ['RekSai'] = 0xFF00AAFF, ['Trundle'] = 0xFF00AAFF, ['Udyr'] = 0xFF00AAFF, ['Vi'] = 0xFF00AAFF, ['MonkeyKing'] = 0xFF00AAFF, ['XinZhao'] = 0xFF00AAFF, ['Amumu'] = 0xFF00AAFF, ['Chogath'] = 0xFF00AAFF,['Hecarim'] = 0xFF00AAFF, ['Malphite'] = 0xFF00AAFF, ['Maokai'] = 0xFF00AAFF, ['Nasus'] = 0xFF00AAFF, ['Rammus'] = 0xFF00AAFF, ['Sejuani'] = 0xFF00AAFF, ['Nautilus'] = 0xFF00AAFF, ['Sion'] = 0xFF00AAFF, ['Singed'] = 0xFF00AAFF, ['Skarner'] = 0xFF00AAFF, ['Volibear'] = 0xFF00AAFF, ['Warwick'] = 0xFF00AAFF, ['Yorick'] = 0xFF00AAFF, ['Vladimir'] = 0xFF000000, ['Katarina'] = 0xFF000000, ['Garen'] = 0xFF000000, ['Riven'] = 0xFF000000, ['DrMundo'] = 0xFF000000, ['Zac'] = 0xFF000000, ['Zed'] = 0xFFFFBB00, ['Akali'] = 0xFFFFBB00, ['Kennen'] = 0xFFFFBB00, ['LeeSin'] = 0xFFFFBB00, ['Shen'] = 0xFFFFBB00, ['Mordekaiser'] = 0xFF555555, ['Tryndamere'] = 0xFFFF3300,}
+	self.SpecialParTypes = {
+		['Aatrox'] = function(unit) return unit.mana == 100 and 0xFFFF3300 or 0xFF555555 end, 
+		['Renekton'] = function(unit) return unit.mana > 50 and 0xFFFF3300 or 0xFF555555 end, 
+		['Rengar'] = function(unit) return unit.mana < 5 and 0xFF555555 or 0xFFFF3300 end,
+		['Rumble'] = function(unit) return unit.mana < 50 and 0xFF555555 or unit.mana < 100 and 0xFFFF9900 end,
+		['Shyvana'] = function(unit) return unit.mana == 100 and 0xFFFF3300 or 0xFFFF9900 end,
+		['Yasuo'] = function(unit) return unit.mana==unit.maxMana and 0xFFFF3300 or 0xFF555555 end, 
+	}
+	self:CreateMenu()
+	self.Sprite = createSprite('Pewtility/barTemplate.png')
+	
+	self.Sprite:SetScale(0.3,0.3)
+	
 	AddDrawCallback(function() self:Draw() end)
 	--[[
 	self.CallTimers = {}
@@ -1337,63 +1404,109 @@ function SKILLS:__init()
 		end
 	end)
 	--]]
+	SendChat('Hello')
 end
 
-function SKILLS:Menu()
-	MainMenu:addSubMenu('Cooldown Tracker', 'CooldownTracker')
-	self.Menu = MainMenu.CooldownTracker
-	self.Menu:addParam('Enemy', 'Enable Enemy Cooldown Tracker', SCRIPT_PARAM_ONOFF, true)	
+function SKILLS:CreateMenu()
+	MainMenu:addSubMenu('Cooldown Tracker', 'CooldownTracker2')
+	self.Menu = MainMenu.CooldownTracker2
+	self.Menu:addParam('Enemy', 'Enable Enemy Cooldown Tracker', SCRIPT_PARAM_ONOFF, true)
 	self.Menu:addParam('Ally', 'Enable Ally Cooldown Tracker', SCRIPT_PARAM_ONOFF, true)
-	self.Menu:addParam('Text', 'Enable Cooldown Text', SCRIPT_PARAM_ONOFF, true)
+	self.Menu:addParam('Scale', 'HP Bar Scale', SCRIPT_PARAM_SLICE, 75, 75, 100)
+	self.Menu:addParam('Text', 'Draw Text (Timers)', SCRIPT_PARAM_ONOFF, true)
 	--sM:addParam('Key', 'Chat Summoner Cooldowns', SCRIPT_PARAM_ONKEYDOWN, false, ('N'):byte())
 end
 
 function SKILLS:Draw()
+	local s = self.Menu.Scale
+	self.Sprite:SetScale(GetScale2(0.3, s), GetScale2(0.3, s))	
 	for _, info in ipairs(self.Heroes) do
 		if info.hero.valid and info.hero.visible and not info.hero.dead and ((info.hero.team == myHero.team and self.Menu.Ally) or (info.hero.team ~= myHero.team and self.Menu.Enemy)) then
 			local barX, barY = self:BarData(info.hero)
+			local barX, barY = barX - GetScale(100, s), barY+GetScale(15, s)
 			if barX > -100 and barX < WINDOW_W + 100 and barY > -100 and barY < WINDOW_H + 100 then
-				barX, barY = ceil(barX), ceil(barY)
-				DrawLine(barX-29,barY+51,barX+62,barY+51,29,info.hero.team == myHero.team and ARGB(220, 114, 213, 242) or ARGB(220, 204, 126, 114))
+				--HP
+				local hpMidX = barX + GetScale(61 + (187 * info.hero.health / (info.hero.maxHealth+info.hero.shield)), s)
+				local hpY = GetScale(17, s)
+				local hpFS = GetScale(24,s)
+				DrawLine(barX + GetScale(61,s), barY + hpY, hpMidX, barY + hpY,hpFS,info.hero.team==TEAM_ALLY and 0xFF0088FF or 0xFFFF4400)
+				local slopeI=0
+				for i=1, info.hero.health*0.01 do
+					local x = barX + GetScale(61 + (187 * (100*i) / (info.hero.maxHealth+info.hero.shield)), s)
+					local l, w = 12, 1
+					if x<barX+GetScale(148,s) then
+						l=22
+						slopeI = 3
+					elseif x<barX+GetScale(156,s) then
+						l=l+GetScale(2.25*slopeI,s)
+						slopeI = math.max(slopeI - 1, 0)						
+					end
+					if i==10 or i==20 or i==30 or i==40 or i==50 then
+						l, w = 28, 2
+					end
+					local l = GetScale(l, s)
+					DrawLine(x,barY,x,barY+l,w,0xFF000000)
+				end
+				if info.hero.shield > 0 then
+					local shieldMidX = hpMidX + GetScale(187 * info.hero.shield / info.hero.maxHealth, s)
+					DrawLine(hpMidX, barY + hpY, shieldMidX,barY + hpY,hpFS,0xFFCCCCCC)
+					hpMidX = shieldMidX
+				end
+				DrawLine(hpMidX, barY + hpY, barX + GetScale(248,s),barY + hpY,hpFS,0xFF000000)
+				if self.Menu.Text then
+					local hText = ('%u / %u'):format(info.hero.health + info.hero.shield, info.hero.maxHealth)
+					local hTextArea = GetTextArea(hText, hpY)
+					DrawText(hText,hpY,barX+GetScale(107,s)-(hTextArea.x*0.5),barY+GetScale(18,s)-(hTextArea.y*0.5),0xFFFFFFFF)
+				end
+				
+				--MP
+				local mpMid = barX + GetScale(165 + (info.hero.maxMana~=0 and 58 * info.hero.mana / info.hero.maxMana or 0), s)
+				local mpColor = self.ParTypes[info.hero.charName] or self.SpecialParTypes[info.hero.charName] and self.SpecialParTypes[info.hero.charName](info.hero) or 0xFF00AAFF
+				local mpY = GetScale(33, s)
+				DrawLine(barX + GetScale(165, s),barY + mpY, mpMid,barY + mpY,hpY,mpColor)
+				DrawLine(mpMid,barY + mpY, barX + GetScale(223, s),barY + mpY,hpY,0xFF000000)
+				
+				if self.Menu.Text then
+					local mText = ('%u / %u'):format(info.hero.mana, info.hero.maxMana)
+					local mpFS = GetScale(14, s)
+					local mTextArea = GetTextArea(mText, mpFS)
+					DrawText(mText,mpFS,barX+GetScale(193-(mTextArea.x*0.5),s),barY+GetScale(34-(mTextArea.y*0.5),s),0xFFFFFFFF)
+				end
+				
+				--Spells
 				for i=_Q, _R do
-					local data = info.hero:GetSpellData(i)
-					local x = barX-27+(i*22)
-					local y = barY+44
-					if data.level > 0 then
-						if data.currentCd ~= 0 then
-							local cd = data.cd-(data.cd-data.currentCd)
-							DrawLine(x, y, x+((cd / data.cd) * 21), y, 12, COLOR_ORANGE)
-							DrawLine(x+((cd / data.cd) * 21), y, x+21, y, 12, COLOR_GREY)
-							if self.Menu.Text then
-								local text = ('%i'):format(cd)
-								local tA = GetTextArea(text, 14)
-								DrawText(text, 14, x + 11 - (tA.x / 2), y - (tA.y / 2), COLOR_WHITE)
-							end
-						else
-							DrawLine(x,y,x+21,y,12,COLOR_GREEN)							
-						end
-					else
-						DrawLine(x,y,x+21,y,12,COLOR_GREY)							
-					end
+					local d = info.hero:GetSpellData(i)
+					local color = d.level == 0 and 0xFF000000 or 0==d.currentCd and 0xFF00AA00 or 0xFFAA0000
+					local h = (d.level == 0 or 0==d.currentCd) and 24 or 24*(d.cd~=0 and d.currentCd/d.cd or 0)
+					local cdMid = barY+GetScale(29-h, s)
+					local cdX = GetScale(28+(i*7.5), s)
+					local cdFS = GetScale(7,s)
+					DrawLine(barX+cdX,barY+GetScale(29, s),barX+cdX,cdMid,cdFS,color)
+					DrawLine(barX+cdX,cdMid,barX+cdX,barY+GetScale(5,s),cdFS,0xFF000000)
 				end
-				for i=SUMMONER_1, SUMMONER_2 do
-					local data = info.hero:GetSpellData(i)					
-					local x = barX-27+((i-4)*42) + ((i-4)*2.5)
-					local y = barY+47
-					local text = info['sum'..(i-3)]
-					if data.currentCd ~= 0 then
-						local cd = data.cd-(data.cd-data.currentCd)
-						DrawLine(x, y+11, x+((cd / data.cd) * 42), y+11, 12, COLOR_ORANGE)
-						DrawLine(x+((cd / data.cd) * 42), y+11, x+42, y+11, 12, COLOR_GREY)
-						--self.CallTimers[enemy.charName] = {x=x, y=y+5,t=floor(data.currentCd+GetInGameTimer()), text=text}
-					else
-						DrawLine(x, y+11, x+42, y+11, 12, COLOR_GREEN)								
-					end
-					if self.Menu.Text then
-						local tA = GetTextArea(text, 11)
-						DrawText(text, 11, x + 22 - (tA.x / 2), y + 11 - (tA.y / 2), COLOR_WHITE)
-					end
+				
+				self.Sprite:Draw(barX, barY, 255)
+				
+				--Summoners
+				local sumX = GetScale(7.5,s)
+				info.sum1:SetScale(GetScale2(0.2,s), GetScale2(0.2,s))
+				info.sum1:Draw(barX+sumX, barY+GetScale(4,s), 255)
+				local sum1Cd = info.hero:GetSpellData(SUMMONER_1).currentCd
+				local sumFS = GetScale(14,s)
+				if sum1Cd~=0 then
+					local mText = ('%u'):format(sum1Cd)
+					local mTextArea = GetTextArea(mText, sumFS)
+					DrawText(mText,sumFS,barX+GetScale(13,s)-(mTextArea.x*0.5),barY+sumFS-(mTextArea.y*0.5),0xFFFFFFFF)
 				end
+				info.sum2:Draw(barX+sumX, barY+GetScale(18,s), 255)
+				info.sum2:SetScale(GetScale2(0.2,s), GetScale2(0.2,s))
+				local sum2Cd = info.hero:GetSpellData(SUMMONER_2).currentCd
+				if sum2Cd~=0 then
+					local mText = ('%u'):format(sum2Cd)
+					local mTextArea = GetTextArea(mText, sumFS)
+					DrawText(mText,sumFS,barX+GetScale(13,s)-(mTextArea.x*0.5),barY+GetScale(24,s)-(mTextArea.y*0.5),0xFFFFFFFF)
+				end
+				DrawText(info.hero.level..'',GetScale(16,s),barX+GetScale(242,s),barY+GetScale(25,s),0xFFFFFFFF)
 			end
 		end
 	end
@@ -1802,11 +1915,9 @@ function OTHER:Draw()
 					local t = d-self.TurretRange
 					if turret.team == TEAM_ENEMY then
 						DrawCircle3D(turret.x,turret.y,turret.z,self.TurretRange,1, ARGB(t>0 and 255 * ((500-t) / 500) or 255, 255, 0, 0))
-						-- DrawCircle(turret.x, turret.y, turret.z, self.TurretRange, RGB(t>0 and 255 * ((500-t) / 500) or 255, 0, 0))
 					elseif self.Menu.AllyTurret then
 						local p = t>0 and ((500-t) / 500) or 1
 						DrawCircle3D(turret.x,turret.y,turret.z,self.TurretRange,1, ARGB(t>0 and 255 * ((500-t) / 500) or 255, 255, 120, 120))
-						-- DrawCircle(turret.x, turret.y, turret.z, self.TurretRange, RGB(255*p,120*p,120*p)) 
 					end
 				end
 			else
@@ -1846,12 +1957,13 @@ function OTHER:Draw()
 					end
 					if draw then
 						DrawLines2(points, 2, COLOR_RED)
-						DrawText3D(('%.2f'):format(sqrt(pathLength)/(e.ms))..'\n'..e.charName, e.endPath.x, e.endPath.y, e.endPath.z, 12, COLOR_WHITE)
+						local x, y = points[#points].x, points[#points].y
+						DrawText(('%.2f'):format(sqrt(pathLength)/(e.ms))..'\n'..e.charName,12,x,y,COLOR_WHITE)
 					end
 				else
 					local x, y = points[#points].x, points[#points].y
 					if x > 0 and x < WINDOW_W and y > 0 and y < WINDOW_H then
-						DrawText3D(('%.2f'):format(sqrt(pathLength)/(e.ms))..'\n'..e.charName, e.endPath.x, e.endPath.y, e.endPath.z, 12, COLOR_WHITE)
+						DrawText(('%.2f'):format(sqrt(pathLength)/(e.ms))..'\n'..e.charName,12,x,y,COLOR_WHITE)
 					end
 				end
 			end
@@ -2069,6 +2181,7 @@ function MAGWARDS:__init()
 		['TrinketTotemLvl1'] = true, 
 		['TrinketTotemLvl3'] = true, 
 		['TrinketTotemLvl3b'] = true, 
+		['TrinketOrbLvl3'] = true,
 	}
 	AddCastSpellCallback(function(...) self:CastSpell(...) end)	
 	AddMsgCallback(function(m,k) self:WndMsg(m,k) end)
