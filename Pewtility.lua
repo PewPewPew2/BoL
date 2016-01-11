@@ -124,7 +124,7 @@ end
 -- end)
 
 AddLoadCallback(function()
-	local Version = 5.245
+	local Version = 5.246
 	HookPackets()
 	TEAM_ALLY, TEAM_ENEMY = myHero.team, 300-myHero.team
 	MainMenu = scriptConfig('Pewtility', 'Pewtility')
@@ -1284,9 +1284,9 @@ class 'SKILLS'
 function SKILLS:__init()
 	CreateDirectory(SPRITE_PATH..'Pewtility/')
 	local pngChecks = {
-		['barTemplate.png'] = {
-			['localPath'] = SPRITE_PATH..'/Pewtility/barTemplate.png',
-			['url'] = '/KwTTvQ4.png',
+		['barTemplate_r1.png'] = {
+			['localPath'] = SPRITE_PATH..'/Pewtility/barTemplate_r1.png',
+			['url'] = '/Pfr1Tpw.png',
 		},
 		['summonerbarrier.png'] = {
 			['localPath'] = SPRITE_PATH..'/Pewtility/summonerbarrier.png',
@@ -1356,7 +1356,20 @@ function SKILLS:__init()
 			)			
 		end
 	end
-	
+	self.SkillText = {
+		['summonerdot']      		= 'Ignite',
+		['summonerexhaust']  		= 'Exhaust',
+		['summonerflash']    		= 'Flash',
+		['summonerheal']     		= 'Heal',
+		['summonersmite']    		= 'Smite',
+		['summonerbarrier']  		= 'Barrier',
+		['summonerclairvoyance']    = 'Clairvoyance',
+		['summonermana']     		= 'Clarity',
+		['summonerteleport']     	= 'Teleport',
+		['summonerrevive']     		= 'Revive',
+		['summonerhaste']     		= 'Ghost',
+		['summonerboost']     		= 'Cleanse',
+	}
 	self.Heroes = {}
 	for i=1, heroManager.iCount do
 		local hero = heroManager:getHero(i)
@@ -1365,6 +1378,8 @@ function SKILLS:__init()
 				['hero'] = hero,
 				['sum1'] = createSprite('Pewtility/'..hero:GetSpellData(SUMMONER_1).name..'.png'),
 				['sum2'] = createSprite('Pewtility/'..hero:GetSpellData(SUMMONER_2).name..'.png'),
+				['t1'] = self.SkillText[hero:GetSpellData(SUMMONER_1).name:lower()],
+				['t2'] = self.SkillText[hero:GetSpellData(SUMMONER_2).name:lower()],
 			}
 		end
 	end
@@ -1385,11 +1400,11 @@ function SKILLS:__init()
 		['Yasuo'] = function(unit) return unit.mana==unit.maxMana and 0xFFFF3300 or 0xFF555555 end, 
 	}
 	self:CreateMenu()
-	self.Sprite = createSprite('Pewtility/barTemplate.png')
+	self.Sprite = createSprite('Pewtility/barTemplate_r1.png')
 	
 	self.Sprite:SetScale(0.3,0.3)
 	
-	AddDrawCallback(function() self:Draw() end)
+	AddDrawCallback(function() self[self.Menu.UseOld and 'DrawOLD' or 'Draw'](self) end)
 	--[[
 	self.CallTimers = {}
 	AddMsgCallback(function(m,k)
@@ -1415,6 +1430,8 @@ function SKILLS:CreateMenu()
 	self.Menu:addParam('Ally', 'Enable Ally Cooldown Tracker', SCRIPT_PARAM_ONOFF, true)
 	self.Menu:addParam('Scale', 'HP Bar Scale', SCRIPT_PARAM_SLICE, 75, 75, 100)
 	self.Menu:addParam('Text', 'Draw Text (Timers)', SCRIPT_PARAM_ONOFF, true)
+	self.Menu:addParam('SPACE', '', SCRIPT_PARAM_INFO, '')
+	self.Menu:addParam('UseOld', 'Use Old', SCRIPT_PARAM_ONOFF, false)
 	--sM:addParam('Key', 'Chat Summoner Cooldowns', SCRIPT_PARAM_ONKEYDOWN, false, ('N'):byte())
 end
 
@@ -1427,18 +1444,23 @@ function SKILLS:Draw()
 			local barX, barY = barX - GetScale(100, s), barY+GetScale(15, s)
 			if barX > -100 and barX < WINDOW_W + 100 and barY > -100 and barY < WINDOW_H + 100 then
 				--HP
-				local hpMidX = barX + GetScale(61 + (187 * info.hero.health / (info.hero.maxHealth+info.hero.shield)), s)
+				local hpMidX = barX + GetScale(102 + (187 * info.hero.health / (info.hero.maxHealth+info.hero.shield)), s)
 				local hpY = GetScale(17, s)
-				local hpFS = GetScale(24,s)
-				DrawLine(barX + GetScale(61,s), barY + hpY, hpMidX, barY + hpY,hpFS,info.hero.team==TEAM_ALLY and 0xFF0088FF or 0xFFFF4400)
+				local hpFS = GetScale(30,s)
+				DrawLine(barX + GetScale(102,s), barY + hpY, hpMidX, barY + hpY,hpFS,info.hero.team==TEAM_ALLY and 0xFF0088FF or 0xFFFF4400)
+				if info.hero.shield > 0 then
+					local shieldMidX = hpMidX + GetScale(187 * info.hero.shield / info.hero.maxHealth, s)
+					DrawLine(hpMidX, barY + hpY, shieldMidX,barY + hpY,hpFS,0xFFCCCCCC)
+					hpMidX = shieldMidX
+				end
 				local slopeI=0
-				for i=1, info.hero.health*0.01 do
-					local x = barX + GetScale(61 + (187 * (100*i) / (info.hero.maxHealth+info.hero.shield)), s)
+				for i=1, (info.hero.health+info.hero.shield)*0.01 do
+					local x = barX + GetScale(102 + (187 * (100*i) / (info.hero.maxHealth+info.hero.shield)), s)
 					local l, w = 12, 1
-					if x<barX+GetScale(148,s) then
+					if x<barX+GetScale(188,s) then
 						l=22
 						slopeI = 3
-					elseif x<barX+GetScale(156,s) then
+					elseif x<barX+GetScale(194,s) then
 						l=l+GetScale(2.25*slopeI,s)
 						slopeI = math.max(slopeI - 1, 0)						
 					end
@@ -1446,32 +1468,27 @@ function SKILLS:Draw()
 						l, w = 28, 2
 					end
 					local l = GetScale(l, s)
-					DrawLine(x,barY,x,barY+l,w,0xFF000000)
+					DrawLine(x,barY+2,x,barY+l,w,0xFF000000)
 				end
-				if info.hero.shield > 0 then
-					local shieldMidX = hpMidX + GetScale(187 * info.hero.shield / info.hero.maxHealth, s)
-					DrawLine(hpMidX, barY + hpY, shieldMidX,barY + hpY,hpFS,0xFFCCCCCC)
-					hpMidX = shieldMidX
-				end
-				DrawLine(hpMidX, barY + hpY, barX + GetScale(248,s),barY + hpY,hpFS,0xFF000000)
+				DrawLine(hpMidX, barY + hpY, barX + GetScale(288,s),barY + hpY,hpFS,0xFF000000)
 				if self.Menu.Text then
 					local hText = ('%u / %u'):format(info.hero.health + info.hero.shield, info.hero.maxHealth)
 					local hTextArea = GetTextArea(hText, hpY)
-					DrawText(hText,hpY,barX+GetScale(107,s)-(hTextArea.x*0.5),barY+GetScale(18,s)-(hTextArea.y*0.5),0xFFFFFFFF)
+					DrawText(hText,hpY,barX+GetScale(146,s)-(hTextArea.x*0.5),barY+GetScale(18,s)-(hTextArea.y*0.5),0xFFFFFFFF)
 				end
 				
 				--MP
-				local mpMid = barX + GetScale(165 + (info.hero.maxMana~=0 and 58 * info.hero.mana / info.hero.maxMana or 0), s)
+				local mpMid = barX + GetScale(204 + (info.hero.maxMana~=0 and 58 * info.hero.mana / info.hero.maxMana or 0), s)
 				local mpColor = self.ParTypes[info.hero.charName] or self.SpecialParTypes[info.hero.charName] and self.SpecialParTypes[info.hero.charName](info.hero) or 0xFF00AAFF
 				local mpY = GetScale(33, s)
-				DrawLine(barX + GetScale(165, s),barY + mpY, mpMid,barY + mpY,hpY,mpColor)
-				DrawLine(mpMid,barY + mpY, barX + GetScale(223, s),barY + mpY,hpY,0xFF000000)
+				DrawLine(barX + GetScale(204, s),barY + mpY, mpMid,barY + mpY,hpY,mpColor)
+				DrawLine(mpMid,barY + mpY, barX + GetScale(264, s),barY + mpY,hpY,0xFF000000)
 				
 				if self.Menu.Text then
 					local mText = ('%u / %u'):format(info.hero.mana, info.hero.maxMana)
 					local mpFS = GetScale(14, s)
 					local mTextArea = GetTextArea(mText, mpFS)
-					DrawText(mText,mpFS,barX+GetScale(193-(mTextArea.x*0.5),s),barY+GetScale(34-(mTextArea.y*0.5),s),0xFFFFFFFF)
+					DrawText(mText,mpFS,barX+GetScale(234,s)-(mTextArea.x*0.5),barY+GetScale(34-(mTextArea.y*0.5),s),0xFFFFFFFF)
 				end
 				
 				--Spells
@@ -1480,34 +1497,86 @@ function SKILLS:Draw()
 					local color = d.level == 0 and 0xFF000000 or 0==d.currentCd and 0xFF00AA00 or 0xFFAA0000
 					local h = (d.level == 0 or 0==d.currentCd) and 24 or 24*(d.cd~=0 and d.currentCd/d.cd or 0)
 					local cdMid = barY+GetScale(29-h, s)
-					local cdX = GetScale(28+(i*7.5), s)
+					local cdX = GetScale(68+(i*7.5), s)
 					local cdFS = GetScale(7,s)
 					DrawLine(barX+cdX,barY+GetScale(29, s),barX+cdX,cdMid,cdFS,color)
 					DrawLine(barX+cdX,cdMid,barX+cdX,barY+GetScale(5,s),cdFS,0xFF000000)
 				end
 				
-				self.Sprite:Draw(barX, barY, 255)
 				
 				--Summoners
-				local sumX = GetScale(7.5,s)
-				info.sum1:SetScale(GetScale2(0.2,s), GetScale2(0.2,s))
-				info.sum1:Draw(barX+sumX, barY+GetScale(4,s), 255)
+				info.sum1:SetScale(GetScale2(0.411,s), GetScale2(0.43,s))
+				info.sum1:Draw(barX+GetScale(7,s), barY+GetScale(4,s), 255)
 				local sum1Cd = info.hero:GetSpellData(SUMMONER_1).currentCd
 				local sumFS = GetScale(14,s)
 				if sum1Cd~=0 then
 					local mText = ('%u'):format(sum1Cd)
 					local mTextArea = GetTextArea(mText, sumFS)
-					DrawText(mText,sumFS,barX+GetScale(13,s)-(mTextArea.x*0.5),barY+sumFS-(mTextArea.y*0.5),0xFFFFFFFF)
+					DrawLine(barX+GetScale(20.5,s)-(mTextArea.x*0.5)-3,barY+GetScale(24,s),barX+GetScale(20.5,s)+(mTextArea.x*0.5)+3,barY+GetScale(24,s),mTextArea.y,0xFF000000)
+					DrawText(mText,sumFS,barX+GetScale(20.5,s)-(mTextArea.x*0.5),barY+GetScale(24,s)-(mTextArea.y*0.5),0xFFFFFFFF)
 				end
-				info.sum2:Draw(barX+sumX, barY+GetScale(18,s), 255)
-				info.sum2:SetScale(GetScale2(0.2,s), GetScale2(0.2,s))
+				info.sum2:SetScale(GetScale2(0.411,s), GetScale2(0.43,s))
+				info.sum2:Draw(barX+GetScale(33,s), barY+GetScale(4,s), 255)
 				local sum2Cd = info.hero:GetSpellData(SUMMONER_2).currentCd
 				if sum2Cd~=0 then
 					local mText = ('%u'):format(sum2Cd)
 					local mTextArea = GetTextArea(mText, sumFS)
-					DrawText(mText,sumFS,barX+GetScale(13,s)-(mTextArea.x*0.5),barY+GetScale(24,s)-(mTextArea.y*0.5),0xFFFFFFFF)
+					DrawLine(barX+GetScale(46.5,s)-(mTextArea.x*0.5)-3,barY+GetScale(24,s),barX+GetScale(46.5,s)+(mTextArea.x*0.5)+3,barY+GetScale(24,s),mTextArea.y,0xFF000000)
+					DrawText(mText,sumFS,barX+GetScale(46.5,s)-(mTextArea.x*0.5),barY+GetScale(24,s)-(mTextArea.y*0.5),0xFFFFFFFF)
 				end
-				DrawText(info.hero.level..'',GetScale(16,s),barX+GetScale(242,s),barY+GetScale(25,s),0xFFFFFFFF)
+				self.Sprite:Draw(barX, barY, 255)
+				DrawText(info.hero.level..'',GetScale(16,s),barX+GetScale(283,s),barY+GetScale(26,s),0xFFFFFFFF)
+			end
+		end
+	end
+end
+
+function SKILLS:DrawOLD()
+	for _, info in ipairs(self.Heroes) do
+		if info.hero.valid and info.hero.visible and not info.hero.dead and ((info.hero.team == myHero.team and self.Menu.Ally) or (info.hero.team ~= myHero.team and self.Menu.Enemy)) then
+			local barX, barY = self:BarData(info.hero)
+			if barX > -100 and barX < WINDOW_W + 100 and barY > -100 and barY < WINDOW_H + 100 then
+				barX, barY = ceil(barX), ceil(barY)
+				DrawLine(barX-29,barY+51,barX+62,barY+51,29,info.hero.team == myHero.team and ARGB(220, 114, 213, 242) or ARGB(220, 204, 126, 114))
+				for i=_Q, _R do
+					local data = info.hero:GetSpellData(i)
+					local x = barX-27+(i*22)
+					local y = barY+44
+					if data.level > 0 then
+						if data.currentCd ~= 0 then
+							local cd = data.cd-(data.cd-data.currentCd)
+							DrawLine(x, y, x+((cd / data.cd) * 21), y, 12, COLOR_ORANGE)
+							DrawLine(x+((cd / data.cd) * 21), y, x+21, y, 12, COLOR_GREY)
+							if self.Menu.Text then
+								local text = ('%i'):format(cd)
+								local tA = GetTextArea(text, 14)
+								DrawText(text, 14, x + 11 - (tA.x / 2), y - (tA.y / 2), COLOR_WHITE)
+							end
+						else
+							DrawLine(x,y,x+21,y,12,COLOR_GREEN)							
+						end
+					else
+						DrawLine(x,y,x+21,y,12,COLOR_GREY)							
+					end
+				end
+				for i=SUMMONER_1, SUMMONER_2 do
+					local data = info.hero:GetSpellData(i)					
+					local x = barX-27+((i-4)*42) + ((i-4)*2.5)
+					local y = barY+47
+					local text = info['t'..(i-3)]
+					if data.currentCd ~= 0 then
+						local cd = data.cd-(data.cd-data.currentCd)
+						DrawLine(x, y+11, x+((cd / data.cd) * 42), y+11, 12, COLOR_ORANGE)
+						DrawLine(x+((cd / data.cd) * 42), y+11, x+42, y+11, 12, COLOR_GREY)
+						--self.CallTimers[enemy.charName] = {x=x, y=y+5,t=floor(data.currentCd+GetInGameTimer()), text=text}
+					else
+						DrawLine(x, y+11, x+42, y+11, 12, COLOR_GREEN)								
+					end
+					if self.Menu.Text then
+						local tA = GetTextArea(text, 11)
+						DrawText(text, 11, x + 22 - (tA.x / 2), y + 11 - (tA.y / 2), COLOR_WHITE)
+					end
+				end
 			end
 		end
 	end
