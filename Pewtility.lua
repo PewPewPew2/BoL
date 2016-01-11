@@ -124,7 +124,7 @@ end
 -- end)
 
 AddLoadCallback(function()
-	local Version = 5.244
+	local Version = 5.245
 	HookPackets()
 	TEAM_ALLY, TEAM_ENEMY = myHero.team, 300-myHero.team
 	MainMenu = scriptConfig('Pewtility', 'Pewtility')
@@ -1282,6 +1282,7 @@ end
 class 'SKILLS'
 
 function SKILLS:__init()
+	CreateDirectory(SPRITE_PATH..'Pewtility/')
 	local pngChecks = {
 		['barTemplate.png'] = {
 			['localPath'] = SPRITE_PATH..'/Pewtility/barTemplate.png',
