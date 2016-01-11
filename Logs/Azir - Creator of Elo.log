@@ -1,3 +1,7 @@
+--0.13@
+-Small changes to Insec push direction@
+-Fixes to manual W-Q combo@
+-Improved prediction for both HPred and DPred@
 --0.12@
 -Fixed a bug that was causing manual E casts to be blocked@
 --0.11@
