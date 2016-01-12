@@ -124,7 +124,7 @@ end
 -- end)
 
 AddLoadCallback(function()
-	local Version = 5.246
+	local Version = 5.247
 	HookPackets()
 	TEAM_ALLY, TEAM_ENEMY = myHero.team, 300-myHero.team
 	MainMenu = scriptConfig('Pewtility', 'Pewtility')
@@ -1284,9 +1284,9 @@ class 'SKILLS'
 function SKILLS:__init()
 	CreateDirectory(SPRITE_PATH..'Pewtility/')
 	local pngChecks = {
-		['barTemplate_r1.png'] = {
-			['localPath'] = SPRITE_PATH..'/Pewtility/barTemplate_r1.png',
-			['url'] = '/Pfr1Tpw.png',
+		['barTemplate_r2.png'] = {
+			['localPath'] = SPRITE_PATH..'/Pewtility/barTemplate_r2.png',
+			['url'] = '/7ktM3ej.png',
 		},
 		['summonerbarrier.png'] = {
 			['localPath'] = SPRITE_PATH..'/Pewtility/summonerbarrier.png',
@@ -1400,7 +1400,7 @@ function SKILLS:__init()
 		['Yasuo'] = function(unit) return unit.mana==unit.maxMana and 0xFFFF3300 or 0xFF555555 end, 
 	}
 	self:CreateMenu()
-	self.Sprite = createSprite('Pewtility/barTemplate_r1.png')
+	self.Sprite = createSprite('Pewtility/barTemplate_r2.png')
 	
 	self.Sprite:SetScale(0.3,0.3)
 	
@@ -1457,10 +1457,10 @@ function SKILLS:Draw()
 				for i=1, (info.hero.health+info.hero.shield)*0.01 do
 					local x = barX + GetScale(102 + (187 * (100*i) / (info.hero.maxHealth+info.hero.shield)), s)
 					local l, w = 12, 1
-					if x<barX+GetScale(188,s) then
+					if x<barX+GetScale(158,s) then
 						l=22
 						slopeI = 3
-					elseif x<barX+GetScale(194,s) then
+					elseif x<barX+GetScale(164,s) then
 						l=l+GetScale(2.25*slopeI,s)
 						slopeI = math.max(slopeI - 1, 0)						
 					end
@@ -1471,26 +1471,14 @@ function SKILLS:Draw()
 					DrawLine(x,barY+2,x,barY+l,w,0xFF000000)
 				end
 				DrawLine(hpMidX, barY + hpY, barX + GetScale(288,s),barY + hpY,hpFS,0xFF000000)
-				if self.Menu.Text then
-					local hText = ('%u / %u'):format(info.hero.health + info.hero.shield, info.hero.maxHealth)
-					local hTextArea = GetTextArea(hText, hpY)
-					DrawText(hText,hpY,barX+GetScale(146,s)-(hTextArea.x*0.5),barY+GetScale(18,s)-(hTextArea.y*0.5),0xFFFFFFFF)
-				end
 				
 				--MP
-				local mpMid = barX + GetScale(204 + (info.hero.maxMana~=0 and 58 * info.hero.mana / info.hero.maxMana or 0), s)
+				local mpMid = barX + GetScale(172 + (info.hero.maxMana~=0 and 90 * info.hero.mana / info.hero.maxMana or 0), s)
 				local mpColor = self.ParTypes[info.hero.charName] or self.SpecialParTypes[info.hero.charName] and self.SpecialParTypes[info.hero.charName](info.hero) or 0xFF00AAFF
 				local mpY = GetScale(33, s)
-				DrawLine(barX + GetScale(204, s),barY + mpY, mpMid,barY + mpY,hpY,mpColor)
+				DrawLine(barX + GetScale(172, s),barY + mpY, mpMid,barY + mpY,hpY,mpColor)
 				DrawLine(mpMid,barY + mpY, barX + GetScale(264, s),barY + mpY,hpY,0xFF000000)
-				
-				if self.Menu.Text then
-					local mText = ('%u / %u'):format(info.hero.mana, info.hero.maxMana)
-					local mpFS = GetScale(14, s)
-					local mTextArea = GetTextArea(mText, mpFS)
-					DrawText(mText,mpFS,barX+GetScale(234,s)-(mTextArea.x*0.5),barY+GetScale(34-(mTextArea.y*0.5),s),0xFFFFFFFF)
-				end
-				
+		
 				--Spells
 				for i=_Q, _R do
 					local d = info.hero:GetSpellData(i)
@@ -1502,8 +1490,7 @@ function SKILLS:Draw()
 					DrawLine(barX+cdX,barY+GetScale(29, s),barX+cdX,cdMid,cdFS,color)
 					DrawLine(barX+cdX,cdMid,barX+cdX,barY+GetScale(5,s),cdFS,0xFF000000)
 				end
-				
-				
+		
 				--Summoners
 				info.sum1:SetScale(GetScale2(0.411,s), GetScale2(0.43,s))
 				info.sum1:Draw(barX+GetScale(7,s), barY+GetScale(4,s), 255)
@@ -1524,7 +1511,19 @@ function SKILLS:Draw()
 					DrawLine(barX+GetScale(46.5,s)-(mTextArea.x*0.5)-3,barY+GetScale(24,s),barX+GetScale(46.5,s)+(mTextArea.x*0.5)+3,barY+GetScale(24,s),mTextArea.y,0xFF000000)
 					DrawText(mText,sumFS,barX+GetScale(46.5,s)-(mTextArea.x*0.5),barY+GetScale(24,s)-(mTextArea.y*0.5),0xFFFFFFFF)
 				end
+				
 				self.Sprite:Draw(barX, barY, 255)
+				
+				if self.Menu.Text then
+					local hText = ('%u / %u'):format(info.hero.health + info.hero.shield, info.hero.maxHealth)
+					local hTextArea = GetTextArea(hText, hpY)
+					DrawText(hText,hpY,barX+GetScale(146,s)-(hTextArea.x*0.5),barY+GetScale(18,s)-(hTextArea.y*0.5),0xFFFFFFFF)
+					
+					local mText = ('%u / %u'):format(info.hero.mana, info.hero.maxMana)
+					local mpFS = GetScale(14, s)
+					local mTextArea = GetTextArea(mText, mpFS)
+					DrawText(mText,mpFS,barX+GetScale(218,s)-(mTextArea.x*0.5),barY+GetScale(34-(mTextArea.y*0.5),s),0xFFFFFFFF)
+				end				
 				DrawText(info.hero.level..'',GetScale(16,s),barX+GetScale(283,s),barY+GetScale(26,s),0xFFFFFFFF)
 			end
 		end
