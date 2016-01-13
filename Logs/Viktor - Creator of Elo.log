@@ -1,3 +1,7 @@
+--0.85@
+-[Humanizer] Visible For Delay (ms) will now be applied after an enemy flashes@
+-Commands will no longer be issued to the Chaos Storm off screen@
+-Chaos Storm will no longer follow minions/jungle mobs@
 --0.83@
 -Improved prediction for both HPred and DPred@
 --0.82@
