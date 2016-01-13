@@ -1,3 +1,6 @@
+--0.14@
+-Added an option to draw the insec arrow all of the time (or never at all)@
+-Changed default dash to target key (was the same as an orbwalk key, oops)@
 --0.13@
 -Small changes to Insec push direction@
 -Fixes to manual W-Q combo@
