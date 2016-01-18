@@ -124,7 +124,7 @@ end
 -- end)
 
 AddLoadCallback(function()
-	local Version = 6.11
+	local Version = 6.12
 	HookPackets()
 	TEAM_ALLY, TEAM_ENEMY = myHero.team, 300-myHero.team
 	MainMenu = scriptConfig('Pewtility', 'Pewtility')
@@ -1424,7 +1424,6 @@ function SKILLS:__init()
 		end
 	end)
 	--]]
-	SendChat('Hello')
 end
 
 function SKILLS:CreateMenu()
