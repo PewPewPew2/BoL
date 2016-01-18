@@ -1,3 +1,5 @@
+--0.88@
+-Fixed AA cancel issues@
 --0.85@
 -[Humanizer] Visible For Delay (ms) will now be applied after an enemy flashes@
 -Commands will no longer be issued to the Chaos Storm off screen@
