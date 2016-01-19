@@ -9,6 +9,7 @@ class 'SmiteCore'
 function SmiteCore:__init()
 	self.Mobs = SmiteMinions()
 	self.Slot = myHero:GetSpellData(SUMMONER_1).name:find('smite') and SUMMONER_1 or SUMMONER_2
+	self.LastClick = 0
 	self.DamageTable = {390,410,430,450,480,510,540,570,600,640,680,720,760,800,850,900,950,1000,}
 	self.Offsets = {
 		['SRU_Blue'] 		= {['x'] = -72, ['y'] =  2, ['h'] = 9,  ['w'] = 144,},
@@ -24,12 +25,16 @@ function SmiteCore:__init()
 	}
 	self.White = ARGB(120,255,255,255)
 	self.Menu = scriptConfig('Smiterino', 'Smite1234')
-	self.Menu:addParam('Key', 'Key (Smite)', SCRIPT_PARAM_ONKEYTOGGLE, true, ('D'):byte())
-	self.Menu:permaShow('Key')
+	for name, _ in pairs(self.Offsets) do
+		self.Menu:addParam(name:gsub('_', ''), name:gsub('SRU_', ''):gsub('Sru_', ''), SCRIPT_PARAM_ONOFF, true)
+	end
+	self.Menu:addParam('space', '', SCRIPT_PARAM_INFO, '') 
+	self.Menu:addParam('space', 'Double Click a Jungle Minion', SCRIPT_PARAM_INFO, '') 
+	self.Menu:addParam('space', 'to enable/disable smite.', SCRIPT_PARAM_INFO, '') 
 	AddTickCallback(function()
-		if self.Menu.Key and myHero:CanUseSpell(self.Slot) == READY then
+		if myHero:CanUseSpell(self.Slot) == READY then
 			for i, mob in ipairs(self.Mobs.Objects) do
-				if self:IsValid(mob) and mob.health < self:Damage() then
+				if self:IsValid(mob) and self.Menu[mob.charName:gsub('_', '')] and mob.health < self:Damage() then
 					if GetDistance(mob) < (500 + myHero.boundingRadius + mob.boundingRadius) then
 						CastSpell(self.Slot, mob)
 						return
@@ -39,17 +44,27 @@ function SmiteCore:__init()
 		end
 	end)
 	AddDrawCallback(function()
-		if self.Menu.Key then
-			for i, mob in ipairs(self.Mobs.Objects) do
-				if self:IsValid(mob) then
-					local HPBar = GetUnitHPBarPos(mob)
-					if HPBar.x > -100 and HPBar.x < WINDOW_W + 100 and HPBar.y > -100 and HPBar.y < WINDOW_H + 100 then
-						local x, y = math.floor(HPBar.x) + self.Offsets[mob.charName].x, math.floor(HPBar.y) + self.Offsets[mob.charName].y
-						DrawLine(x, y, x+((self:Damage()/mob.maxHealth)*self.Offsets[mob.charName].w), y, self.Offsets[mob.charName].h, self.White)
+		for i, mob in ipairs(self.Mobs.Objects) do
+			if self:IsValid(mob) and self.Menu[mob.charName:gsub('_', '')] then
+				local HPBar = GetUnitHPBarPos(mob)
+				if HPBar.x > -100 and HPBar.x < WINDOW_W + 100 and HPBar.y > -100 and HPBar.y < WINDOW_H + 100 then
+					local x, y = math.floor(HPBar.x) + self.Offsets[mob.charName].x, math.floor(HPBar.y) + self.Offsets[mob.charName].y
+					DrawLine(x, y, x+((self:Damage()/mob.maxHealth)*self.Offsets[mob.charName].w), y, self.Offsets[mob.charName].h, self.White)
+				end				
+			end
+		end
+	end)
+	AddMsgCallback(function(m,k)
+		if m==514 then
+			if self.LastClick > os.clock() then
+				for i, mob in ipairs(self.Mobs.Objects) do
+					if self:IsValid(mob) and GetDistanceSqr(mob, mousePos) < 22500 then
+						self.Menu[mob.charName:gsub('_', '')] = not self.Menu[mob.charName:gsub('_', '')]
 					end
 				end
 			end
-		end		
+			self.LastClick = os.clock() + 0.25
+		end
 	end)
 end
 
