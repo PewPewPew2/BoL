@@ -1,3 +1,4 @@
+if myHero.charName~='Poppy' then return end
 print('PewPoppy')
 require('HPrediction')
 local Enemies = {}
