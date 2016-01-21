@@ -1,4 +1,61 @@
 if myHero.charName~='Poppy' then return end
+
+local pi, pi2, atan, cos, sin, sqrt = math.pi, math.pi*2, math.atan, math.cos, math.sin, math.sqrt
+
+local function Normalize(x,z)
+    local length  = sqrt(x * x + z * z)
+	return { ['x'] = x / length, ['z'] = z / length, }
+end
+
+local function NormalizeX(v1, v2, length)
+	local x, z
+	if v1.x==v2.x then x, z = 1, 1 else x, z = v1.x - v2.x, v1.z - v2.z	end
+    local nLength  = sqrt(x * x + z * z)
+	return { ['x'] = v2.x + ((x / nLength) * length), ['z'] = v2.z + ((z / nLength) * length)} 
+end
+
+local function GetLinePoint(ax, ay, bx, by, cx, cy)
+    local rL = ((cx - ax) * (bx - ax) + (cy - ay) * (by - ay)) / ((bx - ax) ^ 2 + (by - ay) ^ 2)	
+	return { x = ax + rL * (bx - ax), z = ay + rL * (by - ay) }, (rL < 0 and 0 or (rL > 1 and 1 or rL)) == rL
+end
+
+local function GetPath(unit)
+	if unit.hasMovePath then
+		if unit.pathCount == 1 then return unit.endPath end
+		local unitPath = unit:GetPath(math.max(2,unit.pathIndex))
+		if unitPath then
+			return {x=unitPath.x,z=unitPath.z}
+		end
+		return unit.endPath
+	end
+	return unit
+end
+
+local Sector = pi * (110 / 180)
+local Sector4 = Sector / 3
+local function GeneratePoints(range, pMax, ePos, sPos)
+	local points, c = {}, -1
+	local v2 = { ['x'] = sPos.x-ePos.x, ['z'] = sPos.z-ePos.z, }
+	local a = (v2.x > 0) and pi-atan(v2.z/v2.x) or pi-atan(v2.z/v2.x)+pi
+	for i = a, a+Sector, Sector4 do
+		if #points==pMax then break end
+		points[#points+1] = { 
+			['x'] = sPos.x+(range*cos(i)), 
+			['z'] = sPos.z-(range*sin(i)),
+			['a'] = i,
+		}
+		c=c+2
+		if #points==pMax then break end
+		points[#points+1] = { 
+			['x'] = sPos.x+(range*cos(i+(pi2-(c*Sector4)))),
+			['z'] = sPos.z-(range*sin(i+pi2-(c*Sector4))),
+			['a'] = i+pi2-(c*Sector4),
+		}
+	end
+	return points
+end
+
+
 print('PewPoppy')
 require('HPrediction')
 local Enemies = {}
@@ -146,7 +203,7 @@ AddTickCallback(function()
 				CastSpell(_E, t)
 			end
 			for i, e in ipairs(Enemies) do
-				if e~=t and isValid(e, 700) and _Pewalk.IsHighPriority(e, 2) and checkE(e) then
+				if e~=t and _Pewalk.ValidTarget(e, 700) and _Pewalk.IsHighPriority(e, 2) and checkE(e) then
 					CastSpell(_E, e)						
 				end
 			end
