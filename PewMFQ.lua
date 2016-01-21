@@ -27,7 +27,7 @@ AddLoadCallback(function()
 			LastEndPos[h.networkID] = Vector(0,0,0)
 		end
 	end
-	print('MF Q Helper')
+	print('PewMFQ Helper')
 end)
 
 AddCreateObjCallback(function(o)
