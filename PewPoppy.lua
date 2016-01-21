@@ -1,4 +1,4 @@
-print('Simple Poppy')
+print('PewPoppy')
 require('HPrediction')
 local Enemies = {}
 for i=1, heroManager.iCount do
