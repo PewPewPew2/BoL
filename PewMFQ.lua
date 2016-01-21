@@ -1,4 +1,4 @@
-  if myHero.charName~='MissFortune' then return end
+if myHero.charName~='MissFortune' then return end
 local pi, atan, cos, sin = math.pi, math.atan, math.cos, math.sin
 local sqrt = math.sqrt
 local insert, remove=table.insert, table.remove
@@ -18,7 +18,6 @@ Menu:addParam('ConeRadius', 'Cone Radius', SCRIPT_PARAM_SLICE, 460, 300, 487)
 Menu:addParam('HighHit', 'High Hit Chance Only', SCRIPT_PARAM_ONOFF, true)
 
 AddLoadCallback(function()
-	Minions = _Minions().Objects
 	Enemies = {}
 	for i=1, heroManager.iCount do
 		local h = heroManager:getHero(i)
@@ -28,7 +27,7 @@ AddLoadCallback(function()
 			LastEndPos[h.networkID] = Vector(0,0,0)
 		end
 	end
-	print('hi')
+	print('MF Q Helper')
 end)
 
 AddCreateObjCallback(function(o)
@@ -61,7 +60,18 @@ AddNewPathCallback(function(unit,startPos,endPos,isDash,dashSpeed,dashGravity,da
 	end
 end)
 
+local AACB = false
 AddDrawCallback(function()
+	if not AACB then
+		if _Pewalk then
+			_Pewalk.AddAfterAttackCallback(function(target)
+				if target.type == 'AIHeroClient' and myHero:CanUseSpell(_Q) == READY then
+					CastSpell(_Q, target)
+				end
+			end)
+			AACB = true
+		end		
+	end
 	if Menu.DrawRate then
 		DrawText(success..' / '..attempts,30,100,400,0xFFFFFFFF)
 	end
@@ -77,7 +87,7 @@ AddDrawCallback(function()
 			end
 		end
 		ValidMinions = {}
-		for i, minion in ipairs(Minions) do
+		for i, minion in ipairs(_Pewalk.GetMinions()) do
 			if minion.valid and minion.visible and not minion.dead and minion.bTargetable and GetDistanceSqr(minion) < 1690000 then
 				ValidMinions[#ValidMinions + 1] = minion	
 			end
@@ -150,8 +160,8 @@ function PredictHP(unit)
 	local pHP = unit.health
 	if _G.AutoCarry then
 		pHP = _G.AutoCarry.DamagePred:GetPred(unit, 2, {Speed = 1.4, Delay = 250})
-	elseif Pewalk_PredictMinionHealth then
-		pHp = Pewalk_PredictMinionHealth(unit, 0.25 + GetDistance(unit) / 1400)
+	elseif _Pewalk then
+		pHp = _Pewalk.PredictMinionHealth(unit, 0.25 + GetDistance(unit) / 1400)
 	end
 	return pHP
 end
@@ -192,7 +202,6 @@ end
 
 function Cone(target, sector, allowDraw)
     local poly = _Poly()
-	poly:declareCone()
 	local vx, vz = myHero.x-target.x, myHero.z-target.z
 	poly:Add({['x'] = target.x, ['z'] = target.z,})
 	local a = (vx > 0) and atan(vz/vx) or atan(vz/vx)+pi
@@ -243,11 +252,8 @@ end
 class '_Poly'
 
 function _Poly:__init(...)
-	self.points = {...}
-end
-
-function _Poly:declareCone()
 	self.bCone = true
+	self.points = {...}
 end
 
 function _Poly:Add(point)
@@ -284,12 +290,7 @@ function _Poly:triangulate()
 			elseif self.bCone then
 				for i=2, #self.points-1 do
 					insert(self.triangles, _Poly(self.points[1], self.points[i], self.points[i+1]))
-				end
-			elseif self.bArc then
-				for i=1, nVertices/2 do
-					insert(self.triangles, _Poly(self.points[i], self.points[nVertices-(i-1)], self.points[nVertices-i]))
-					insert(self.triangles, _Poly(self.points[i], self.points[nVertices-i], self.points[i+1]))
-				end		
+				end	
 			else
 				if not self.Center then
 					local xt, zt = 0, 0
@@ -322,152 +323,3 @@ function _Poly:draw(color, yValue)
 		DrawLines2(p, 3, color)
 	end
 end
-
---SSL LINE
-class '_Minions'
-
-function _Minions:__init()
-	self.Objects = {}
-	self.Others = {}
-	for i = 0, objManager.maxObjects do
-		if self:IsValid(objManager:getObject(i)) then
-			insert(self.Objects, objManager:getObject(i))
-		end
-	end
-	self.AreValid = {
-		['Blue_Minion_Basic'] 	  = true,
-		['Blue_Minion_Wizard'] 	  = true,
-		['Blue_Minion_MechCannon']= true,
-		['Blue_Minion_MechMelee'] = true,
-		['Red_Minion_Basic'] 	  = true,
-		['Red_Minion_Wizard'] 	  = true,
-		['Red_Minion_MechCannon'] = true,
-		['Red_Minion_MechMelee']  = true,
-		--Summoner Rift
-		['SRU_OrderMinionMelee']  = true,
-		['SRU_OrderMinionRanged'] = true,
-		['SRU_OrderMinionSiege']  = true,
-		['SRU_OrderMinionSuper']  = true,
-		['SRU_ChaosMinionMelee']  = true,
-		['SRU_ChaosMinionRanged'] = true,
-		['SRU_ChaosMinionSiege']  = true,
-		['SRU_ChaosMinionSuper']  = true,
-		['SRU_BlueMini']  = true,
-		['SRU_BlueMini2'] = true,
-		['SRU_Blue']  = true,
-		['SRU_Gromp']  = true,
-		['SRU_MurkwolfMini']  = true,
-		['SRU_Murkwolf'] = true,
-		['Sru_Crab']  = true,
-		['SRU_Razorbeak']  = true,
-		['SRU_RazorbeakMini']  = true,
-		['SRU_RedMini'] = true,
-		['SRU_Red']  = true,
-		['SRU_Krug']  = true,
-		['SRU_KrugMini']  = true,
-		['SRU_Dragon']  = true,
-		['SRU_RiftHerald']  = true,
-		['SRU_Baron']  = true,
-		--BilgeWater
-		['BilgeLaneMelee_Order']  = true,
-		['BilgeLaneRanged_Order'] = true,
-		['BilgeLaneCannon_Order']  = true,
-		['BilgeLaneMelee_Chaos']  = true,
-		['BilgeLaneRanged_Chaos'] = true,
-		['BilgeLaneCannon_Chaos']  = true,
-		['BW_Razorfin']  = true,
-		['BW_Ironback'] = true,
-		['BW_Ocklepod']  = true,
-		['BW_Plundercrab']  = true,
-		--Twisted Treeline & Howling Abyss
-		['HA_ChaosMinionMelee']   = true,
-		['HA_ChaosMinionRanged']  = true,
-		['HA_ChaosMinionSiege']   = true,
-		['HA_ChaosMinionSuper']   = true,
-		['HA_OrderMinionMelee']   = true,
-		['HA_OrderMinionRanged']  = true,
-		['HA_OrderMinionSiege']   = true,
-		['HA_OrderMinionSuper']   = true,
-		['TT_NWraith2']   = true,
-		['TT_NWraith']   = true,
-		['TT_NGolem']   = true,
-		['TT_NGolem2']  = true,
-		['TT_NWolf']   = true,
-		['TT_NWolf2']   = true,
-		['TT_Spiderboss']   = true,
-		--Crystal Scar
-		['Odin_Red_Minion_Caster']= true,
-		['Odin_Blue_Minion_Caster']=true,
-		['OdinRedSuperminion']	  = true,
-		['OdinBlueSuperminion']   = true,
-		--Others
-		['MalzaharVoidling'] = true,
-		['AnnieTibbers'] = true,
-		['YorickDecayedGhoul'] = true,
-		['YorickRavenousGhoul'] = true,
-		['YorickSpectralGhoul'] = true,
-		['ShacoBox'] = true,
-		['HeimerTBlue'] = true,
-		['HeimerTYellow'] = true,
-		['OdinBlueSuperminion'] = true,
-		['OdinRedSuperminion'] = true,
-		['ZacRebirthBloblet'] = true,
-	}	
-	self.ToOthers = {
-		['ZyraGraspingPlant'] = true,
-		['RobotBuddy'] = true,
-		['ZyraThornPlant'] = true,
-		['TeemoMushroom'] = true,
-		['God'] = true,
-	}
-	AddTickCallback(function() self:Tick() end)
-	AddCreateObjCallback(function(o) self:CreateObj(o) end)
-	AddDeleteObjCallback(function(o) self:DeleteObj(o) end)
-	return self
-end
-
-function _Minions:IsValid(o)
-	return o and o.valid and not o.dead and o.type == 'obj_AI_Minion' and o.team ~= myHero.team
-end
-
-function _Minions:IsValid2(charName)
-	return self.AreValid[charName]
-end
-
-function _Minions:Tick()
-	for i=#self.Objects, 1, -1 do
-		local o = self.Objects[i]
-		if not self:IsValid(o) then
-			remove(self.Objects, i)
-		elseif self.ToOthers[o.name] or o.name:lower():find('ward') then
-			insert(self.Others, #self.Others+1, o)
-			remove(self.Objects, i)
-		elseif not self:IsValid2(o.charName) then
-			remove(self.Objects, i)
-		end
-	end
-	for i=#self.Others, 1, -1 do
-		if not self:IsValid(self.Others[i]) then
-			remove(self.Others, i)
-		end	
-	end
-end
-
-function _Minions:CreateObj(o)
-	if self:IsValid(o) then
-		insert(self.Objects, #self.Objects + 1, o)
-	end
-end
-
-function _Minions:DeleteObj(o)
-	if o.valid then
-		for i, m in ipairs(self.Objects) do
-			if m.networkID == o.networkID then
-				remove(self.Objects, i)
-				return
-			end
-		end
-	end
-end
-
-
