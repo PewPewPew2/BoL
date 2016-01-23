@@ -131,26 +131,37 @@ local HP_R2 = HPSkillshot({type = 'DelayLine', delay = 0, range = 1200, width = 
 local pFlash = myHero:GetSpellData(SUMMONER_1).name == 'summonerflash' and SUMMONER_1 or (myHero:GetSpellData(SUMMONER_2).name == 'summonerflash') and SUMMONER_2 or nil	
 local channelingR = 0
 local pMenu = scriptConfig('Poppy', 'Poppy')
+pMenu:addParam('info', '-General-', SCRIPT_PARAM_INFO, '')  
 pMenu:addParam('Key', ' Carry Key', SCRIPT_PARAM_ONKEYDOWN, false, 32)
+pMenu:addParam('space', '', SCRIPT_PARAM_INFO, '')
+pMenu:addParam('info', '-Heroic Charge-', SCRIPT_PARAM_INFO, '')
 pMenu:addParam('FlashKey', 'Flash E', SCRIPT_PARAM_ONKEYDOWN, false, ('C'):byte())
+pMenu:addParam('ForceE', 'Force E (No Wall Check)', SCRIPT_PARAM_ONKEYDOWN, false, 20)
+pMenu:addParam('space', '  Carry Key must be ON for Force', SCRIPT_PARAM_INFO, '')
+pMenu:addParam('space', '', SCRIPT_PARAM_INFO, '')
+pMenu:addParam('info', '-Keeper\'s Verdict-', SCRIPT_PARAM_INFO, '')
 pMenu:addParam('KS', 'Killsteal R', SCRIPT_PARAM_ONKEYTOGGLE, true, ('T'):byte())
+pMenu:addParam('MinR', 'Cast R if can hit X', SCRIPT_PARAM_SLICE, 3, 2, 5)
+pMenu:addParam('SecondCast', 'Allow Auto Second Cast', SCRIPT_PARAM_ONOFF, true)
 local amDashing, poppyShield = 0, nil
+
 local function checkLine(s, e)
 	for i=50, 350, 50 do
 		local cp = NormalizeX(e, s, i)
-		if IsWall(D3DXVECTOR3(cp.x,myHero.y,cp.z)) then
+		if IsWall2(D3DXVECTOR3(cp.x,myHero.y,cp.z)) then
 			return true
 		end
 	end			
 end
+
 local function checkWallCollision(cStart, cEnd)	
 	if checkLine(cStart, cEnd) then
 		local d1 = Normalize(cStart.x-(cStart.x-(cStart.z-cEnd.z)), cStart.z-(cStart.z+(cStart.x-cEnd.x)))
-		local lEnd = {['x'] = cEnd.x + (d1.x*(-70)), ['z'] = cEnd.z + (d1.z*(-70))}
-		local lStart = {['x'] = cStart.x + (d1.x*(-70)), ['z'] = cStart.z + (d1.z*(-70))}
+		local lEnd = {['x'] = cEnd.x + d1.x*-70, ['z'] = cEnd.z + d1.z*-70}
+		local lStart = {['x'] = cStart.x + d1.x*-70, ['z'] = cStart.z + d1.z*-70}
 		if checkLine(lStart, lEnd) then
-			local rEnd = {['x'] = cEnd.x + (d1.x*70), ['z'] = cEnd.z + (d1.z*70)}
-			local rStart = {['x'] = cStart.x + (d1.x*70), ['z'] = cStart.z + (d1.z*70)}
+			local rEnd = {['x'] = cEnd.x + d1.x*70, ['z'] = cEnd.z + d1.z*70}
+			local rStart = {['x'] = cStart.x + d1.x*70, ['z'] = cStart.z + d1.z*70}
 			if checkLine(rStart, rEnd) then
 				return true
 			end
@@ -158,6 +169,7 @@ local function checkWallCollision(cStart, cEnd)
 	end
 	return false
 end
+
 local function checkE(t, from)
 	local myPos = from or NormalizeX(GetPath(myHero), myHero, (GetLatency()*0.0005)*myHero.ms)
 	local d1 = GetDistance(t, myPos)	
@@ -174,6 +186,12 @@ local function checkE(t, from)
 		end
 	end
 end
+
+local function blackShieldCheck(unit)
+	local buffs = _Pewalk and _Pewalk.GetBuffs(unit) or {}
+	return buffs['blackshield'] == nil
+end
+
 AddNewPathCallback(function(unit,startPos,endPos,isDash,dashSpeed,dashGravity,dashDistance)
 	if unit.valid and isDash and unit.type == 'AIHeroClient' then
 		if unit.isMe then
@@ -186,6 +204,72 @@ AddNewPathCallback(function(unit,startPos,endPos,isDash,dashSpeed,dashGravity,da
 		end
 	end
 end)
+
+local IceBlocks, Soldiers, J4Wall = {}, {}, {}
+local Pillar
+AddCreateObjCallback(function(o)
+	if o.valid then
+		if o.name == 'IceBlock' then
+			o.endTime = os.clock() + 4
+			table.insert(IceBlocks, o)
+		elseif o.name == 'AzirRSoldier' and o.team == myHero.team then
+			o.endTime = os.clock() + 4.75
+			table.insert(Soldiers, o)
+		elseif o.name == 'JarvanIVWall' then
+			o.endTime = os.clock() + 3
+			table.insert(J4Wall, o)
+		elseif o.name == 'PlagueBlock' then
+			o.endTime = os.clock() + 5.5
+			Pillar = o
+		end
+	end
+end)
+
+function IsWall2(p)
+	if IsWall(p) then
+		return true
+	end
+	for i=#IceBlocks, 1, -1 do
+		local b = IceBlocks[i]
+		if b and b.valid and b.endTime > os.clock() then
+			if GetDistanceSqr(p, b) < 3600 then
+				return true
+			end
+		else
+			table.remove(IceBlocks, i)
+		end
+	end
+	for i=#J4Wall, 1, -1 do
+		local b = J4Wall[i]
+		if b and b.valid and b.endTime > os.clock() and not b.dead then
+			if GetDistanceSqr(p, b) < 10000 then
+				return true
+			end
+		else
+			table.remove(J4Wall, i)
+		end
+	end
+	for i=#Soldiers, 1, -1 do
+		local b = Soldiers[i]
+		if b and b.valid and b.endTime > os.clock() then
+			if GetDistanceSqr(p, b) < 3600 then
+				return true
+			end
+		else
+			table.remove(Soldiers, i)
+		end
+	end
+	if Pillar then
+		if Pillar.valid and Pillar.endTime > os.clock() then
+			if GetDistanceSqr(p, Pillar) < 10000 then
+				return true
+			end			
+		else
+			Pillar = nil
+		end
+	end
+end
+
 AddTickCallback(function()
 	if pMenu.Key then
 		if myHero:CanUseSpell(_Q) == READY then
@@ -199,12 +283,16 @@ AddTickCallback(function()
 		end
 		if myHero:CanUseSpell(_E) == READY then
 			local t = _Pewalk.GetTarget(700)
-			if t and checkE(t) then
-				CastSpell(_E, t)
+			if t then
+				if (checkE(t) and blackShieldCheck(t)) or pMenu.ForceE then
+					CastSpell(_E, t)
+				end
 			end
 			for i, e in ipairs(Enemies) do
-				if e~=t and _Pewalk.ValidTarget(e, 700) and _Pewalk.IsHighPriority(e, 2) and checkE(e) then
-					CastSpell(_E, e)						
+				if e~=t and _Pewalk.ValidTarget(e, 700) and blackShieldCheck(e) then
+					if _Pewalk.IsHighPriority(e, 2) and checkE(e) then
+						CastSpell(_E, e)
+					end
 				end
 			end
 		end
@@ -212,7 +300,7 @@ AddTickCallback(function()
 			local t = _Pewalk.GetTarget(450)
 			if t then
 				local CP, HC, NH = HP:GetPredict(HP_R, t, Vector(myHero), 3)
-				if CP and HC > 1 and NH > 2 then
+				if CP and HC > 1 and NH >= pMenu.MinR then
 					CastSpell(_R, CP.x, CP.z)
 					CastSpell2(_R, D3DXVECTOR3(CP.x,myHero.y,CP.z))
 				elseif pMenu.KS and HC > 0.75 then
@@ -229,7 +317,7 @@ AddTickCallback(function()
 	if pMenu.FlashKey and pFlash then
 		if myHero:CanUseSpell(_E) == READY and myHero:CanUseSpell(pFlash) == READY then
 			local t = _Pewalk.GetTarget(1000)
-			if t then
+			if t and blackShieldCheck(t) then
 				local myPos = NormalizeX(GetPath(myHero), myHero, (GetLatency()*0.0005)*myHero.ms)
 				local tPos = NormalizeX(GetPath(t), t, (GetLatency()*0.0005)*t.ms)
 				for _, p in ipairs(GeneratePoints(400, 7, tPos, myPos)) do
@@ -242,7 +330,7 @@ AddTickCallback(function()
 			end
 		end
 	end
-	if channelingR + 4 > os.clock() then
+	if channelingR + 4 > os.clock() and pMenu.SecondCast then
 		local windUp = os.clock() - channelingR
 		if windUp > 1 then
 			local t = _Pewalk.GetTarget(1200)
@@ -255,6 +343,7 @@ AddTickCallback(function()
 		end
 	end
 end)
+
 local recip = 0
 AddDrawCallback(function()	
 	if poppyShield and poppyShield.valid and not poppyShield.dead then
@@ -270,13 +359,15 @@ AddDrawCallback(function()
 		DrawCircle(myHero.x, myHero.y, myHero.z, cr, RGB(300-cr, 0, cr-70))
 		recip = recip+0.02
 	end
-end)	
+end)
+	
 AddCreateObjCallback(function(o)
 	if o.valid and o.name == 'Shield' and o.team == myHero.team then 
 		poppyShield = o
 		poppyShield.time = os.clock() + 5 - (GetLatency() * 0.0005)
 	end
 end)
+
 AddAnimationCallback(function(unit, animation)
 	if unit.valid and unit.isMe then
 		if animation=='' then
