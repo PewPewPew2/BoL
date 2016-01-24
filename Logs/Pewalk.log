@@ -1,3 +1,9 @@
+--0.11@
+-Fixed bugs with Rengar and Leona@
+-Fixed a bug with AA resets@
+-Fixed AA reset last hit timings@
+-Fixed bug when playing vs. Illaoi@
+-Fixed bug with ForcePoint API@
 --0.09@
 -Fixed skill farm timings@
 -Added more developer API@
