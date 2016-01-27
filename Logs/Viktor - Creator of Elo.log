@@ -1,3 +1,6 @@
+--0.94@
+-IMPORTANT: Now requires the standalone version Pewalk, the script will download it automatically after you reload, though you will need to tick it on in the BoL client.@
+-Made various performance improvements.@
 --0.89@
 -Fixed minion bonus damages (from level/turret advantage)@
 --0.88@
