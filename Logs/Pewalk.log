@@ -1,3 +1,7 @@
+--0.15@
+-Fixed some AA bugs@
+-Fixed errors with VelKoz and KhaZix@
+-Added channel checks for VelKoz@
 --0.12@
 -Added almost all non-collison linear spells to last hit / laneclear@
 -Improved intentional cancelling@
