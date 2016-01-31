@@ -124,7 +124,7 @@ end
 -- end)
 
 AddLoadCallback(function()
-	local Version = 6.2
+	local Version = 6.21
 	TEAM_ALLY, TEAM_ENEMY = myHero.team, 300-myHero.team
 	MainMenu = scriptConfig('Pewtility', 'Pewtility')
 	MainMenu:addParam('update', 'Enable AutoUpdate', SCRIPT_PARAM_ONOFF, true)
@@ -1889,8 +1889,8 @@ function OTHER:__init()
 			} or GetGameVersion():sub(1, 9) == '6.1.0.489' and {
 				['Header'] = 0x00D1,
 				['vTable'] = 0xEC2BC0,
-				['Hash'] = 0x03000000,				
-			} or GetGameVersion():sub(1, 10) == '6.2.0.238' and {
+				['Hash'] = 0x03000000,
+			} or GetGameVersion():sub(1, 9) == '6.2.0.238' and {
 				['Header'] = 0x004A,
 				['vTable'] = 0xEFEB84,			
 			} or GetGameVersion():sub(1, 10) == '5.23.0.239' and {
