@@ -1,3 +1,8 @@
+--0.18@
+-Fixed an AA range bug@
+-Added Shen Q enchanced AA bonus damage@
+-Removed old Shen Q from spell farming@
+-Will no longer target enemies that have Shens W buff active@
 --0.17@
 -Fixed all item bonus damages@
 --0.15@
