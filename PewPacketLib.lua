@@ -1,34 +1,18 @@
 class "PewLibUpdate"
-  
-function PewLibUpdate:__init()
-	self.LocalVersion = 6.21
-	self.Host = 'raw.githubusercontent.com'
-	self.VersionPath = '/Updater.php?script='..self:Base64Encode(self.Host..'/PewPewPew2/BoL/master/Versions/PewPacketLib.version')..'&rand='..math.random(99999999)
-	self.ScriptPath = '/Updater.php?script='..self:Base64Encode(self.Host..'/PewPewPew2/BoL/master/PewPacketLib.lua')..'&rand='..math.random(99999999)
-	self.SavePath = LIB_PATH..'\\PewPacketLib.lua'
+
+function PewLibUpdate:__init(LocalVersion,UseHttps, Host, VersionPath, ScriptPath, SavePath, CallbackUpdate, CallbackNoUpdate, CallbackNewVersion,CallbackError)
+    self.LocalVersion = 6.22
+    self.Host = 'raw.githubusercontent.com'
+    self.VersionPath = '/BoL/TCPUpdater/GetScript5.php?script='..self:Base64Encode(self.Host..'/PewPewPew2/BoL/master/Versions/PewPacketLib.version')..'&rand='..math.random(99999999)
+    self.ScriptPath = '/BoL/TCPUpdater/GetScript5.php?script='..self:Base64Encode(self.Host..'/PewPewPew2/BoL/master/PewPacketLib.lua')..'&rand='..math.random(99999999)
+    self.SavePath = LIB_PATH..'\\PewPacketLib.lua'
 	self.CallbackUpdate = function() Print('Update complete, please reload (F9 F9)') end
 	self.CallbackNoUpdate = function() return end
 	self.CallbackNewVersion = function() Print('New version found, downloading now...') end
 	self.CallbackError = function() Print('Error during download.') end
-	self:CreateSocket(self.VersionPath)
-	self.DownloadStatus = 'Connect to Server for VersionInfo'
-	AddTickCallback(function() self:GetOnlineVersion() end)
-end
-
-function PewLibUpdate:OnDraw()
-	local bP = {['x1'] = WINDOW_W - (WINDOW_W - 390),['x2'] = WINDOW_W - (WINDOW_W - 20),['y1'] = WINDOW_H / 2,['y2'] = (WINDOW_H / 2) + 20,}
-	local text = 'Download Status: '..(self.DownloadStatus or 'Unknown')
-	DrawLine(bP.x1, bP.y1 + 10, bP.x2,  bP.y1 + 10, 18, ARGB(0x7D,0xE1,0xE1,0xE1))
-	local xOff
-	if self.File and self.Size then
-		local c = math.round(100/self.Size*self.File:len(),2)/100
-		xOff = c < 1 and math.ceil(370 * c) or 370
-	else
-		xOff = 0
-	end
-	DrawLine(bP.x2 + xOff, bP.y1 + 10, bP.x2, bP.y1 + 10, 18, ARGB(0xC8,0xE1,0xE1,0xE1))
-	DrawLines2({D3DXVECTOR2(bP.x1, bP.y1),D3DXVECTOR2(bP.x2, bP.y1),D3DXVECTOR2(bP.x2, bP.y2),D3DXVECTOR2(bP.x1, bP.y2),D3DXVECTOR2(bP.x1, bP.y1),}, 3, ARGB(0xB9, 0x0A, 0x0A, 0x0A))
-	DrawText(text, 16, WINDOW_W - (WINDOW_W - 205) - (GetTextArea(text, 16).x / 2), bP.y1 + 2, ARGB(0xB9,0x0A,0x0A,0x0A))
+    self:CreateSocket(self.VersionPath)
+    self.DownloadStatus = 'Connect to Server for VersionInfo'
+    AddTickCallback(function() self:GetOnlineVersion() end)
 end
 
 function PewLibUpdate:CreateSocket(url)
@@ -44,7 +28,7 @@ function PewLibUpdate:CreateSocket(url)
     self.Socket = self.LuaSocket.tcp()
     self.Socket:settimeout(0, 'b')
     self.Socket:settimeout(99999999, 't')
-    self.Socket:connect('pewpewpew.website', 80)
+    self.Socket:connect('sx-bol.eu', 80)
     self.Url = url
     self.Started = false
     self.LastPrint = ""
@@ -71,7 +55,7 @@ function PewLibUpdate:GetOnlineVersion()
     self.Receive, self.Status, self.Snipped = self.Socket:receive(1024)
     if self.Status == 'timeout' and not self.Started then
         self.Started = true
-        self.Socket:send("GET "..self.Url.." HTTP/1.1\r\nHost: pewpewpew.website\r\n\r\n")
+        self.Socket:send("GET "..self.Url.." HTTP/1.1\r\nHost: sx-bol.eu\r\n\r\n")
     end
     if (self.Receive or (#self.Snipped > 0)) and not self.RecvStarted then
         self.RecvStarted = true
@@ -81,17 +65,17 @@ function PewLibUpdate:GetOnlineVersion()
     self.File = self.File .. (self.Receive or self.Snipped)
     if self.File:find('</s'..'ize>') then
         if not self.Size then
-            self.Size = tonumber(self.File:sub(self.File:find('<si'..'ze>')+6,self.File:find('</si'..'ze>')-1) or '1')
+            self.Size = tonumber(self.File:sub(self.File:find('<si'..'ze>')+6,self.File:find('</si'..'ze>')-1))
         end
-        if self.File:find('<lua'..'file>') then
-            local _,ScriptFind = self.File:find('<lua'..'file>')
-            local ScriptEnd = self.File:find('</lua'..'file>')
+        if self.File:find('<scr'..'ipt>') then
+            local _,ScriptFind = self.File:find('<scr'..'ipt>')
+            local ScriptEnd = self.File:find('</scr'..'ipt>')
             if ScriptEnd then ScriptEnd = ScriptEnd - 1 end
             local DownloadedSize = self.File:sub(ScriptFind+1,ScriptEnd or -1):len()
             self.DownloadStatus = 'Downloading VersionInfo ('..math.round(100/self.Size*DownloadedSize,2)..'%)'
         end
     end
-    if self.File:find('</lua'..'file>') then
+    if self.File:find('</scr'..'ipt>') then
         self.DownloadStatus = 'Downloading VersionInfo (100%)'
         local a,b = self.File:find('\r\n\r\n')
         self.File = self.File:sub(a,-1)
@@ -101,8 +85,8 @@ function PewLibUpdate:GetOnlineVersion()
                 self.NewFile = self.NewFile .. content
             end
         end
-        local HeaderEnd, ContentStart = self.File:find('<lua'..'file>')
-        local ContentEnd, _ = self.File:find('</lua'..'file>')
+        local HeaderEnd, ContentStart = self.File:find('<scr'..'ipt>')
+        local ContentEnd, _ = self.File:find('</sc'..'ript>')
         if not ContentStart or not ContentEnd then
             if self.CallbackError and type(self.CallbackError) == 'function' then
                 self.CallbackError()
@@ -110,12 +94,10 @@ function PewLibUpdate:GetOnlineVersion()
         else
             self.OnlineVersion = (Base64Decode(self.File:sub(ContentStart + 1,ContentEnd-1)))
             self.OnlineVersion = tonumber(self.OnlineVersion)
-			if not self.OnlineVersion then self.OnlineVersion = 0 end
-			if self.OnlineVersion > self.LocalVersion then
+            if self.OnlineVersion > self.LocalVersion then
                 if self.CallbackNewVersion and type(self.CallbackNewVersion) == 'function' then
                     self.CallbackNewVersion(self.OnlineVersion,self.LocalVersion)
                 end
-				AddDrawCallback(function() self:OnDraw() end)
                 self:CreateSocket(self.ScriptPath)
                 self.DownloadStatus = 'Connect to Server for ScriptDownload'
                 AddTickCallback(function() self:DownloadUpdate() end)
@@ -134,7 +116,7 @@ function PewLibUpdate:DownloadUpdate()
     self.Receive, self.Status, self.Snipped = self.Socket:receive(1024)
     if self.Status == 'timeout' and not self.Started then
         self.Started = true
-        self.Socket:send("GET "..self.Url.." HTTP/1.1\r\nHost: pewpewpew.website\r\n\r\n")
+        self.Socket:send("GET "..self.Url.." HTTP/1.1\r\nHost: sx-bol.eu\r\n\r\n")
     end
     if (self.Receive or (#self.Snipped > 0)) and not self.RecvStarted then
         self.RecvStarted = true
@@ -144,43 +126,42 @@ function PewLibUpdate:DownloadUpdate()
     self.File = self.File .. (self.Receive or self.Snipped)
     if self.File:find('</si'..'ze>') then
         if not self.Size then
-            self.Size = tonumber(self.File:sub(self.File:find('<si'..'ze>')+6,self.File:find('</si'..'ze>')-1) or '1')
+            self.Size = tonumber(self.File:sub(self.File:find('<si'..'ze>')+6,self.File:find('</si'..'ze>')-1))
         end
-        if self.File:find('<lua'..'file>') then
-            local _,ScriptFind = self.File:find('<lua'..'file>')
-            local ScriptEnd = self.File:find('</lua'..'file>')
+        if self.File:find('<scr'..'ipt>') then
+            local _,ScriptFind = self.File:find('<scr'..'ipt>')
+            local ScriptEnd = self.File:find('</scr'..'ipt>')
             if ScriptEnd then ScriptEnd = ScriptEnd - 1 end
             local DownloadedSize = self.File:sub(ScriptFind+1,ScriptEnd or -1):len()
             self.DownloadStatus = 'Downloading Script ('..math.round(100/self.Size*DownloadedSize,2)..'%)'
         end
     end
-    if self.File:find('</lua'..'file>') then
+    if self.File:find('</scr'..'ipt>') then
         self.DownloadStatus = 'Downloading Script (100%)'
         local a,b = self.File:find('\r\n\r\n')
         self.File = self.File:sub(a,-1)
         self.NewFile = ''
         for line,content in ipairs(self.File:split('\n')) do
-            if content:len() > 6 then
+            if content:len() > 5 then
                 self.NewFile = self.NewFile .. content
             end
         end
-        local HeaderEnd, ContentStart = self.NewFile:find('<lua'..'file>')
-        local ContentEnd, _ = self.NewFile:find('</lua'..'file>')
+        local HeaderEnd, ContentStart = self.NewFile:find('<sc'..'ript>')
+        local ContentEnd, _ = self.NewFile:find('</scr'..'ipt>')
         if not ContentStart or not ContentEnd then
             if self.CallbackError and type(self.CallbackError) == 'function' then
-				self.CallbackError()
+                self.CallbackError()
             end
         else
             local newf = self.NewFile:sub(ContentStart+1,ContentEnd-1)
-            newf = newf:gsub('\r', ''):gsub('\n', '')
-			self.GotScriptUpdate = true
+            local newf = newf:gsub('\r','')
             if newf:len() ~= self.Size then
-				if self.CallbackError and type(self.CallbackError) == 'function' then
-					self.CallbackError()
+                if self.CallbackError and type(self.CallbackError) == 'function' then
+                    self.CallbackError()
                 end
                 return
             end
-            newf = Base64Decode(newf)
+            local newf = Base64Decode(newf)
             if type(load(newf)) ~= 'function' then
                 if self.CallbackError and type(self.CallbackError) == 'function' then
                     self.CallbackError()
@@ -196,14 +177,6 @@ function PewLibUpdate:DownloadUpdate()
         end
         self.GotScriptUpdate = true
     end
-end
-
-function Print(text, isError)
-	if isError then
-		print('<font color=\'#0099FF\'>[PewPacketLib] </font> <font color=\'#FF0000\'>'..text..'</font>')	
-		return
-	end
-	print('<font color=\'#0099FF\'>[PewPacketLib] </font> <font color=\'#FF6600\'>'..text..'</font>')
 end
 
 PewLibUpdate()
