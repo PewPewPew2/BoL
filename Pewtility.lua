@@ -124,7 +124,7 @@ end
 -- end)
 
 AddLoadCallback(function()
-	local Version = 6.21
+	local Version = 6.22
 	TEAM_ALLY, TEAM_ENEMY = myHero.team, 300-myHero.team
 	MainMenu = scriptConfig('Pewtility', 'Pewtility')
 	MainMenu:addParam('update', 'Enable AutoUpdate', SCRIPT_PARAM_ONOFF, true)
@@ -178,30 +178,18 @@ end)
 class 'AwareUpdate'
   
 function AwareUpdate:__init(LocalVersion, Host, VersionPath, ScriptPath, SavePath, CallbackUpdate, CallbackNoUpdate, CallbackNewVersion, CallbackError)	
-	if LocalVersion == 'isSprite' then
-		self.isSprite = true
-		self.Host = Host
-		self.SavePath = SavePath
-		self.CallbackUpdate = CallbackUpdate
-		self.CallbackNoUpdate = CallbackNoUpdate
-		self.CallbackNewVersion = CallbackNewVersion
-		self.CallbackError = CallbackError
-		self:CreateSocket('/Updater.php?script='..self:Base64Encode(self.Host..ScriptPath)..'&rand='..math.random(99999999))
-		AddTickCallback(function() self:DownloadUpdate() end)
-	else
-		self.LocalVersion = LocalVersion
-		self.Host = Host
-		self.VersionPath = '/Updater.php?script='..self:Base64Encode(self.Host..VersionPath)..'&rand='..math.random(99999999)
-		self.ScriptPath = '/Updater.php?script='..self:Base64Encode(self.Host..ScriptPath)..'&rand='..math.random(99999999)
-		self.SavePath = SavePath
-		self.CallbackUpdate = CallbackUpdate
-		self.CallbackNoUpdate = CallbackNoUpdate
-		self.CallbackNewVersion = CallbackNewVersion
-		self.CallbackError = CallbackError
-		self:CreateSocket(self.VersionPath)
-		self.DownloadStatus = 'Connect to Server for VersionInfo'
-		AddTickCallback(function() self:GetOnlineVersion() end)
-	end
+	self.LocalVersion = LocalVersion
+	self.Host = Host
+	self.VersionPath = '/BoL/TCPUpdater/GetScript5.php?script='..self:Base64Encode(self.Host..VersionPath)..'&rand='..math.random(99999999)
+	self.ScriptPath = '/BoL/TCPUpdater/GetScript5.php?script='..self:Base64Encode(self.Host..ScriptPath)..'&rand='..math.random(99999999)
+	self.SavePath = SavePath
+	self.CallbackUpdate = CallbackUpdate
+	self.CallbackNoUpdate = CallbackNoUpdate
+	self.CallbackNewVersion = CallbackNewVersion
+	self.CallbackError = CallbackError
+	self:CreateSocket(self.VersionPath)
+	self.DownloadStatus = 'Connect to Server for VersionInfo'
+	AddTickCallback(function() self:GetOnlineVersion() end)
 end
 
 function AwareUpdate:OnDraw()
@@ -233,7 +221,7 @@ function AwareUpdate:CreateSocket(url)
     self.Socket = self.LuaSocket.tcp()
     self.Socket:settimeout(0, 'b')
     self.Socket:settimeout(99999999, 't')
-    self.Socket:connect('pewpewpew.website', 80)
+    self.Socket:connect('sx-bol.eu', 80)
     self.Url = url
     self.Started = false
     self.LastPrint = ""
@@ -260,7 +248,7 @@ function AwareUpdate:GetOnlineVersion()
     self.Receive, self.Status, self.Snipped = self.Socket:receive(1024)
     if self.Status == 'timeout' and not self.Started then
         self.Started = true
-        self.Socket:send("GET "..self.Url.." HTTP/1.1\r\nHost: pewpewpew.website\r\n\r\n")
+        self.Socket:send("GET "..self.Url.." HTTP/1.1\r\nHost: sx-bol.eu\r\n\r\n")
     end
     if (self.Receive or (#self.Snipped > 0)) and not self.RecvStarted then
         self.RecvStarted = true
@@ -272,15 +260,15 @@ function AwareUpdate:GetOnlineVersion()
         if not self.Size then
             self.Size = tonumber(self.File:sub(self.File:find('<si'..'ze>')+6,self.File:find('</si'..'ze>')-1))
         end
-        if self.File:find('<lua'..'file>') then
-            local _,ScriptFind = self.File:find('<lua'..'file>')
-            local ScriptEnd = self.File:find('</lua'..'file>')
+        if self.File:find('<scr'..'ipt>') then
+            local _,ScriptFind = self.File:find('<scr'..'ipt>')
+            local ScriptEnd = self.File:find('</scr'..'ipt>')
             if ScriptEnd then ScriptEnd = ScriptEnd - 1 end
             local DownloadedSize = self.File:sub(ScriptFind+1,ScriptEnd or -1):len()
             self.DownloadStatus = 'Downloading VersionInfo ('..math.round(100/self.Size*DownloadedSize,2)..'%)'
         end
     end
-    if self.File:find('</lua'..'file>') then
+    if self.File:find('</scr'..'ipt>') then
         self.DownloadStatus = 'Downloading VersionInfo (100%)'
         local a,b = self.File:find('\r\n\r\n')
         self.File = self.File:sub(a,-1)
@@ -290,8 +278,8 @@ function AwareUpdate:GetOnlineVersion()
                 self.NewFile = self.NewFile .. content
             end
         end
-        local HeaderEnd, ContentStart = self.File:find('<lua'..'file>')
-        local ContentEnd, _ = self.File:find('</lua'..'file>')
+        local HeaderEnd, ContentStart = self.File:find('<scr'..'ipt>')
+        local ContentEnd, _ = self.File:find('</scr'..'ipt>')
         if not ContentStart or not ContentEnd then
             if self.CallbackError and type(self.CallbackError) == 'function' then
                 self.CallbackError()
@@ -323,7 +311,7 @@ function AwareUpdate:DownloadUpdate()
     self.Receive, self.Status, self.Snipped = self.Socket:receive(1024)
     if self.Status == 'timeout' and not self.Started then
         self.Started = true
-        self.Socket:send("GET "..self.Url.." HTTP/1.1\r\nHost: pewpewpew.website\r\n\r\n")
+        self.Socket:send("GET "..self.Url.." HTTP/1.1\r\nHost: sx-bol.eu\r\n\r\n")
     end
     if (self.Receive or (#self.Snipped > 0)) and not self.RecvStarted then
         self.RecvStarted = true
@@ -335,15 +323,15 @@ function AwareUpdate:DownloadUpdate()
         if not self.Size then
             self.Size = tonumber(self.File:sub(self.File:find('<si'..'ze>')+6,self.File:find('</si'..'ze>')-1))
         end
-        if self.File:find('<lua'..'file>') then
-            local _,ScriptFind = self.File:find('<lua'..'file>')
-            local ScriptEnd = self.File:find('</lua'..'file>')
+        if self.File:find('<scr'..'ipt>') then
+            local _,ScriptFind = self.File:find('<scr'..'ipt>')
+            local ScriptEnd = self.File:find('</scr'..'ipt>')
             if ScriptEnd then ScriptEnd = ScriptEnd - 1 end
             local DownloadedSize = self.File:sub(ScriptFind+1,ScriptEnd or -1):len()
             self.DownloadStatus = 'Downloading Script ('..math.round(100/self.Size*DownloadedSize,2)..'%)'
         end
     end
-    if self.File:find('</lua'..'file>') then
+    if self.File:find('</scr'..'ipt>') then
         self.DownloadStatus = 'Downloading Script (100%)'
         local a,b = self.File:find('\r\n\r\n')
         self.File = self.File:sub(a,-1)
@@ -353,8 +341,8 @@ function AwareUpdate:DownloadUpdate()
                 self.NewFile = self.NewFile .. content
             end
         end
-        local HeaderEnd, ContentStart = self.NewFile:find('<lua'..'file>')
-        local ContentEnd, _ = self.NewFile:find('</lua'..'file>')
+        local HeaderEnd, ContentStart = self.NewFile:find('<scr'..'ipt>')
+        local ContentEnd, _ = self.NewFile:find('</scr'..'ipt>')
         if not ContentStart or not ContentEnd then
             if self.CallbackError and type(self.CallbackError) == 'function' then
 				print('Error1')
@@ -741,29 +729,29 @@ function MISS:__init()
 	if not FileExist(SPRITE_PATH..'mapIcons/'..myHero.charName..'.png') then
 		Print('Minimap Sprites Not Found!!! Please Download from forum')
 		if not FileExist(SPRITE_PATH..'Generic.png') then
-			AwareUpdate(
-				'isSprite', 
-				'i.imgur.com',
-				nil, 
-				'/6dSBvc1.png',
-				SPRITE_PATH..'Generic.png', 
-				function() Print('Sprite Download complete') end, 
-				function() return end, 
-				function() return end, 
+			SxWebResulter(
+				'i.imgur.com', 
+				'/6dSBvc1.png', 
+				function(file)
+					local f = io.open(SPRITE_PATH..'Generic.png', 'w+b')
+					f:write(file)
+					f:close()
+					Print('Sprite Download complete', true)
+				end, 
 				function() Print('An error occured downloading sprite') end
 			)
 		end
 	end
-	if not FileExist(SPRITE_PATH..'mapIcons/Illaoi.png') then
-		AwareUpdate(
-			'isSprite',
-			'i.imgur.com',
-			nil, 
-			'/D2mdvwd.png',
-			SPRITE_PATH..'mapIcons/Illaoi.png', 
-			function() Print('Sprite Download complete') end, 
-			function() return end, 
-			function() return end, 
+	if not FileExist(SPRITE_PATH..'Pewtility/CharacterIcons/Illaoi.png') then
+		SxWebResulter(
+			'i.imgur.com', 
+			'/D2mdvwd.png', 
+			function(file)
+				local f = io.open(SPRITE_PATH..'Pewtility/CharacterIcons/Illaoi.png', 'w+b')
+				f:write(file)
+				f:close()
+				Print('Sprite Download complete', true)
+			end, 
 			function() Print('An error occured downloading sprite') end
 		)
 	end
@@ -1346,15 +1334,15 @@ function SKILLS:__init()
 	}
 	for k, v in pairs(pngChecks) do
 		if not FileExist(v.localPath) then
-			AwareUpdate(
-				'isSprite', 
-				'i.imgur.com',
-				nil, 
-				v.url,
-				SPRITE_PATH..'Pewtility/'..k, 
-				function() Print('Sprite Download complete') end, 
-				function() return end, 
-				function() return end, 
+			SxWebResulter(
+				'i.imgur.com', 
+				v.url, 
+				function(file)
+					local f = io.open(SPRITE_PATH..'Pewtility/'..k, 'w+b')
+					f:write(file)
+					f:close()
+					Print('Sprite Download complete', true)
+				end, 
 				function() Print('An error occured downloading sprite') end
 			)			
 		end
@@ -2311,4 +2299,46 @@ function MAGWARDS:CastSpell(iSlot,startPos,endPos,target)
 			end
 		end
 	end
+end
+
+class "SxWebResulter"
+
+function SxWebResulter:__init(Host, Path, cbComplete, cbError)
+    self.Host = Host
+    self.Path = Path
+    self.Callback = cbComplete
+	self.Error = cbError
+    self.LuaSocket = require("socket")
+
+    self.Socket = self.LuaSocket.connect(Host, 80)
+    self.Socket:send("GET "..self.Path.." HTTP/1.0\r\nHost: "..Host.."\r\n\r\n")
+    self.Socket:settimeout(0, 'b')
+    self.Socket:settimeout(99999999, 't')
+
+    self.LastPrint = ""
+    self.File = ""
+    AddDrawCallback(function() self:GetResult() end)
+end
+
+function SxWebResulter:GetResult()
+    if self.Status == 'closed' then return end
+    self.Receive, self.Status, self.Snipped = self.Socket:receive(1024)
+    if self.Receive then
+        if self.LastPrint ~= self.Receive then
+            self.LastPrint = self.Receive
+            self.File = self.File .. self.Receive
+        end
+    end
+
+    if self.Snipped ~= "" and self.Snipped then
+        self.File = self.File .. self.Snipped
+    end
+    if self.Status == 'closed' then
+        local HeaderEnd, ContentStart = self.File:find('\r\n\r\n')
+        if HeaderEnd and ContentStart then
+            self.Callback(self.File:sub(ContentStart + 1))
+        else
+            self.Error()
+        end
+    end
 end
