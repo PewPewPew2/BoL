@@ -1,3 +1,15 @@
+--0.79@
+-Fixed an error when playing vs. Yasuo that was causing severe FPS loss@
+-Fixed an (major) error in skillshot shielding@
+-Added LifeSavers:@
+-Kayle - Intervention@
+-Kindred - Lambs Respite@
+-Lissandra - Frozen Tomb@
+-Tryndamere - Undying Rage@
+-Zilean - Chronoshift@
+-Zhonyas Hourglass (removed from items menu)@
+-Improved auto attack damage predictions (for shields and lifesavers)@
+-Added [Humanizer] Global Delay , in General menu@
 --0.78@
 -Added Jhin spells@
 -Fixed some errors@
