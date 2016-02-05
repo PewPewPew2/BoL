@@ -1,3 +1,10 @@
+--0.22@
+-Orbwalking is smoother after dashes@
+-Stop Movement - Mouse Over Hero now has a range option@
+-Added targeting delay option (in target selection menu), this delays targeting characters that have recently came out of FoW@
+-Made some small changes to the menu@
+-Fixed Quinn passive bonus damage@
+-Fixed potential incorrect bonus damage calculations from having multiple items that have passives that do not stack (ie. two recurve bows)@
 --0.20@
 -Added Jhin@
 --0.19@
