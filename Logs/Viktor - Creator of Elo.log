@@ -1,3 +1,6 @@
+--0.98@
+-Fixed a Q bug@
+-Removed some old menu options that are now deprecated@
 --0.94@
 -IMPORTANT: Now requires the standalone version Pewalk, the script will download it automatically after you reload, though you will need to tick it on in the BoL client.@
 -Made various performance improvements.@
