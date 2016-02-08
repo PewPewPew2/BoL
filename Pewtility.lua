@@ -124,7 +124,7 @@ end
 -- end)
 
 AddLoadCallback(function()
-	local Version = 6.22
+	local Version = 6.23
 	TEAM_ALLY, TEAM_ENEMY = myHero.team, 300-myHero.team
 	MainMenu = scriptConfig('Pewtility', 'Pewtility')
 	MainMenu:addParam('update', 'Enable AutoUpdate', SCRIPT_PARAM_ONOFF, true)
@@ -726,7 +726,7 @@ end
 class 'MISS'
 
 function MISS:__init()
-	if not FileExist(SPRITE_PATH..'mapIcons/'..myHero.charName..'.png') then
+	if not FileExist(SPRITE_PATH..'Pewtility\\CharacterIcons\\'..myHero.charName..'.png') then
 		Print('Minimap Sprites Not Found!!! Please Download from forum')
 		if not FileExist(SPRITE_PATH..'Generic.png') then
 			SxWebResulter(
@@ -742,12 +742,12 @@ function MISS:__init()
 			)
 		end
 	end
-	if not FileExist(SPRITE_PATH..'Pewtility/CharacterIcons/Illaoi.png') then
+	if not FileExist(SPRITE_PATH..'Pewtility\\CharacterIcons\\Illaoi.png') then
 		SxWebResulter(
 			'i.imgur.com', 
 			'/D2mdvwd.png', 
 			function(file)
-				local f = io.open(SPRITE_PATH..'Pewtility/CharacterIcons/Illaoi.png', 'w+b')
+				local f = io.open(SPRITE_PATH..'Pewtility\\CharacterIcons\\Illaoi.png', 'w+b')
 				f:write(file)
 				f:close()
 				Print('Sprite Download complete', true)
@@ -791,10 +791,8 @@ function MISS:__init()
 			self.Enemies[#self.Enemies + 1] = hero
 			self.VisibleSince[hero.networkID] = clock()
 			self.missing[hero.networkID] = nil
-			if FileExist(SPRITE_PATH..'mapIcons/'..hero.charName..'.png') then
-				self.Sprites[hero.networkID] = createSprite('mapIcons/'.. hero.charName ..'.png')
-			elseif FileExist(SPRITE_PATH..'Pewtility/CharacterIcons'..hero.charName..'.png') then
-				self.Sprites[hero.networkID] = createSprite(SPRITE_PATH..'Pewtility/CharacterIcons'..hero.charName..'.png')			
+			if FileExist(SPRITE_PATH..'Pewtility\\CharacterIcons\\'..hero.charName..'.png') then
+				self.Sprites[hero.networkID] = createSprite(SPRITE_PATH..'Pewtility\\CharacterIcons\\'..hero.charName..'.png')			
 			else
 				self.Sprites[hero.networkID] = createSprite('Generic.png')
 			end
@@ -1377,10 +1375,12 @@ function SKILLS:__init()
 	self.xOffsets = {
 		['AniviaEgg'] = -0.1,
 		['Darius'] = -0.05,
+		['Jhin'] = 0.05,
 		['Renekton'] = -0.05,
 		['Sion'] = -0.05,
 		['Thresh'] = -0.03,
 	}
+	self.yOffsets = {['Jhin'] = 22,}
 	self.ParTypes = {['Ashe'] = 0xFF00AAFF, ['Caitlyn'] = 0xFF00AAFF, ['Corki'] = 0xFF00AAFF, ['Draven'] = 0xFF00AAFF, ['Ezreal'] = 0xFF00AAFF, ['Graves'] = 0xFF00AAFF,	['Jayce'] = 0xFF00AAFF, ['Jinx'] = 0xFF00AAFF, ['Kalista'] = 0xFF00AAFF, ['Kindred'] = 0xFF00AAFF, ['KogMaw'] = 0xFF00AAFF, ['Lucian'] = 0xFF00AAFF, 	['MasterYi'] = 0xFF00AAFF, ['MissFortune'] = 0xFF00AAFF, ['Pantheon'] = 0xFF00AAFF, ['Quinn'] = 0xFF00AAFF,['Shaco'] = 0xFF00AAFF, ['Sivir'] = 0xFF00AAFF, ['Talon'] = 0xFF00AAFF, ['Tristana'] = 0xFF00AAFF, ['Twitch'] = 0xFF00AAFF, ['Urgot'] = 0xFF00AAFF, ['Varus'] = 0xFF00AAFF, ['Vayne'] = 0xFF00AAFF, ['Fiora'] = 0xFF00AAFF, ['Annie'] = 0xFF00AAFF, ['Ahri'] = 0xFF00AAFF, ['Azir'] = 0xFF00AAFF, ['Bard'] = 0xFF00AAFF, ['Anivia'] = 0xFF00AAFF, ['Brand'] = 0xFF00AAFF, ['Cassiopeia'] = 0xFF00AAFF, ['Diana'] = 0xFF00AAFF, ['Ekko'] = 0xFF00AAFF, ['Evelynn'] = 0xFF00AAFF, ['FiddleSticks'] = 0xFF00AAFF, ['Fizz'] = 0xFF00AAFF, ['Heimerdinger'] = 0xFF00AAFF, ['Illaoi'] = 0xFF00AAFF, ['Karthus'] = 0xFF00AAFF, ['Kassadin'] = 0xFF00AAFF, ['Kayle'] = 0xFF00AAFF, ['Leblanc'] = 0xFF00AAFF, ['Lissandra'] = 0xFF00AAFF, ['Lux'] = 0xFF00AAFF, ['Malzahar'] = 0xFF00AAFF, ['Morgana'] = 0xFF00AAFF, ['Nidalee'] = 0xFF00AAFF,	['Orianna'] = 0xFF00AAFF, ['Ryze'] = 0xFF00AAFF, ['Swain'] = 0xFF00AAFF, ['Syndra'] = 0xFF00AAFF, ['Teemo'] = 0xFF00AAFF, ['TwistedFate'] = 0xFF00AAFF, ['Veigar'] = 0xFF00AAFF, ['Viktor'] = 0xFF00AAFF,['Xerath'] = 0xFF00AAFF, ['Ziggs'] = 0xFF00AAFF, ['Zyra'] = 0xFF00AAFF, ['Velkoz'] = 0xFF00AAFF, ['Zilean'] = 0xFF00AAFF, ['Alistar'] = 0xFF00AAFF, ['Blitzcrank'] = 0xFF00AAFF, ['Braum'] = 0xFF00AAFF, ['Galio'] = 0xFF00AAFF, ['Janna'] = 0xFF00AAFF, ['Karma'] = 0xFF00AAFF, ['Leona'] = 0xFF00AAFF, ['Lulu'] = 0xFF00AAFF, ['Nami'] = 0xFF00AAFF, ['Nunu'] = 0xFF00AAFF, ['Sona'] = 0xFF00AAFF, ['Soraka'] = 0xFF00AAFF, ['TahmKench'] = 0xFF00AAFF, ['Taric'] = 0xFF00AAFF, ['Thresh'] = 0xFF00AAFF, ['Darius'] = 0xFF00AAFF, ['Elise'] = 0xFF00AAFF, ['Gangplank'] = 0xFF00AAFF,['Gnar'] = 0xFF00AAFF, ['Gragas'] = 0xFF00AAFF, ['Irelia'] = 0xFF00AAFF, ['JarvanIV'] = 0xFF00AAFF, ['Jax'] = 0xFF00AAFF, ['Khazix'] = 0xFF00AAFF, ['Nocturne'] = 0xFF00AAFF, ['Olaf'] = 0xFF00AAFF, ['Poppy'] = 0xFF00AAFF, ['RekSai'] = 0xFF00AAFF, ['Trundle'] = 0xFF00AAFF, ['Udyr'] = 0xFF00AAFF, ['Vi'] = 0xFF00AAFF, ['MonkeyKing'] = 0xFF00AAFF, ['XinZhao'] = 0xFF00AAFF, ['Amumu'] = 0xFF00AAFF, ['Chogath'] = 0xFF00AAFF,['Hecarim'] = 0xFF00AAFF, ['Malphite'] = 0xFF00AAFF, ['Maokai'] = 0xFF00AAFF, ['Nasus'] = 0xFF00AAFF, ['Rammus'] = 0xFF00AAFF, ['Sejuani'] = 0xFF00AAFF, ['Nautilus'] = 0xFF00AAFF, ['Sion'] = 0xFF00AAFF, ['Singed'] = 0xFF00AAFF, ['Skarner'] = 0xFF00AAFF, ['Volibear'] = 0xFF00AAFF, ['Warwick'] = 0xFF00AAFF, ['Yorick'] = 0xFF00AAFF, ['Vladimir'] = 0xFF000000, ['Katarina'] = 0xFF000000, ['Garen'] = 0xFF000000, ['Riven'] = 0xFF000000, ['DrMundo'] = 0xFF000000, ['Zac'] = 0xFF000000, ['Zed'] = 0xFFFFBB00, ['Akali'] = 0xFFFFBB00, ['Kennen'] = 0xFFFFBB00, ['LeeSin'] = 0xFFFFBB00, ['Shen'] = 0xFFFFBB00, ['Mordekaiser'] = 0xFF555555, ['Tryndamere'] = 0xFFFF3300,}
 	self.SpecialParTypes = {
 		['Aatrox'] = function(unit) return unit.mana == 100 and 0xFFFF3300 or 0xFF555555 end, 
@@ -1574,7 +1574,7 @@ end
 function SKILLS:BarData(enemy)
 	local barPos = GetUnitHPBarPos(enemy)
 	local barOff = GetUnitHPBarOffset(enemy)
-	return barPos.x + ((self.xOffsets[enemy.charName] or 0) * 140) - 38, barPos.y + (barOff.y * 53) - 22
+	return barPos.x + ((self.xOffsets[enemy.charName] or 0) * 140) - 38, barPos.y + (barOff.y * 53) - 22 - (self.yOffsets[enemy.charName] or 0)
 end
 
 class 'TIMERS'
@@ -1866,25 +1866,16 @@ function OTHER:__init()
 	for i=1, heroManager.iCount do
 		local h = heroManager:getHero(i)
 		if h.team == TEAM_ALLY and not h.isMe and h.charName == 'Thresh' then
-			self.Packets = GetGameVersion():sub(1, 10) == '5.23.0.247' and {
-				['Header'] = 0x00116,
-				['vTable'] = 0xDF9520,
-				['Hash'] = 0x04000000,				
-			} or GetGameVersion():sub(1, 10) == '5.24.0.249' and {
-				['Header'] = 0x00B0,
-				['vTable'] = 0xE98380,
-				['Hash'] = 0x03000000,
-			} or GetGameVersion():sub(1, 9) == '6.1.0.489' and {
+			self.Packets = GetGameVersion():sub(1, 9) == '6.1.0.489' and {
 				['Header'] = 0x00D1,
 				['vTable'] = 0xEC2BC0,
 				['Hash'] = 0x03000000,
 			} or GetGameVersion():sub(1, 9) == '6.2.0.238' and {
 				['Header'] = 0x004A,
 				['vTable'] = 0xEFEB84,			
-			} or GetGameVersion():sub(1, 10) == '5.23.0.239' and {
-				['Header'] = 0x0116,
-				['vTable'] = 0xDFE390,
-				['Hash'] = 0x05000000,				
+			} or GetGameVersion():sub(1, 9) == '6.2.0.239' and {
+				['Header'] = 0x004A,
+				['vTable'] = 0xF13F24,
 			}
 			if not self.Packets then
 				Print('Thresh Lantern packets are outdated!!', true)
