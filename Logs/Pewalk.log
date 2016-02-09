@@ -1,3 +1,8 @@
+--0.23@
+-Fixed a few bugs with Jhin@
+-Added Anivia E and Quinn E to target spells that can be used to farm@
+-Added all linear skillshots with collision (a complete list is in thread)@
+-Fixed timings with linear skillshot farming (with and without collision)@
 --0.22@
 -Orbwalking is smoother after dashes@
 -Stop Movement - Mouse Over Hero now has a range option@
