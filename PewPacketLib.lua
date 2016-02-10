@@ -1,15 +1,24 @@
+function Print(text, isError)
+	if isError then
+		print('<font color=\'#0099FF\'>[PewPacketLib] </font> <font color=\'#FF0000\'>'..text..'</font>')
+		return
+	end
+	print('<font color=\'#0099FF\'>[PewPacketLib] </font> <font color=\'#FF6600\'>'..text..'</font>')
+end
+
+
 class "PewLibUpdate"
 
 function PewLibUpdate:__init(LocalVersion,UseHttps, Host, VersionPath, ScriptPath, SavePath, CallbackUpdate, CallbackNoUpdate, CallbackNewVersion,CallbackError)
-    self.LocalVersion = 6.3
+    self.LocalVersion = 6.31
     self.Host = 'raw.githubusercontent.com'
     self.VersionPath = '/BoL/TCPUpdater/GetScript5.php?script='..self:Base64Encode(self.Host..'/PewPewPew2/BoL/master/Versions/PewPacketLib.version')..'&rand='..math.random(99999999)
     self.ScriptPath = '/BoL/TCPUpdater/GetScript5.php?script='..self:Base64Encode(self.Host..'/PewPewPew2/BoL/master/PewPacketLib.lua')..'&rand='..math.random(99999999)
     self.SavePath = LIB_PATH..'\\PewPacketLib.lua'
-	self.CallbackUpdate = function() Print('Update complete, please reload (F9 F9)') end
+	self.CallbackUpdate = function() Print('Update complete, please reload (F9 F9)', true) end
 	self.CallbackNoUpdate = function() return end
-	self.CallbackNewVersion = function() Print('New version found, downloading now...') end
-	self.CallbackError = function() Print('Error during download.') end
+	self.CallbackNewVersion = function() Print('New version found, downloading now...', true) end
+	self.CallbackError = function() Print('Error during download.', true) end
     self:CreateSocket(self.VersionPath)
     self.DownloadStatus = 'Connect to Server for VersionInfo'
     AddTickCallback(function() self:GetOnlineVersion() end)
