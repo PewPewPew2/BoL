@@ -1,6 +1,7 @@
 --1.00@
 -Improvements to DPred implementation@
 -Q / E last hitting can now be set to only be cast when under turret, always or never at all@
+-No longer need to reload between changing predictions@
 --0.98@
 -Fixed a Q bug@
 -Removed some old menu options that are now deprecated@
