@@ -124,7 +124,7 @@ end
 -- end)
 
 AddLoadCallback(function()
-	local Version = 6.3
+	local Version = 6.31
 	TEAM_ALLY, TEAM_ENEMY = myHero.team, 300-myHero.team
 	MainMenu = scriptConfig('Pewtility', 'Pewtility')
 	MainMenu:addParam('update', 'Enable AutoUpdate', SCRIPT_PARAM_ONOFF, true)
@@ -748,9 +748,11 @@ function MISS:__init()
 			'/zqateLX.png', 
 			function(file)
 				local f = io.open(SPRITE_PATH..'Pewtility\\CharacterIcons\\Jhin.png', 'w+b')
-				f:write(file)
-				f:close()
-				Print('Sprite Download complete', true)
+				if f then
+					f:write(file)
+					f:close()
+					Print('Sprite Download complete', true)
+				end
 			end, 
 			function() Print('An error occured downloading sprite') end
 		)
@@ -809,7 +811,7 @@ function MISS:__init()
 	self.Packets = GetGameVersion():sub(1, 3) == '6.3' and {
 		['LoseVision'] = { ['Header'] = 0x0116, ['pos'] = 2, },
 		['GainVision'] = { ['Header'] = 0x0052, ['pos'] = 2, },
-		['Recall'] = { ['Header'] = 0x012B, ['pos'] = 81, ['stringPos'] = 30, ['tpPos'] = 22, ['isTP'] = 0x08,},
+		['Recall'] = { ['Header'] = 0x012B, ['pos'] = 80, ['stringPos'] = 30, ['tpPos'] = 22, ['isTP'] = 0x08,},
 		['Aggro'] = { ['Header'] = 0x00A0, ['pos'] = 2, },
 		['Reset'] = { ['Header'] = 0x0122, ['pos'] = 2, ['pos2'] = 7, },
 		['AggroUpdate'] = { ['Header'] = 0x0102, ['pos'] = 2, },
