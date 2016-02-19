@@ -1,7 +1,8 @@
-local p_TopA, p_TopB, p_MidA, p_MidB, p_BotA, p_BotB, p_Neut
 local floor, clock = math.floor, os.clock
 --Minion Arrays
 local m_Top, m_Mid, m_Bot, m_Global = {['Name'] = 'Top'}, {['Name'] = 'Mid'}, {['Name'] = 'Bot'}, nil
+--MinionBonus
+local m_Bonus
 --Drawing
 local anchor = {x=20, y=160}
 local barSprite
@@ -17,26 +18,17 @@ local momentum_Value = {
 	['SRU_ChaosMinionRanged'] = 0.35,
 	['SRU_ChaosMinionSiege']  = 1.5,
 	['SRU_ChaosMinionSuper']  = 4,
-} 
+}
 
 AddLoadCallback(function()
 	if GetMap().shortName ~= 'summonerRift' then return end
 	--Create Menu
 	Menu = scriptConfig('Lane Momentum', 'Lane Momentum')
 	Menu:addParam('Scale', 'HUD Scale', SCRIPT_PARAM_SLICE, 100, 50, 100)
-	--Top Polygons
-	p_TopA = PewPoly({x=2633,z=12058},{x=547,z=14617},{x=774,z=1981},{x=1635,z=2012})
-	p_TopB = PewPoly({x=2633,z=12058},{x=547,z=14617},{x=12905,z=13843},{x=12802,z=13166})
-	--Middle Polygon
-	p_MidA = PewPoly({x=1626,z=2384},{x=2371,z=1578},{x=7900,z=6860},{x=6870,z=7850})
-	p_MidB = PewPoly({x=13252,z=12422},{x=12332,z=13291},{x=6870,z=7850},{x=7900,z=6800})
-	--Bottom Polygons
-	p_BotA = PewPoly({x=12006,z=3021},{x=14358,z=550},{x=2000,z=800},{x=1933,z=1732})
-	p_BotB = PewPoly({x=12006,z=3021},{x=14358,z=550},{x=14101,z=12531},{x=13203,z=12651})
-	--Neutral Area
-	p_Neut = PewPoly({x=12700,z=930},{x=14250,z=2370},{x=2150,z=14100},{x=630,z=13000})
 	--Initialize minion array
 	m_Global = MomentumMinions()	
+	--Initialize minion bonus class
+	m_Bonus = MinionBonus()
 	--Save HUD position
 	if FileExist(LIB_PATH..'\\Saves\\LaneMomentum.save') then
 		local file = loadfile(LIB_PATH ..'Saves\\LaneMomentum.save')
@@ -83,20 +75,9 @@ function OnSpell(unit,spell)
 	if unit.valid and unit.type == 'obj_AI_Minion' then
 		for i=#m_Global.Objects, 1, -1 do
 			local minion = m_Global.Objects[i]
-			if minion and m_Global:IsValid(minion) and m_Global.AreValid[minion.charName] and minion==unit then
-				if p_TopA:contains(minion.x, minion.z) then
-					AddToLane(m_Top, minion, i, 100)
-				elseif p_TopB:contains(minion.x, minion.z) then
-					AddToLane(m_Top, minion, i, 200)
-				elseif p_MidA:contains(minion.x, minion.z) then
-					AddToLane(m_Mid, minion, i, 100)
-				elseif p_MidB:contains(minion.x, minion.z) then
-					AddToLane(m_Mid, minion, i, 200)
-				elseif p_BotA:contains(minion.x, minion.z) then
-					AddToLane(m_Bot, minion, i, 100)
-				elseif p_BotB:contains(minion.x, minion.z) then
-					AddToLane(m_Bot, minion, i, 200)
-				end
+			if minion and m_Global:IsValid(minion) and m_Global.AreValid[minion.charName] and minion==unit then					
+				local lane = minion.name:find('L0') and m_Bot or minion.name:find('L1') and m_Mid or minion.name:find('L2') and m_Top
+				AddToLane(lane, minion, i)
 			end
 		end		
 	end
@@ -125,10 +106,9 @@ function Draw()
 	end
 end
 
-function AddToLane(tbl, minion, index, team)
-	table.insert(tbl, #tbl+1, {['minion'] = minion, ['time'] = clock() + 10})
+function AddToLane(tbl, minion, index)
+	table.insert(tbl, #tbl+1, {['minion'] = minion, ['time'] = clock() + 10, ['bonus'] = m_Bonus:GetBonus(minion),})
 	table.remove(m_Global.Objects, index)
-	tbl['Advantage'] = p_Neut:contains(minion.x, minion.z) and nil or team
 end
 
 function RoundNumber(num)
@@ -157,7 +137,7 @@ function DrawMomentum(y, off, test)
 		ARGB((IsKeyDown(menuKey) and 125 or 200),230,0,0)
 	)
 	if test then
-		DrawText(test,GetScale(26), anchor.x+GetBarOffset(test==string.char(27) and off or off-1), anchor.y+GetScale(y-12), 0xFFFFFFFF)
+		DrawText(test,GetScale(26), anchor.x+GetBarOffset(test==string.char(27) and off or off-1), anchor.y+GetScale(y-14), 0xFFFFFFFF)
 	end
 end
 
@@ -165,19 +145,20 @@ function GetDifference(lane)
 	local ally, ally_Count, enemy, enemy_Count, direction = 0, 0, 0, 0, nil
 	for i, info in ipairs(lane) do
 		if info and info.minion and m_Global:IsValid(info.minion) and momentum_Value[info.minion.charName] then
+			local MV = momentum_Value[info.minion.charName]
 			if info.minion.team == myHero.team then
 				if info.time < clock() then
 					ally_Count = ally_Count + 1
-					ally=ally+momentum_Value[info.minion.charName]
+					ally=ally+MV+(MV*info.bonus)
 				else
-					ally=ally+(momentum_Value[info.minion.charName] * 0.25)					
+					ally=ally+(MV * 0.25)+(MV*info.bonus)
 				end
 			else
 				if info.time < clock() then
 					enemy_Count = enemy_Count + 1
-					enemy=enemy+momentum_Value[info.minion.charName]
+					enemy=enemy+MV+(MV*info.bonus)
 				else
-					enemy=enemy+(momentum_Value[info.minion.charName]*0.25)			
+					enemy=enemy+(MV*0.25)+(MV*info.bonus)
 				end
 			end
 		end
@@ -186,17 +167,17 @@ function GetDifference(lane)
 		local difference = ally_Count-enemy_Count
 		if difference > 4 then
 			ally = ally + 2
-			direction = string.char(26)
+			direction = string.char(187)
 		elseif difference < -4 then
 			enemy = enemy + 2
-			direction = string.char(27)
+			direction = string.char(171)
 		end		
 	elseif ally_Count == 0 and enemy_Count > 7 then
 		enemy = enemy + 2
-		direction = string.char(27)
+		direction = string.char(171)
 	elseif enemy_Count == 0 and ally_Count > 7 then
 		ally = ally + 2
-		direction = string.char(26)
+		direction = string.char(187)
 	end
 	if lane.Advantage then
 		if lane.Advantage == myHero.team then
@@ -214,51 +195,6 @@ end
 
 function GetScale(m)
 	return floor((Menu.Scale / 100) * m)
-end
-
-class 'PewPoly'
-
-function PewPoly:__init(...)
-	self.points = {...}
-end
-
-function PewPoly:Add(point)
-	insert(self.points, point)
-	self.lineSegments = nil
-	self.triangles = nil
-end
-
-function PewPoly:contains(px, pz)
-	if #self.points == 3 then
-		local p1, p2, p3 = self.points[1], self.points[2], self.points[3]
-		local VERTEX_A = ((pz - p1.z) * (p2.x - p1.x)) - ((px - p1.x) * (p2.z - p1.z))
-		local VERTEX_B = ((pz - p2.z) * (p3.x - p2.x)) - ((px - p2.x) * (p3.z - p2.z))
-		local VERTEX_C = ((pz - p3.z) * (p1.x - p3.x)) - ((px - p3.x) * (p1.z - p3.z))
-		return (VERTEX_A * VERTEX_B >= 0 and VERTEX_B * VERTEX_C >= 0)
-	else
-		for j, triangle in ipairs(self:triangulate()) do
-			if triangle:contains(px, pz) then
-				return true
-			end
-		end
-		return false
-	end
-end
-
-function PewPoly:triangulate()
-	if not self.triangles then
-		self.triangles = {}
-		local nVertices = #self.points
-		if nVertices > 3 then			
-			if nVertices == 4 then
-				table.insert(self.triangles, PewPoly(self.points[1], self.points[2], self.points[3]))
-				table.insert(self.triangles, PewPoly(self.points[1], self.points[3], self.points[4]))
-			end
-		elseif #self.points == 3 then
-			table.insert(self.triangles, self)
-		end
-	end
-	return self.triangles
 end
 
 class 'MomentumMinions'
@@ -315,4 +251,89 @@ function MomentumMinions:DeleteObj(o)
 			end
 		end
 	end
+end
+
+class 'MinionBonus'
+
+function MinionBonus:__init()
+	self.Turrets = {['Top'] = {}, ['Mid'] = {}, ['Bot'] = {},}
+	self.Assigned = {}
+	local turretsInit = {
+		['Turret_T1_C_07_A'] = 'Bot', --rito plz
+		['Turret_T1_R_02_A'] = 'Bot',
+		['Turret_T1_R_03_A'] = 'Bot',
+		['Turret_T1_C_03_A'] = 'Mid',
+		['Turret_T1_C_04_A'] = 'Mid',
+		['Turret_T1_C_05_A'] = 'Mid',
+		['Turret_T1_C_06_A'] = 'Top', --rito plz
+		['Turret_T1_L_02_A'] = 'Top',
+		['Turret_T1_L_03_A'] = 'Top',
+		['Turret_T2_R_01_A'] = 'Bot',
+		['Turret_T2_R_02_A'] = 'Bot',
+		['Turret_T2_R_03_A'] = 'Bot',
+		['Turret_T2_C_03_A'] = 'Mid',
+		['Turret_T2_C_04_A'] = 'Mid',
+		['Turret_T2_C_05_A'] = 'Mid',
+		['Turret_T2_L_01_A'] = 'Top',
+		['Turret_T2_L_02_A'] = 'Top',
+		['Turret_T2_L_03_A'] = 'Top',
+	}
+	for i=objManager.maxObjects, 1, -1 do
+		local o = objManager:getObject(i)
+		if o and o.valid and o.type == 'obj_AI_Turret' and turretsInit[o.name] then
+			self.Turrets[turretsInit[o.name]][#self.Turrets[turretsInit[o.name]] + 1] = o
+		end
+	end		
+end
+
+function MinionBonus:GetLane(minion)
+	if not self.Assigned[minion.networkID] then
+		self.Assigned[minion.networkID] = minion.name:find('L0') and 'Bot' or minion.name:find('L1') and 'Mid' or minion.name:find('L2') and 'Top'
+	end
+	return self.Assigned[minion.networkID]
+end
+
+function MinionBonus:GetLevelDifference(team)
+	local AllyTotal, EnemyTotal, AllyLevels, EnemyLevels = 0, 0, 0, 0
+	for i=1, heroManager.iCount do
+		local h = heroManager:getHero(i)
+		if h.team==team then
+			AllyLevels, AllyTotal = AllyLevels + h.level, AllyTotal + 1
+		else
+			EnemyLevels, EnemyTotal = EnemyLevels + h.level, EnemyTotal + 1
+		end
+	end
+	local HeroLevelDifference = (AllyTotal ~= 0 and AllyLevels / AllyTotal or 0) - (EnemyTotal ~= 0 and EnemyLevels / EnemyTotal or 0)
+	return math.min(math.max(HeroLevelDifference, -3), 3)
+end
+
+function MinionBonus:GetTurretDifference(lane, team)
+	local TurretDifference = 0
+	for i, turret in ipairs(self.Turrets[lane]) do
+		if turret.valid and not turret.dead then
+			TurretDifference = TurretDifference + (turret.team == team and 1 or -1)
+		end
+	end
+	return TurretDifference
+end
+
+function MinionBonus:GetBonus(unit) 
+	local bonus = 0
+	local level = self:GetLevelDifference(unit.team)
+	if level ~= 0 and GetInGameTimer() > 210 then
+		if level > 0 then
+			local lane = self:GetLane(unit)
+			if lane then
+				local turret = self:GetTurretDifference(lane, unit.team)
+				bonus = 0.05 + (0.05 * math.max(0, turret))
+			end
+		elseif unit.spell and unit.spell.target then
+			local lane = self:GetLane(unit.spell.target)
+			if lane then
+				local turret = self:GetTurretDifference(lane, unit.spell.target.team)
+				bonus = -0.05 - (0.05 * math.max(0, turret))
+			end
+		end
+	end
+	return bonus
 end
