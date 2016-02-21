@@ -1,3 +1,8 @@
+--0.24@
+-Fixed a menu bug with lane clear Q@
+-Added support for Fun House Prediction@
+-Added translation base, no translations right now, when people send me translations, they will be added@
+-Fixed a few other minor bugs@
 --0.20@
 -Updated packets for 6.2@
 -Fixed some error spam@
