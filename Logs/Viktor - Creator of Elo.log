@@ -1,4 +1,9 @@
---1.01@@
+--1.02@
+-Added option Casting Method to Q menu, Method 1 casts only if it can AA immediately after, method 2 spams Q@
+-Small changes to E casting, should be more reliable at close range@
+-Added Italian translation to the menu@
+-Small readability changes made to the English menu@
+--1.01@
 -Small improvements to Gravity Field in carry mode@
 -Added support for Fun House Prediction@
 --1.00@
