@@ -82,7 +82,7 @@ function Zyra:__init()
 	-----------------------
 	--Update
 	-----------------------
-	local version = 2.1 --0.1 increments
+	local version = 2.2 --0.1 increments
 	local Downloads = {
 		[1] = {
 			version = version,
@@ -737,7 +737,7 @@ function Zyra:GetPrediction(target, spell, draw, hpOnly)
 			self.DrawPrediction.Color = ARGB(255, (1-self.DrawPrediction.Ratio) * 255, self.DrawPrediction.Ratio * 255, 0)
 			self.DrawPrediction.Chance = HitChance
 		end
-		return CastPos, HitChance	
+		return CastPos, HitChance + 1
 	end
 end
 
@@ -1000,12 +1000,12 @@ function Zyra:Tick()
 			local zone = self.wZones[i]
 			if zone and zone.time > clock() then
 				if zone.valid and GetDistanceSqr(zone.pos) < self.Spells[_W].rangeSqr then
-					if zone.spell == _Q and zone.target then
-						local CP = NormalizeX(zone.target, zone.pos, 225)
-						CastSpell(_W, CP.x, CP.z)
-					else
+					-- if zone.spell == _Q and zone.target then
+						-- local CP = NormalizeX(zone.target, zone.pos, 225)
+						-- CastSpell(_W, CP.x, CP.z)
+					-- else
 						CastSpell(_W, zone.pos.x, zone.pos.z)
-					end
+					-- end
 					if zone.spell == _E or zone.removeAfterCast then
 						remove(self.wZones, i)
 					end
