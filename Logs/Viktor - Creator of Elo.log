@@ -1,3 +1,7 @@
+--1.04@
+-Added support for Korean Prediction@
+-Added Emote on Kill option (off by default)@
+-Fixed a bug with Ignite@
 --1.02@
 -Added option Casting Method to Q menu, Method 1 casts only if it can AA immediately after, method 2 spams Q@
 -Small changes to E casting, should be more reliable at close range@
