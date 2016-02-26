@@ -128,7 +128,7 @@ local HP = HPrediction()
 local HP_Q = HPSkillshot({type = 'PromptLine', delay = 0.375, range = 350, width = 150, speed = math.huge})
 local HP_R = HPSkillshot({type = 'PromptLine', delay = 0.450, range = 550, width = 275, speed = math.huge})
 local HP_R2 = HPSkillshot({type = 'DelayLine', delay = 0, range = 1200, width = 275, speed = 1600})
-local pFlash = myHero:GetSpellData(SUMMONER_1).name == 'summonerflash' and SUMMONER_1 or (myHero:GetSpellData(SUMMONER_2).name == 'summonerflash') and SUMMONER_2 or nil	
+local pFlash = myHero:GetSpellData(SUMMONER_1).name:lower() == 'summonerflash' and SUMMONER_1 or (myHero:GetSpellData(SUMMONER_2).name:lower() == 'summonerflash') and SUMMONER_2 or nil	
 local channelingR = 0
 local pMenu = scriptConfig('Poppy', 'Poppy')
 pMenu:addParam('info', '-General-', SCRIPT_PARAM_INFO, '')  
@@ -157,11 +157,11 @@ end
 local function checkWallCollision(cStart, cEnd)	
 	if checkLine(cStart, cEnd) then
 		local d1 = Normalize(cStart.x-(cStart.x-(cStart.z-cEnd.z)), cStart.z-(cStart.z+(cStart.x-cEnd.x)))
-		local lEnd = {['x'] = cEnd.x + d1.x*-70, ['z'] = cEnd.z + d1.z*-70}
-		local lStart = {['x'] = cStart.x + d1.x*-70, ['z'] = cStart.z + d1.z*-70}
+		local lEnd = {['x'] = cEnd.x + d1.x*-35, ['z'] = cEnd.z + d1.z*-35}
+		local lStart = {['x'] = cStart.x + d1.x*-35, ['z'] = cStart.z + d1.z*-35}
 		if checkLine(lStart, lEnd) then
-			local rEnd = {['x'] = cEnd.x + d1.x*70, ['z'] = cEnd.z + d1.z*70}
-			local rStart = {['x'] = cStart.x + d1.x*70, ['z'] = cStart.z + d1.z*70}
+			local rEnd = {['x'] = cEnd.x + d1.x*35, ['z'] = cEnd.z + d1.z*35}
+			local rStart = {['x'] = cStart.x + d1.x*35, ['z'] = cStart.z + d1.z*35}
 			if checkLine(rStart, rEnd) then
 				return true
 			end
