@@ -1,4 +1,4 @@
-if myHero:GetSpellData(SUMMONER_1).name:find('smite') == nil and myHero:GetSpellData(SUMMONER_2).name:find('smite') == nil then return end
+if myHero:GetSpellData(SUMMONER_1).name:lower():find('smite') == nil and myHero:GetSpellData(SUMMONER_2).name:lower():find('smite') == nil then return end
 
 AddLoadCallback(function()
 	SmiteCore()
@@ -8,7 +8,7 @@ class 'SmiteCore'
 
 function SmiteCore:__init()
 	self.Mobs = SmiteMinions()
-	self.Slot = myHero:GetSpellData(SUMMONER_1).name:find('smite') and SUMMONER_1 or SUMMONER_2
+	self.Slot = myHero:GetSpellData(SUMMONER_1).name:lower():find('smite') and SUMMONER_1 or SUMMONER_2
 	self.LastClick = 0
 	self.DamageTable = {390,410,430,450,480,510,540,570,600,640,680,720,760,800,850,900,950,1000,}
 	self.Offsets = {
@@ -22,6 +22,11 @@ function SmiteCore:__init()
 		['SRU_Dragon'] 		= {['x'] = -72, ['y'] =  2, ['h'] = 9,  ['w'] = 144,},
 		['SRU_RiftHerald'] 	= {['x'] = -72, ['y'] =  2, ['h'] = 9,  ['w'] = 144,},
 		['SRU_Baron'] 		= {['x'] = -96, ['y'] =  1, ['h'] = 12, ['w'] = 192,},
+		
+		['TT_NWraith'] 		= {['x'] = -38, ['y'] =  1, ['h'] = 4,  ['w'] = 78, },
+		['TT_NGolem'] 		= {['x'] = -38, ['y'] =  1, ['h'] = 4,  ['w'] = 78, },
+		['TT_NWolf'] 		= {['x'] = -38, ['y'] =  1, ['h'] = 4,  ['w'] = 78, },
+		['TT_Spiderboss'] 	= {['x'] = -96, ['y'] =  1, ['h'] = 12, ['w'] = 192,},
 	}
 	self.White = ARGB(120,255,255,255)
 	self.Menu = scriptConfig('Smiterino', 'Smite1234')
@@ -96,6 +101,10 @@ function SmiteMinions:__init()
 		['SRU_Dragon']  = true,
 		['SRU_RiftHerald']  = true,
 		['SRU_Baron']  = true,
+		['TT_NWraith'] = true,
+		['TT_NGolem'] = true,
+		['TT_NWolf'] = true,
+		['TT_Spiderboss'] = true,
 	}
 	AddTickCallback(function() self:Tick() end)
 	AddCreateObjCallback(function(o) self:CreateObj(o) end)
