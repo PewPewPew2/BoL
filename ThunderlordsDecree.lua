@@ -5,45 +5,32 @@
       -Displays stack expiration time on enemies
 --]]
 
-
-local Cooldown, Targets, Packet, pi2, cos, sin = 0, {}, nil, 2*math.pi, math.cos, math.sin
-
-if FileExist(LIB_PATH..'PewPacketLib.lua') then
-	require('PewPacketLib')
-	Packet = GetOnDamagePacketData()
-else
-	print('<font color=\'#FF0000\'>Thunderlord\'s Decree - PewPacketLib Required</font>')
-	return
-end
+local Cooldown, Targets, pi2, cos, sin = 0, {}, 2*math.pi, math.cos, math.sin
 
 AddLoadCallback(function()
 	print('<font color=\'#FFFFFF\'>Thunderlord\'s Decree</font>')
 end)
 
 AddApplyBuffCallback(function(source,unit,buff)
-	if unit.valid and unit.isMe and buff.name == 'MasteryLordsDecreeCooldown' then
+	if unit and unit.valid and unit.isMe and buff.name:lower() == 'masterylordsdecreecooldown' then
 		Cooldown = buff.endTime
 		Targets = {}
 	end
 end)
 
-AddRecvPacketCallback2(function(p)
-	if p.header == Packet.Header and Cooldown<GetGameTimer() then
-		local networkID = p:DecodeF()
-		if networkID then
-			local object = objManager:GetObjectByNetworkId(networkID)
-			if object and object.valid and object.type == 'AIHeroClient' and not object.isMe then
-				if Targets[networkID] and Targets[networkID].time > os.clock() then
-					Targets[networkID].stacks = Targets[networkID].stacks + 1
-					Targets[networkID].time = os.clock() + 5
-				else
-					Targets[networkID] = {
-						stacks = 1,
-						time = os.clock() + 5,
-						object = object,
-					}
-				end
-			end
+AddDamageCallback(function(source,target,damage)
+	if source and target and source.valid and target.valid and Cooldown < GetGameTimer() then
+		if source.isMe and target.type == 'AIHeroClient' and target.team ~= myHero.team then
+			if Targets[target.networkID] and Targets[target.networkID].time > os.clock() then
+				Targets[target.networkID].stacks = Targets[target.networkID].stacks + 1
+				Targets[target.networkID].time = os.clock() + 5
+			else
+				Targets[target.networkID] = {
+					stacks = 1,
+					time = os.clock() + 5,
+					object = target,
+				}
+			end			
 		end
 	end
 end)
@@ -67,7 +54,7 @@ end)
 function GetBarPos()
 	local barPos = GetUnitHPBarPos(myHero)
 	local barOff = GetUnitHPBarOffset(myHero)
-	return barPos.x-43, math.floor(barPos.y + (barOff.y * 53) - 11)
+	return barPos.x-43, math.floor(barPos.y + (barOff.y * 53) - 19)
 end
 
 function DrawCircleSector(pos, stacks, time)
