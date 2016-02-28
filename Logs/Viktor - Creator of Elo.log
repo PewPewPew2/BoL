@@ -1,3 +1,5 @@
+--1.05@
+-Fixed error messages when using Korean Prediction@
 --1.04@
 -Added support for Korean Prediction@
 -Added Emote on Kill option (off by default)@
