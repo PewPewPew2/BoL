@@ -133,6 +133,10 @@ local channelingR = 0
 local pMenu = scriptConfig('Poppy', 'Poppy')
 pMenu:addParam('info', '-General-', SCRIPT_PARAM_INFO, '')  
 pMenu:addParam('Key', ' Carry Key', SCRIPT_PARAM_ONKEYDOWN, false, 32)
+pMenu:addParam('KS', 'Killsteal', SCRIPT_PARAM_ONKEYTOGGLE, true, ('T'):byte())
+pMenu:addParam('space', '', SCRIPT_PARAM_INFO, '')
+pMenu:addParam('info', '-Hammer Shock-', SCRIPT_PARAM_INFO, '')
+pMenu:addParam('KSQ', 'Killsteal Q', SCRIPT_PARAM_ONOFF, true)
 pMenu:addParam('space', '', SCRIPT_PARAM_INFO, '')
 pMenu:addParam('info', '-Heroic Charge-', SCRIPT_PARAM_INFO, '')
 pMenu:addParam('FlashKey', 'Flash E', SCRIPT_PARAM_ONKEYDOWN, false, ('C'):byte())
@@ -140,7 +144,8 @@ pMenu:addParam('ForceE', 'Force E (No Wall Check)', SCRIPT_PARAM_ONKEYDOWN, fals
 pMenu:addParam('space', '  Carry Key must be ON for Force', SCRIPT_PARAM_INFO, '')
 pMenu:addParam('space', '', SCRIPT_PARAM_INFO, '')
 pMenu:addParam('info', '-Keeper\'s Verdict-', SCRIPT_PARAM_INFO, '')
-pMenu:addParam('KS', 'Killsteal R', SCRIPT_PARAM_ONKEYTOGGLE, true, ('T'):byte())
+pMenu:addParam('ForceR', 'Force R', SCRIPT_PARAM_ONKEYDOWN, false, 20)
+pMenu:addParam('KSR', 'Killsteal R', SCRIPT_PARAM_ONOFF, true)
 pMenu:addParam('MinR', 'Cast R if can hit X', SCRIPT_PARAM_SLICE, 3, 2, 5)
 pMenu:addParam('SecondCast', 'Allow Auto Second Cast', SCRIPT_PARAM_ONOFF, true)
 local amDashing, poppyShield = 0, nil
@@ -187,9 +192,9 @@ local function checkE(t, from)
 	end
 end
 
-local function blackShieldCheck(unit)
+local function immuneCheck(unit)
 	local buffs = _Pewalk and _Pewalk.GetBuffs(unit) or {}
-	return buffs['blackshield'] == nil
+	return buffs['blackshield'] == nil and buffs['fioraw'] == nil
 end
 
 AddNewPathCallback(function(unit,startPos,endPos,isDash,dashSpeed,dashGravity,dashDistance)
@@ -198,7 +203,7 @@ AddNewPathCallback(function(unit,startPos,endPos,isDash,dashSpeed,dashGravity,da
 			amDashing = os.clock() + (GetDistance(startPos, endPos) / dashSpeed) - (GetLatency() * 0.0005)
 		elseif unit.team ~= myHero.team and amDashing < os.clock() then
 			local dp, bp = GetLinePoint(startPos.x, startPos.z, endPos.x, endPos.z, myHero.x, myHero.z)
-			if bp and GetDistanceSqr(dp) < 160000 then
+			if (bp and GetDistanceSqr(dp) < 160000) or GetDistanceSqr(endPos) < 160000 or GetDistanceSqr(startPos) < 160000 then
 				CastSpell(_W)
 			end
 		end
@@ -277,19 +282,28 @@ AddTickCallback(function()
 			if t then
 				local CP, HC = HP:GetPredict(HP_Q, t, Vector(myHero))
 				if CP then
-					CastSpell(_Q, CP.x, CP.z)
+					if HC > 1.4 then
+						CastSpell(_Q, CP.x, CP.z)
+					elseif pMenu.KS and pMenu.KSQ then
+						local qDamage = 15 + (25 * myHero:GetSpellData(_Q).level) + (.8 * myHero.addDamage) + (.06 * t.maxHealth)
+						if qDamage > t.health then
+							CastSpell(_Q, CP.x, CP.z)
+						end
+					end
 				end
 			end
 		end
 		if myHero:CanUseSpell(_E) == READY then
 			local t = _Pewalk.GetTarget(700)
 			if t then
-				if (checkE(t) and blackShieldCheck(t)) or pMenu.ForceE then
-					CastSpell(_E, t)
+				if checkE(t) or pMenu.ForceE then
+					if immuneCheck(t) then
+						CastSpell(_E, t)
+					end
 				end
 			end
 			for i, e in ipairs(Enemies) do
-				if e~=t and _Pewalk.ValidTarget(e, 700) and blackShieldCheck(e) then
+				if e~=t and _Pewalk.ValidTarget(e, 700) and immuneCheck(e) then
 					if _Pewalk.IsHighPriority(e, 2) and checkE(e) then
 						CastSpell(_E, e)
 					end
@@ -300,10 +314,10 @@ AddTickCallback(function()
 			local t = _Pewalk.GetTarget(450)
 			if t then
 				local CP, HC, NH = HP:GetPredict(HP_R, t, Vector(myHero), 3)
-				if CP and HC > 1 and NH >= pMenu.MinR then
+				if CP and HC > 1 and (NH >= pMenu.MinR or pMenu.ForceR) then
 					CastSpell(_R, CP.x, CP.z)
 					CastSpell2(_R, D3DXVECTOR3(CP.x,myHero.y,CP.z))
-				elseif pMenu.KS and HC > 0.75 then
+				elseif pMenu.KS and pMenu.KSR and HC > 0.75 then
 					local fd = 100 + (myHero:GetSpellData(_R).level * 100) + (myHero.addDamage * 0.9)
 					local ar = 100 / (100 + ((t.armor * myHero.armorPenPercent) - myHero.armorPen))
 					if t.health + t.shield < fd * ar then
@@ -317,7 +331,7 @@ AddTickCallback(function()
 	if pMenu.FlashKey and pFlash then
 		if myHero:CanUseSpell(_E) == READY and myHero:CanUseSpell(pFlash) == READY then
 			local t = _Pewalk.GetTarget(1000)
-			if t and blackShieldCheck(t) then
+			if t and immuneCheck(t) then
 				local myPos = NormalizeX(GetPath(myHero), myHero, (GetLatency()*0.0005)*myHero.ms)
 				local tPos = NormalizeX(GetPath(t), t, (GetLatency()*0.0005)*t.ms)
 				for _, p in ipairs(GeneratePoints(400, 7, tPos, myPos)) do
