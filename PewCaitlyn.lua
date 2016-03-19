@@ -6,6 +6,8 @@ local clock = os.clock
 local pairs, ipairs = pairs, ipairs
 local insert, remove = table.insert, table.remove
 local TEAM_ALLY, TEAM_ENEMY
+local DPExist = FileExist(LIB_PATH..'DivinePred.lua')
+local KPExist = FileExist(LIB_PATH..'KPrediction.lua')
 
 local function Normalize(x,z)
     local length  = sqrt(x * x + z * z)
@@ -61,6 +63,8 @@ AddLoadCallback(function()
 	end
 	require 'PewPacketLib'
 	require 'HPrediction'
+	if DPExist then require('DivinePred') end
+	if KPExist then require('KPrediction') end
 	local isLoaded, loadTime = false, clock()
 	AddTickCallback(function() 
 		if _Pewalk and not isLoaded then
@@ -77,7 +81,7 @@ end)
 class 'Caitlyn'
  
 function Caitlyn:__init()
-	local version = 2.8
+	local version = 2.9
 	ScriptUpdate(
 		version,
 		true,
@@ -247,8 +251,27 @@ function Caitlyn:__init()
 	self:CreateMenu()
 	
 	self.Packets = GetLoseVisionPacketData()
-	self.HPrediction = HPrediction()
-	self.Spell_Q = HPSkillshot({type = 'DelayLine', delay = 0.625, range = 1300, width = 180, speed = 2200})
+	
+	self.HP = HPrediction()
+	self.HP_Q = HPSkillshot({type = 'DelayLine', delay = 0.625, range = 1300, width = 180, speed = 2200})
+	if DPExist then
+		AddTickCallback(function()
+			if not self.DivineInitialized and DivinePred.isAuthed() then
+				self.DP = DivinePred()
+				self.DP_Q = LineSS(2200, 1300, 90, 625, huge)
+				self.DP:bindSS('Q', self.DP_Q, 0, 0)
+				self.DivineInitialized = true
+			end		
+		end)
+	end
+	if KPExist then
+		self.KP = KPrediction()
+		self.KP_Q = KPSkillshot({type = 'DelayLine', delay = 0.625, range = 1300, speed = 2200, width = 180})
+	end
+	if FHPrediction then
+		self.FH_Q = {range = 1300,speed = 2200,delay = 0.625,radius = 90,type = SkillShotType.SkillshotMissileLine,}
+	end	
+	
 	
 	AddTickCallback(function() self:Tick() end)
 	AddCreateObjCallback(function(o) self:CreateObj(o) end)
@@ -355,6 +378,7 @@ function Caitlyn:CreateMenu()
 		self.Menu.R:addParam('Key', 'Kill Key', SCRIPT_PARAM_ONKEYDOWN, false, ('R'):byte())
 		self.Menu.R:addParam('Auto', 'Use Automatically', SCRIPT_PARAM_ONOFF, false)
 	self.Menu:addParam('Combo', 'E - Q Combo', SCRIPT_PARAM_ONKEYDOWN, false, ('T'):byte())
+	self.Menu:addParam('Prediction', 'Prediction Selection', SCRIPT_PARAM_LIST, 1, {'HPrediction', 'Korean Prediction', 'Fun House Prediction', 'Divine Prediction',})
 end
 
 function Caitlyn:CreateObj(o)
@@ -438,7 +462,20 @@ function Caitlyn:GetCollision(unit, CastPos)
 end
 
 function Caitlyn:GetPrediction(unit, hitchance)
-	local CastPos, HitChance = self.HPrediction:GetPredict(self.Spell_Q, unit, myHero)
+	if self.Menu.Prediction==4 and DPExist then
+		if self.DivineInitialized then
+			local Status, CastPos, Percent = self.DP:predict('Q', target, StartPos)
+			return CastPos and Status == SkillShot.STATUS.SUCCESS_HIT and Percent * 0.03 >= hitchance and self:GetCollision(unit, CastPos), CastPos 
+		end			
+	elseif self.Menu.Prediction==3 and FHPrediction then
+		local CastPos, HitChance = FHPrediction.GetPrediction(self.FH_Q, unit, myHero)
+		return CastPos and HitChance >= hitchance and self:GetCollision(unit, CastPos), CastPos
+	elseif self.Menu.Prediction==2 and KPExist then
+		local CastPos, HitChance = self.KP:GetPrediction(self.KP_Q, unit, myHero)
+		return CastPos and HitChance >= hitchance * 0.5 and self:GetCollision(unit, CastPos), CastPos
+	end
+	
+	local CastPos, HitChance = self.HP:GetPredict(self.HP_Q, unit, myHero)
 	return CastPos and HitChance >= hitchance * 0.5 and self:GetCollision(unit, CastPos), CastPos
 end
 
@@ -540,7 +577,7 @@ function Caitlyn:Tick()
 	local OM = _Pewalk.GetActiveMode()
 	
 	if self.qCombo and self.qCombo.Time < clock() then
-		local CastPos, HitChance = self.HPrediction:GetPredict(self.Spell_Q, self.qCombo.target, Vector(self.qCombo.x, myHero.y, self.qCombo.z))	
+		local CastPos, HitChance = self.HP:GetPredict(self.HP_Q, self.qCombo.target, Vector(self.qCombo.x, myHero.y, self.qCombo.z))	
 		if CastPos then	
 			CastSpell(_Q, CastPos.x, CastPos.z)
 			self.qCombo = nil
