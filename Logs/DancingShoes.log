@@ -1,3 +1,12 @@
+--0.80@
+-Fixed a bug that could potentially cause you to get stuck@
+-Reworked almost all internal damage calculations (this was a lot of work!!)@
+-Improved internal polygon class, polygon calculations are now much faster@
+-Added Shield Only spells, these are spells like Alistars Passive and Amumus W, they aren't practical to evade though are very important for damage calculations, these are drawn by default though the script will never attempt to evade them@
+-Lifesavers have been reworked, you no longer set a minimum HP for them to trigger, with the greatly improved damage calculations, it will only cast when the target is going to die@
+-Added an option to Enable/Disable Lifesavers (on by default)@
+-Added global spells to options, ie. Bilgewater Cutlass (for shielding purposes again)@
+-There is a known bug with the snowball summoner spell (ARAMs)@
 --0.79@
 -Fixed an error when playing vs. Yasuo that was causing severe FPS loss@
 -Fixed an (major) error in skillshot shielding@
