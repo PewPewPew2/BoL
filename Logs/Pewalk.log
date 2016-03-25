@@ -1,3 +1,6 @@
+--0.28@
+-Fixed a bug with the BeforeAttackCallback@
+-Fixed several bugs with Kalista@
 --0.27@
 -Updated packets for 6.5@
 -Updated bonus damage for KogMaw W@
