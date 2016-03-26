@@ -1,3 +1,6 @@
+--0.81@
+-Fixed an update bug@
+-Added Aurelion Sols spells@
 --0.80@
 -Fixed a bug that could potentially cause you to get stuck@
 -Reworked almost all internal damage calculations (this was a lot of work!!)@
