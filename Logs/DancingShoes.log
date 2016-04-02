@@ -1,3 +1,8 @@
+--0.82@
+-Fixed a bug with Rengar E@
+-Added Zac E and R, Sivir E and Nocturne W to Disable Triggers@
+-The Shield CC option for all shields has been changed so that you may now select to shield only Hard CC, all CC or none at all@
+-Fixed a bug with all shields@
 --0.81@
 -Fixed an update bug@
 -Added Aurelion Sols spells@
