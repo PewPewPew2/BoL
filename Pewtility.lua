@@ -124,7 +124,7 @@ end
 -- end)
 
 AddLoadCallback(function()
-	local Version = 6.7
+	local Version = 6.71
 	TEAM_ALLY, TEAM_ENEMY = myHero.team, 300-myHero.team
 	MainMenu = scriptConfig('Pewtility', 'Pewtility')
 	MainMenu:addParam('update', 'Enable AutoUpdate', SCRIPT_PARAM_ONOFF, true)
@@ -1832,6 +1832,9 @@ function OTHER:__init()
 		local h = heroManager:getHero(i)
 		if h.team == TEAM_ALLY and not h.isMe and h.charName == 'Thresh' then
 			self.Packets = GetGameVersion():find('6.7.138.9658') and {
+				['Header'] = 0x00F1,
+				['vTable'] = 0xE99B8C,
+			} or GetGameVersion():find('6.7.139.4318') and {
 				['Header'] = 0x00F1,
 				['vTable'] = 0xE99B8C,
 			} or GetGameVersion():find('6.6.137.4261') and {
