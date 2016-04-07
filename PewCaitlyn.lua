@@ -81,7 +81,7 @@ end)
 class 'Caitlyn'
  
 function Caitlyn:__init()
-	local version = 2.9
+	local version = 3.0
 	ScriptUpdate(
 		version,
 		true,
@@ -233,6 +233,8 @@ function Caitlyn:__init()
 	}
 	self.Enemies = {}
 	self.LastCtrl = 0
+	self.AllowECast = {x=0,z=0}
+	self.PreventSpam = 0
 	self.DT = 0
 	for i=1, objManager.maxObjects do
 		local o = objManager:getObject(i)
@@ -300,8 +302,12 @@ function Caitlyn:ApplyBuff(source, unit, buff)
 end
 
 function Caitlyn:CastSpell(iSlot,startPos,endPos,target)
-	if iSlot == _E and self.Menu.E.Mouse and GetDistanceSqr(mousePos, endPos) < 10000 then
-		BlockSpell()
+	if iSlot == _E and not self.Menu.E.NeverBlock then
+		if ceil(self.AllowECast.x)~=ceil(endPos.x) or ceil(self.AllowECast.z)~=ceil(endPos.z) then
+			BlockSpell()
+		end		
+	elseif iSlot == _W then
+		self.PreventSpam = clock() + 5
 	end
 end
 
@@ -319,7 +325,11 @@ end
 
 function Caitlyn:CreateMenu()
 	self.Menu = scriptConfig('PewCaitlyn', 'Caitlyn')
-	self.Menu:addSubMenu('Piltover Peacemaker', 'Q')
+	self.Menu:addSubMenu('Piltover Peacemaker', 'Q')		
+		self.Menu.Q:addParam('info', '-Farming-', SCRIPT_PARAM_INFO, '')
+		self.Menu.Q:addParam('LastHit', 'Use for Last Hits', SCRIPT_PARAM_ONOFF, true)
+		self.Menu.Q:addParam('space', '', SCRIPT_PARAM_INFO, '')
+		self.Menu.Q:addParam('info', '-Combat-', SCRIPT_PARAM_INFO, '')
 		self.Menu.Q:addParam('Carry', 'Use in Carry Mode', SCRIPT_PARAM_ONOFF, true)
 		self.Menu.Q:addParam('Mixed', 'Harass in Mixed Mode', SCRIPT_PARAM_ONOFF, true)
 		self.Menu.Q:addParam('Clear', 'Harass in Clear Mode', SCRIPT_PARAM_ONOFF, true)
@@ -342,10 +352,12 @@ function Caitlyn:CreateMenu()
 		end)
 		self.Menu.Q:addParam('HitChance', 'Cast HitChance [3==Highest]', SCRIPT_PARAM_SLICE, 1.25, 0.5, 3, 1)
 		self.Menu.Q:addParam('Collision', 'Check for minion Collision', SCRIPT_PARAM_ONOFF, true)
-		self.Menu.Q:addParam('LastHit', 'Use for Last Hits', SCRIPT_PARAM_ONOFF, true)
+		self.Menu.Q:addParam('space', '', SCRIPT_PARAM_INFO, '')
+		self.Menu.Q:addParam('info', '-Miscellaneous-', SCRIPT_PARAM_INFO, '')
 		self.Menu.Q:addParam('Mana', 'Always Save Mana for E', SCRIPT_PARAM_ONOFF, true)
 		self.Menu.Q:addParam('Draw', 'Draw Peacemaker Range', SCRIPT_PARAM_LIST, 1, { 'Low FPS', 'Normal', 'None', })
 	self.Menu:addSubMenu('Yordle Snap Trap', 'W')
+		self.Menu.W:addParam('info', '-Combat-', SCRIPT_PARAM_INFO, '')
 		self.Menu.W:addParam('Path', 'Cast on Target Path', SCRIPT_PARAM_ONOFF, true)
 		self.Menu.W:addParam('Channel', 'Trap Channel Spells', SCRIPT_PARAM_ONOFF, true)
 		self.Menu.W:addParam('CrowdControl', 'Trap Crowd Control', SCRIPT_PARAM_ONOFF, true)
@@ -364,18 +376,29 @@ function Caitlyn:CreateMenu()
 				end
 			end
 		end
+		self.Menu.W:addParam('space', '', SCRIPT_PARAM_INFO, '')
+		self.Menu.W:addParam('info', '-Miscellaneous-', SCRIPT_PARAM_INFO, '')
 		self.Menu.W:addParam('Mana', 'Always Save Mana for E', SCRIPT_PARAM_ONOFF, true)
 		self.Menu.W:addParam('Draw', 'Draw Active Trap Timers', SCRIPT_PARAM_ONOFF, true)
 	self.Menu:addSubMenu('90 Caliber Net', 'E')
+		self.Menu.E:addParam('info', '-Keys-', SCRIPT_PARAM_INFO, '')
 		self.Menu.E:addParam('Mouse', 'Net To Mouse', SCRIPT_PARAM_ONKEYDOWN, false, ('E'):byte())
+		self.Menu.E:addParam('space', '', SCRIPT_PARAM_INFO, '')
+		self.Menu.E:addParam('info', '-Farming-', SCRIPT_PARAM_INFO, '')
+		self.Menu.E:addParam('LastHit', 'Use for Last Hits', SCRIPT_PARAM_ONOFF, false)
+		self.Menu.E:addParam('space', '', SCRIPT_PARAM_INFO, '')
+		self.Menu.E:addParam('info', '-Miscellaneous-', SCRIPT_PARAM_INFO, '')
+		self.Menu.E:addParam('NeverBlock', 'Never block E Casts', SCRIPT_PARAM_ONOFF, false)
 		self.Menu.E:addParam('Block', 'Block Failed Wall Jumps', SCRIPT_PARAM_ONOFF, true)
 		self.Menu.E:addParam('MinimumBlock', 'Do Not Block if Will Jump This Far', SCRIPT_PARAM_SLICE, 350, 20, 490)
-		self.Menu.E:addParam('LastHit', 'Use for Last Hits', SCRIPT_PARAM_ONOFF, false)
 	self.Menu:addSubMenu('Ace in the Hole', 'R')
+		self.Menu.R:addParam('info', '-Keys-', SCRIPT_PARAM_INFO, '')
+		self.Menu.R:addParam('Key', 'Kill Key', SCRIPT_PARAM_ONKEYDOWN, false, ('R'):byte())
+		self.Menu.R:addParam('info', '-Miscellaneous-', SCRIPT_PARAM_INFO, '')
+		self.Menu.R:addParam('space', '', SCRIPT_PARAM_INFO, '')
 		self.Menu.R:addParam('CrossHair', 'Draw Can Kill Alert', SCRIPT_PARAM_ONOFF, true)
 		self.Menu.R:addParam('Line', 'Draw Line to Killable Character', SCRIPT_PARAM_ONOFF, true)
 		self.Menu.R:addParam('Indicator', 'Draw Health Remaining Indicator', SCRIPT_PARAM_ONOFF, true)
-		self.Menu.R:addParam('Key', 'Kill Key', SCRIPT_PARAM_ONKEYDOWN, false, ('R'):byte())
 		self.Menu.R:addParam('Auto', 'Use Automatically', SCRIPT_PARAM_ONOFF, false)
 	self.Menu:addParam('Combo', 'E - Q Combo', SCRIPT_PARAM_ONKEYDOWN, false, ('T'):byte())
 	self.Menu:addParam('Prediction', 'Prediction Selection', SCRIPT_PARAM_LIST, 1, {'HPrediction', 'Korean Prediction', 'Fun House Prediction', 'Divine Prediction',})
@@ -592,6 +615,7 @@ function Caitlyn:Tick()
 				local bCast, CastPos = self:GetPrediction(target, 0.25)
 				if CastPos then
 					self.qCombo = {['Time'] = clock() + 0.22, ['x'] = myHero.x, ['z'] = myHero.z, ['target'] = target,}
+					self.AllowECast = {x=CastPos.x, z=CastPos.z}
 					CastSpell(_E, CastPos.x, CastPos.z)
 				end
 			end
@@ -633,7 +657,7 @@ function Caitlyn:Tick()
 			end
 		end
 	end	
-	if self.wReady and myHero.mana - 50 > 75 then
+	if self.wReady and myHero.mana - 50 > 75 and self.PreventSpam < clock() then
 		for i, active in ipairs(self.W.Active) do
 			if active.endTime > clock() then
 				if GetDistanceSqr(active.pos) < 640000 then
@@ -683,7 +707,9 @@ function Caitlyn:Tick()
 			end
 			local x, z = mousePos.x - myHero.x, mousePos.z - myHero.z
 			local nLength  = sqrt(x * x + z * z)
-			CastSpell(_E, myHero.x + ((x / nLength) * (-400)), myHero.z + ((z / nLength) * (-400)))
+			local CastPos = {x=myHero.x + ((x / nLength) * (-400)), z=myHero.z + ((z / nLength) * (-400))}
+			self.AllowECast = {x=CastPos.x, z=CastPos.z}
+			CastSpell(_E, CastPos.x, CastPos.z)
 		end
 		if (OM.Farm or OM.Clear) and self.Menu.E.LastHit then
 			local d = function() return (50 * myHero:GetSpellData(_E).level) + 30 + (myHero.ap * 0.8) end
@@ -691,6 +717,7 @@ function Caitlyn:Tick()
 			if t and GetDistanceSqr(t, self.SpawnPos) > GetDistanceSqr(self.SpawnPos)  then
 				local CastPos = self:MinionPrediction(t, 0.125, 80, 2000, myHero)
 				if CastPos and not self:MinionCollision(myHero, CastPos, 80, t, 0.125, 2000) then
+					self.AllowECast = {x=CastPos.x, z=CastPos.z}
 					CastSpell(_E, CastPos.x, CastPos.z)
 				end
 			end
