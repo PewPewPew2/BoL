@@ -82,7 +82,7 @@ function Zyra:__init()
 	-----------------------
 	--Update
 	-----------------------
-	local version = 2.2 --0.1 increments
+	local version = 2.3 --0.1 increments
 	local Downloads = {
 		[1] = {
 			version = version,
@@ -237,6 +237,7 @@ function Zyra:__init()
 		['Sion'] = -0.05,
 		['Thresh'] = -0.03,
 	}
+	self.Seeds = {}
 	_Pewalk.DisableSkillFarm(_Q)
 	_Pewalk.DisableSkillFarm(_E)
 	
@@ -408,6 +409,7 @@ function Zyra:CreateMenu()
 		self.Menu.W:addParam('space', '', SCRIPT_PARAM_INFO, '')
 		self.Menu.W:addParam('info', '-Miscellaneous-', SCRIPT_PARAM_INFO, '')
 		self.Menu.W:addParam('Draw', 'Draw Range', SCRIPT_PARAM_LIST, 3, { 'Low FPS', 'Normal', 'None', })
+		self.Menu.W:addParam('DrawTimer', 'Draw Seed Duration', SCRIPT_PARAM_ONOFF, true)
 	self.Menu:addSubMenu('Grasping Roots (E)', 'E')
 		self.Menu.E:addParam('info', '-Farming-', SCRIPT_PARAM_INFO, '')
 		self.Menu.E:addParam('Jungle', 'Use in Jungle Clear', SCRIPT_PARAM_ONOFF, true)
@@ -441,6 +443,10 @@ end
 
 function Zyra:CreateObj(o)
 	if o.valid then
+		if o.name == 'Seed' and o.team == myHero.team and GetDistanceSqr(o) > 10000 then
+			insert(self.Seeds, #self.Seeds+1, o)
+			self.Seeds[#self.Seeds].endTime = clock() + 31
+		end
 		if o.type == 'MissileClient' and o.spellOwner then
 			if o.spellOwner.charName == 'Yasuo' and o.spellOwner.team == TEAM_ENEMY then
 				if o.spellName == 'yasuowmovingwallmisl' then
@@ -459,6 +465,19 @@ function Zyra:Draw()
 	CircleDraw[self.Menu.W.Draw](myHero, self.Spells[_W].range, 0x0000FF)
 	CircleDraw[self.Menu.E.Draw](myHero, self.Spells[_E].range, 0x00FF00)
 	CircleDraw[self.Menu.R.Draw](myHero, self.Spells[_R].range, 0xFF9900)
+	if self.Menu.W.DrawTimer then
+		for i=#self.Seeds, 1, -1 do
+			local seed = self.Seeds[i]
+			if seed and seed.valid then
+				local timeRemaining = seed.endTime - clock()
+				if timeRemaining > 0 then
+					DrawText3D(('%u'):format(timeRemaining),seed.x,seed.y+200,seed.z,22,0xFFFF9900,true)
+				end
+			else
+				remove(self.Seeds, i)
+			end
+		end
+	end
 	if self.Menu.E.DrawPrediction then
 		if self.DrawPrediction.Time > clock() and self.DrawPrediction.EndPos then
 			local EndPos = NormalizeX(self.DrawPrediction.EndPos, self.DrawPrediction.StartPos, self.Spells[_E].range)
@@ -970,12 +989,14 @@ function Zyra:Tick()
 	local MB = _Pewalk.GetBuffs(myHero)
 	if MB['zyrapqueenofthorns'] and MB['zyrapqueenofthorns'].endT > GetGameTimer() then
 		if self.Menu.Passive then	
-			if self.qReady and myHero:GetSpellData(_Q).name == 'zyrapassivedeathmanager'then
-				local Target = _Pewalk.GetTarget(self.Spells.P.range)
-				if Target then
-					local CastPos, HitChance = self:GetPrediction(Target, 'P')
-					if CastPos then
-						CastSpell(_Q, CastPos.x, CastPos.z)
+			for i=_Q, _R do
+				if myHero:GetSpellData(i).name:lower() == 'zyrapassivedeathmanager'then
+					local Target = _Pewalk.GetTarget(self.Spells.P.range)
+					if Target then
+						local CastPos, HitChance = self:GetPrediction(Target, 'P', false, true)
+						if CastPos then
+							CastSpell(i, CastPos.x, CastPos.z)
+						end
 					end
 				end
 			end
@@ -1000,12 +1021,7 @@ function Zyra:Tick()
 			local zone = self.wZones[i]
 			if zone and zone.time > clock() then
 				if zone.valid and GetDistanceSqr(zone.pos) < self.Spells[_W].rangeSqr then
-					-- if zone.spell == _Q and zone.target then
-						-- local CP = NormalizeX(zone.target, zone.pos, 225)
-						-- CastSpell(_W, CP.x, CP.z)
-					-- else
-						CastSpell(_W, zone.pos.x, zone.pos.z)
-					-- end
+					CastSpell(_W, zone.pos.x, zone.pos.z)
 					if zone.spell == _E or zone.removeAfterCast then
 						remove(self.wZones, i)
 					end
