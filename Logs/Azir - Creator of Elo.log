@@ -1,3 +1,11 @@
+--0.25@
+-Major rework to large amounts of script core, vastly improved performance (much less FPS loss)@
+-Simplified some of the drawings@
+-Fixed a bug that you could never turn off (menu bug) the Sand Soldier range circles@
+-Reworked most of the last hit calculations@
+-Added Korean translation to menu@
+-Fixed a bug in the autoupdater that could potentially cause game freezes@
+-Minor tweaks to insec@
 --0.24@
 -Fixed a menu bug with lane clear Q@
 -Added support for Fun House Prediction@
