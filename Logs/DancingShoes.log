@@ -1,3 +1,7 @@
+--0.83@
+-Fixed a bug that was stopping the Flash menu to be created@
+-Fixed Gnar Q extending far past its actual end position@
+-Fixed Aurelion Sol Q from fog of war@
 --0.82@
 -Fixed a bug with Rengar E@
 -Added Zac E and R, Sivir E and Nocturne W to Disable Triggers@
