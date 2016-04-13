@@ -72,10 +72,10 @@ end)
 
 AddTickCallback(function()
 	for i=1, #Enemies do
-		if not Enemies[i].dead and not Enemies[i].visible and not Enemies[i].inFoW then
-			Enemies[i].inFoW = os.clock()
-		else
+		if Enemies[i].dead or Enemies[i].visible then
 			Enemies[i].inFoW = nil
+		elseif not Enemies[i].inFoW then
+			Enemies[i].inFoW = os.clock()
 		end
 	end
 
