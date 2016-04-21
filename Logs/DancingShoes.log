@@ -1,3 +1,7 @@
+--0.84@
+-Added Taric E to evasion spells@
+-Added Taric W to shields@
+-Fixed a bug with all shields@
 --0.83@
 -Fixed a bug that was stopping the Flash menu to be created@
 -Fixed Gnar Q extending far past its actual end position@
