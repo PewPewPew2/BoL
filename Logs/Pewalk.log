@@ -1,3 +1,12 @@
+--0.32@
+-Updated packets for 6.8@
+-Updated Ekko W passive bonus damage@
+-Updated Graves Passive bonus damage@
+-Updated KogMaw W bonus damage@
+-Updated Taric Passive bonus damage@
+-Made some improvements to AA resets@
+-Humanizer interval max is now set to 375ms@
+-Ashe W damage fixed (for last hit, lane clear)@
 --0.30@
 -Added support for Aurelion Sol@
 -Now properly attacks ZzRot Portals and their Void Spawns@
