@@ -9,7 +9,7 @@ end
 class "PewLibUpdate"
 
 function PewLibUpdate:__init(LocalVersion,UseHttps, Host, VersionPath, ScriptPath, SavePath, CallbackUpdate, CallbackNoUpdate, CallbackNewVersion,CallbackError)
-    self.LocalVersion = 6.8
+    self.LocalVersion = 6.81
     self.Host = 'raw.githubusercontent.com'
     self.VersionPath = '/BoL/TCPUpdater/GetScript5.php?script='..self:Base64Encode(self.Host..'/PewPewPew2/BoL/master/Versions/PewPacketLib.version')..'&rand='..math.random(99999999)
     self.ScriptPath = '/BoL/TCPUpdater/GetScript5.php?script='..self:Base64Encode(self.Host..'/PewPewPew2/BoL/master/PewPacketLib.lua')..'&rand='..math.random(99999999)
@@ -246,4 +246,15 @@ function GetGainVisionPacketData()
 		},
 	}
 	return _data[GameVersion]
+end
+
+function GetMasteryEmoteData()
+	local cVersion = GetGameVersion()
+	if cVersion:find('6.8.141.1875') then
+		return {
+			['Header'] = 0x009B,
+			['vTable'] = 0xEA0C48,
+			['hash'] = 0x92929292,
+		}
+	end
 end
