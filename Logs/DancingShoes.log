@@ -1,3 +1,6 @@
+--0.86@
+-Added Sion and KogMaw Passives to the disable triggers@
+-Evasion now accounts for remaining wind up time if you are currently casting a spell (improved evasion)@
 --0.85@
 -Added Sion Ult to disable triggers@
 -Minor changes to Evasion timings (movement only)@
