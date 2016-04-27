@@ -1,3 +1,6 @@
+--0.34@
+-Humanizer has been reworked, default is now set to 375ms, I recommend setting it to this if you haven't already@
+-Fixed Graves reload times@
 --0.32@
 -Updated packets for 6.8@
 -Updated Ekko W passive bonus damage@
