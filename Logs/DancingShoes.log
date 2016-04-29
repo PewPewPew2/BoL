@@ -1,3 +1,8 @@
+--0.90@
+-Fixed a bug that I created in v0.86 that caused evasion to permanently stop working after a Disable Trigger was triggered@
+-Fixed another bug that I created in v0.86 that caused the script to add attack windup times to evasion times (attacks can be cancelled)@
+--0.87-0.89@
+-Updates to prepare for Authorization system@
 --0.86@
 -Added Sion and KogMaw Passives to the disable triggers@
 -Evasion now accounts for remaining wind up time if you are currently casting a spell (improved evasion)@
