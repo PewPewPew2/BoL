@@ -1,3 +1,7 @@
+--0.35@
+-Randomizer added to the humanizer delay, default is 125ms@
+-Fixed some bonus damage timings when the target has a buff that produces the bonus, example Lux passive@
+-Improved the AfterAttack callback and fixed some bugs associated with it@
 --0.34@
 -Humanizer has been reworked, default is now set to 375ms, I recommend setting it to this if you haven't already@
 -Fixed Graves reload times@
