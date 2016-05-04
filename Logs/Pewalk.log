@@ -1,3 +1,5 @@
+--0.36@
+-Updated all bonus damages and spell damages from 6.9 update@
 --0.35@
 -Randomizer added to the humanizer delay, default is 125ms@
 -Fixed some bonus damage timings when the target has a buff that produces the bonus, example Lux passive@
