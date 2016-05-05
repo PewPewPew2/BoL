@@ -82,7 +82,7 @@ function Zyra:__init()
 	-----------------------
 	--Update
 	-----------------------
-	local version = 2.3 --0.1 increments
+	local version = 2.4 --0.1 increments
 	local Downloads = {
 		[1] = {
 			version = version,
@@ -153,6 +153,7 @@ function Zyra:__init()
 	--General Init
 	-----------------------	
 
+	self.wCasts = {}
 	self.Dashing = {}
 	self.LastPaths = {}
 	self.Enemies = {}
@@ -175,11 +176,11 @@ function Zyra:__init()
 			['bReady']	   = false,
 			['range'] 	   = 800,
 			['rangeSqr']   = 640000,
-			['radius'] 	   = 261,
+			['radius'] 	   = 95,
 			['speed'] 	   = huge,
-			['delay'] 	   = 0.95,
-			['damage']     = function() return (35 * myHero:GetSpellData(_Q).level) + 35 + (myHero.ap * 0.65) end,
-			['mana']	   = function() return 70 + (myHero:GetSpellData(_Q).level * 5) end,
+			['delay'] 	   = 0.85,
+			['damage']     = function() return (35 * myHero:GetSpellData(_Q).level) + 35 + (myHero.ap * 0.55) end,
+			['mana']	   = function() return 60 end,
 		},
 		[_W] = {
 			['bReady']	   = false,
@@ -197,7 +198,7 @@ function Zyra:__init()
 			['delay'] 	   = 0.25,
 			['width'] 	   = 70,
 			['damage']     = function() return 25 + (35 * myHero:GetSpellData(_E).level) + (myHero.ap * 0.5) end,
-			['mana']	   = function() return 70 + (myHero:GetSpellData(_E).level * 5) end,			
+			['mana']	   = function() return 65 + (myHero:GetSpellData(_E).level * 5) end,			
 		},
 		[_R] = {
 			['bReady']	   = false,
@@ -208,19 +209,16 @@ function Zyra:__init()
 			['damage'] 	   = function() return 95 + (myHero:GetSpellData(_R).level * 85) + (myHero.ap * 0.7) end,
 			['mana']	   = function() return 80 + (myHero:GetSpellData(_R).level * 20) end,
 		},
-		['P'] = {
-			['range'] 	   = 1450,
-			['rangeSqr']   = 2102500,
-			['speed']      = 1900,
-			['delay']      = 0.5,
-			['width'] 	   = 70,
-			['damage'] 	   = function() return 80 + (20 * myHero.level) end,
-		},
 	}
 	self.JungleW = {
 		['SRU_Red']  = true,
 		['SRU_RedMini']  = true,
-		['SRU_Dragon']  = true,
+		['SRU_Dragon_Elder']  = true,
+		['SRU_Dragon_Fire']  = true,
+		['SRU_Dragon_Water']  = true,
+		['SRU_Dragon_Air']  = true,
+		['SRU_Dragon_Earth']  = true,
+		['SRU_RiftHerald']  = true,
 		['SRU_Baron']  = true,
 		['SRU_Blue']  = true,		
 		['SRU_BlueMini']  = true,		
@@ -238,6 +236,7 @@ function Zyra:__init()
 		['Thresh'] = -0.03,
 	}
 	self.Seeds = {}
+	self.PlantDurations = {5,5,5,5.5,5.5,5.5,6,6,6,6.5,6.5,6.5,7,7,7,7.5,7.5,7.5}
 	_Pewalk.DisableSkillFarm(_Q)
 	_Pewalk.DisableSkillFarm(_E)
 	
@@ -246,14 +245,12 @@ function Zyra:__init()
 	-----------------------	
 
 	self.HP = HPrediction()
-	local SQ, SE, SP = self.Spells[_Q], self.Spells[_E], self.Spells.P
+	local SQ, SE = self.Spells[_Q], self.Spells[_E]
 	self.HP_Q = HPSkillshot({type = 'PromptCircle', delay = SQ.delay, range = SQ.range, radius = SQ.radius})
 	self.HP_E = HPSkillshot({type  = 'DelayLine', delay = SE.delay, range = SE.range, width = SE.width*2, speed = SE.speed, IsLowAccuracy = true}) 
-	self.HP_P = HPSkillshot({type  = 'DelayLine', delay = SP.delay, range = SP.range, width = SP.width*2, speed = SP.speed, IsLowAccuracy = true})
 	if FHPrediction then
 		self.FH_Q = {range = SQ.range, speed = huge, delay = SQ.delay, radius = SQ.radius, type = SkillShotType.SkillshotCircle,}
 		self.FH_E = {range = SE.range, speed = SE.speed, delay = SE.delay, radius = SE.width, type = SkillShotType.SkillshotMissileLine,}
-		self.FH_P = {range = SP.range, speed = SP.speed, delay = SP.delay, radius = SP.width, type = SkillShotType.SkillshotMissileLine,}		
 	end
 	if DPExist then
 		AddTickCallback(function()
@@ -261,10 +258,8 @@ function Zyra:__init()
 				self.DP = DivinePred()
 				self.DP_Q = CircleSS(huge, SQ.range, SQ.radius, SQ.delay, huge)
 				self.DP_E = LineSS(SE.speed, SE.range, SE.width, SE.delay, huge)
-				self.DP_P = LineSS(SP.speed, SP.range, SP.width, SP.delay, huge)
 				self.DP:bindSS('Q',self.DP_Q,50,50)
 				self.DP:bindSS('E',self.DP_E,50,50)
-				self.DP:bindSS("Zyra's Passive",self.DP_P,50,50)
 				self.DivineInitialized = true
 			end		
 		end)
@@ -323,12 +318,14 @@ function Zyra:CastSpell(iSlot,startPos,endPos,target)
 	if iSlot == _Q or iSlot == _E then
 		for i=#self.wZones, 1, -1 do
 			local zone = self.wZones[i]
-			if zone and zone.time > clock() and GetDistanceSqr(zone.pos, endPos) < (iSlot == _Q and 40000 or 3600) then
+			if zone and zone.time > clock() and GetDistanceSqr(zone.pos, endPos) < 90000 then
 				self.wZones[i].valid = true
 			else
 				remove(self.wZones, i)
 			end
 		end
+	elseif iSlot == _W then
+		self.wCasts[clock()] = Vector(endPos)
 	end
 end
 
@@ -435,7 +432,6 @@ function Zyra:CreateMenu()
 		self.Menu.R:addParam('3', '-Miscellaneous-', SCRIPT_PARAM_INFO, '')
 		self.Menu.R:addParam('Draw', 'Draw Range', SCRIPT_PARAM_LIST, 3, { 'Low FPS', 'Normal', 'None', })
 
-	self.Menu:addParam('Passive', 'Cast Passive', SCRIPT_PARAM_ONOFF, true)
 	self.Menu:addParam('Prediction', 'Prediction Selection', SCRIPT_PARAM_LIST, 1, { 'HPrediction', DPExist and 'Divine Prediction' or 'Divine Prediction Not Found!', FHPrediction and 'Fun House Prediction' or 'Fun House Prediction Not Found!', })
 
 	self:Load()
@@ -444,8 +440,16 @@ end
 function Zyra:CreateObj(o)
 	if o.valid then
 		if o.name == 'Seed' and o.team == myHero.team and GetDistanceSqr(o) > 10000 then
+			local duration = 46
+			for time, endPos in pairs(self.wCasts) do
+				if clock() - time < 1 then
+					duration = 61
+				end
+				self.wCasts[time] = nil
+			end
+			
 			insert(self.Seeds, #self.Seeds+1, o)
-			self.Seeds[#self.Seeds].endTime = clock() + 31
+			self.Seeds[#self.Seeds].endTime = clock() + duration
 		end
 		if o.type == 'MissileClient' and o.spellOwner then
 			if o.spellOwner.charName == 'Yasuo' and o.spellOwner.team == TEAM_ENEMY then
@@ -469,9 +473,15 @@ function Zyra:Draw()
 		for i=#self.Seeds, 1, -1 do
 			local seed = self.Seeds[i]
 			if seed and seed.valid then
+				if not seed.transformed and seed.health ~= 1 then
+					seed.endTime = clock() + self.PlantDurations[myHero.level < 19 and myHero.level or 18]
+					seed.transformed = true
+				end
 				local timeRemaining = seed.endTime - clock()
-				if timeRemaining > 0 then
+				if timeRemaining > 10 then
 					DrawText3D(('%u'):format(timeRemaining),seed.x,seed.y+200,seed.z,22,0xFFFF9900,true)
+				elseif timeRemaining > 0 then
+					DrawText3D(('%.1f'):format(timeRemaining),seed.x,seed.y+200,seed.z,22,0xFFFF9900,true)
 				end
 			else
 				remove(self.Seeds, i)
@@ -724,6 +734,7 @@ function Zyra:GetPrediction(target, spell, draw, hpOnly)
 		end
 	end
 	if self.Menu.Prediction == 3 and FHPrediction and not hpOnly then
+		self.FH_Q.radius = 95 + target.boundingRadius
 		local CastPos, HitChance = FHPrediction.GetPrediction(self['FH_'..spell], target, myHero)
 		if draw and CastPos then
 			self.DrawPrediction.EndPos = CastPos
@@ -747,6 +758,7 @@ function Zyra:GetPrediction(target, spell, draw, hpOnly)
 		end
 		return CastPos, 0	
 	else
+		self.HP_Q.Properties.Raw.radius = 95 + target.boundingRadius
 		local CastPos, HitChance = self.HP:GetPredict(self['HP_'..spell], target, myHero)
 		if draw then
 			self.DrawPrediction.EndPos = CastPos
@@ -986,23 +998,6 @@ function Zyra:Tick()
 	self.rReady = myHero:CanUseSpell(_R) == READY
 	self.iReady = self.Ignite and myHero:CanUseSpell(self.Ignite) == READY
 	self.wCount = self.wReady and ReadDWORD(GetPtrS(myHero:GetSpellData(_W))+0x18) or 0
-	local MB = _Pewalk.GetBuffs(myHero)
-	if MB['zyrapqueenofthorns'] and MB['zyrapqueenofthorns'].endT > GetGameTimer() then
-		if self.Menu.Passive then	
-			for i=_Q, _R do
-				if myHero:GetSpellData(i).name:lower() == 'zyrapassivedeathmanager'then
-					local Target = _Pewalk.GetTarget(self.Spells.P.range)
-					if Target then
-						local CastPos, HitChance = self:GetPrediction(Target, 'P', false, true)
-						if CastPos then
-							CastSpell(i, CastPos.x, CastPos.z)
-						end
-					end
-				end
-			end
-		end
-		return
-	end
 	if self.wReady then
 		if self.Menu.W.Vision and self.wCount > self.Menu.W.Vision2-1 then
 			for i=#self.Spells[_W].Active, 1, -1 do
