@@ -96,7 +96,7 @@ for charName, channel in pairs(Channels) do
 end
 
 AddLoadCallback(function()
-	local version = 0.02
+	local version = 0.03
 	for i=1, heroManager.iCount do
 		local h = heroManager:getHero(i)
 		if h and h.team~=myHero.team then
@@ -156,7 +156,7 @@ AddTickCallback(function()
 			for i=1, #Enemies do
 				local e = Enemies[i]
 				if not e.dead and not e.visible and e.inFoW and os.clock() - e.inFoW < 2 then
-					if e.health / e.maxHealth < 20 and GetDistanceSqr(e) < 1440000 then
+					if e.health / e.maxHealth < .4 and GetDistanceSqr(e) < 1440000 then
 						local p = NormalizeX(e.endPath, e, 100)
 						if IsWallOfGrass(D3DXVECTOR3(p.x,e.y,p.z)) or CalculatePath(myHero,D3DXVECTOR3(p.x,e.y,p.z)).count > 3 then
 							CastSpell(_E, e.x, e.z)
