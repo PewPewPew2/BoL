@@ -1,3 +1,12 @@
+--0.37@
+-Updated Anivia and Swains attack missile speed@
+-Updated bonus damage from Bloodrazor and Guinsoo@
+-Fixed some windup issues with RekSai Q and Tarics passive@
+-Fixed a bug with Kalista with high attack speed@
+-Fixed some damage predictions for minions that do not have targets@
+-Fixed some skill farm timings@
+-Added Lulu Pix bonus damage, still needs more testing though@
+-Improved skill farming with reset spells that apply bonus damages (Vayne Q, for example)@
 --0.36@
 -Updated all bonus damages and spell damages from 6.9 update@
 --0.35@
