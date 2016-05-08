@@ -5,8 +5,10 @@
 -Fixed a bug with Kalista with high attack speed@
 -Fixed some damage predictions for minions that do not have targets@
 -Fixed some skill farm timings@
--Added Lulu Pix bonus damage, still needs more testing though@
 -Improved skill farming with reset spells that apply bonus damages (Vayne Q, for example)@
+-Added Lulu Pix bonus damage, still needs more testing though@
+-Added Attack Speed limiter@
+-Restructured the menu so that all the humanizer options are grouped together@
 --0.36@
 -Updated all bonus damages and spell damages from 6.9 update@
 --0.35@
