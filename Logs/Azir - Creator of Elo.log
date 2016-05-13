@@ -2,6 +2,7 @@
 -Standalone Pewalk is now required!!@
 -Fixed an error while downloading menu languages@
 -Fixed an Authorization error that would cause a nil error on load occasionally@
+-Made small improvements to Q and R casting@
 --0.28@
 -Updated to improve load time@
 --0.27@
