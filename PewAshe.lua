@@ -15,7 +15,7 @@ function NormalizeX(v1, v2, length)
 end
 
 local HP, HP_W, Menu
-local Enemies = {}
+local Enemies, ActiveChannels = {}, {}
 local Channels = {
 	['FiddleSticks'] = {
 		['crowstorm'] = 'Fiddlesticks: Crowstorm [R]',
@@ -62,49 +62,20 @@ else
 	return
 end
 
-Menu = scriptConfig('PewAshe', 'PewAshe')
-Menu:addParam('space', '', SCRIPT_PARAM_INFO, '') 
-Menu:addParam('info', 'Uses Pewalks hotkeys.', SCRIPT_PARAM_INFO, '') 
-Menu:addParam('space', '', SCRIPT_PARAM_INFO, '') 
-Menu:addParam('info', '-Ranger\'s Focus-', SCRIPT_PARAM_INFO, '') 
-Menu:addParam('CarryQ', 'Use in Carry Mode', SCRIPT_PARAM_ONOFF, true)
-Menu:addParam('ClearQ', 'Use in Skill Lane Clear', SCRIPT_PARAM_ONOFF, true)
-
-Menu:addParam('space', '', SCRIPT_PARAM_INFO, '') 
-Menu:addParam('info', '-Volley-', SCRIPT_PARAM_INFO, '') 
-Menu:addParam('CarryW', 'Use in Carry Mode', SCRIPT_PARAM_ONOFF, true)
-Menu:addParam('MixedW', 'Harass in Mixed Mode', SCRIPT_PARAM_ONOFF, true)
-Menu:addParam('ClearW', 'Harass in Lane Clear', SCRIPT_PARAM_ONOFF, true)
-Menu:addParam('HarassMana', 'Minimum Harass Mana', SCRIPT_PARAM_SLICE, 40, 0, 100)
-
-Menu:addParam('space', '', SCRIPT_PARAM_INFO, '') 
-Menu:addParam('info', '-Hawkshot-', SCRIPT_PARAM_INFO, '')
-Menu:addParam('LoseVision', 'Use on lose vision of killable target.', SCRIPT_PARAM_ONOFF, true)
-Menu:addParam('info', '(While in Carry Mode only!)', SCRIPT_PARAM_INFO, '')
-
-Menu:addParam('space', '', SCRIPT_PARAM_INFO, '') 
-Menu:addParam('info', '-Enchanted Crystal Arrow-', SCRIPT_PARAM_INFO, '')
-Menu:addParam('CastR', 'Cast Key', SCRIPT_PARAM_ONKEYDOWN, false, ('C'):byte())
-Menu:addParam('MaxRange', 'Max Target Range', SCRIPT_PARAM_SLICE, 1100, 500, 3000)
-Menu:addSubMenu('Channels', 'Channels')
-Menu.Channels:addParam('info', 'Auto Cast R to break Channels', SCRIPT_PARAM_INFO, '') 
-Menu.Channels:addParam('space', '', SCRIPT_PARAM_INFO, '') 
-for charName, channel in pairs(Channels) do
-	for spellName, menuName in pairs(channel) do
-		Menu.Channels:addParam(spellName, menuName, SCRIPT_PARAM_ONOFF, true) 
-	end
-end
-
 AddLoadCallback(function()
-	local version = 0.03
+	local version = 0.04
 	for i=1, heroManager.iCount do
 		local h = heroManager:getHero(i)
 		if h and h.team~=myHero.team then
 			Enemies[#Enemies+1] = h
 		end
 	end
-	DelayAction(function()
-		if _Pewalk.AddAfterAttackCallback then 
+	Ashe_CreateMenu()
+	
+	local initComplete, initStart = false, os.clock()
+	AddTickCallback(function()
+		if initComplete then return end
+		if _Pewalk and _Pewalk.AddAfterAttackCallback then
 			_Pewalk.AddAfterAttackCallback(function(target)
 				local AM = _Pewalk.GetActiveMode()
 				if target.type == 'AIHeroClient' and AM.Carry and Menu.CarryQ then
@@ -119,11 +90,14 @@ AddLoadCallback(function()
 					end					
 				end
 			end)
-		else
-			Print('Pewalk not found!', true)
+			AddTickCallback(function() Ashe_Tick() end)
+			AddAnimationCallback(function(...) Ashe_Animation(...) end)
+			initComplete = true
+		elseif initStart + 2 < os.clock() then
+			Print('Pewalk not found!', true)			
+			initComplete = true
 		end
-	end, 2)
-
+	end)
 	ScriptUpdate(
 		version,
 		true, 
@@ -138,7 +112,7 @@ AddLoadCallback(function()
 	)
 end)
 
-AddTickCallback(function()
+function Ashe_Tick()
 	for i=1, #Enemies do
 		if Enemies[i].dead or Enemies[i].visible then
 			Enemies[i].inFoW = nil
@@ -150,7 +124,7 @@ AddTickCallback(function()
 	local AM = _Pewalk.GetActiveMode()
 	if AM.Carry and _Pewalk.CanMove() then
 		if Menu.CarryW then
-			CastW()
+			Ashe_CastW()
 		end
 		if myHero:CanUseSpell(_E) == READY then
 			for i=1, #Enemies do
@@ -165,7 +139,13 @@ AddTickCallback(function()
 				end
 			end
 		end
-		if myHero:CanUseSpell(_R) == READY and Menu.CastR then
+	elseif (AM.LaneClear and Menu.ClearW) or (AM.Mixed and Menu.MixedW) then
+		if myHero.mana / myHero.maxMana > Menu.HarassMana * .01 then
+			Ashe_CastW()
+		end
+	end
+	if myHero:CanUseSpell(_R) == READY then
+		if Menu.CastR then
 			local t = _Pewalk.GetTarget(Menu.MaxRange)
 			if t then
 				local CP, HC = HP:GetPredict(HP_R, t, myHero)
@@ -174,24 +154,70 @@ AddTickCallback(function()
 				end			
 			end
 		end
-	elseif (AM.LaneClear and Menu.ClearW) or (AM.Mixed and Menu.MixedW) then
-		if myHero.mana / myHero.maxMana > Menu.HarassMana * .01 then
-			CastW()
-		end
-	end
-end)
-
-AddAnimationCallback(function(unit,animation)
-	if unit.valid and unit.type == 'AIHeroClient' and unit.team ~= myHero.team and Channels[unit.charName] then		
-		if myHero:CanUseSpell(_R) == READY and unit.spell and Channels[unit.charName][unit.spell.name:lower()] then
-			if Menu.Channels[unit.spell.name:lower()] and GetDistanceSqr(unit) < 1000000 then
-				CastSpell(_R, unit.x, unit.z)
+		for i, enemy in ipairs(Enemies) do
+			if ActiveChannels[enemy.networkID] and enemy.spell then
+				if ActiveChannels[enemy.networkID] > os.clock() and unit.spell then
+					if _Pewalk.ValidTarget(enemy,1200) then
+						local CP, HC = HP:GetPredict(HP_R, enemy, myHero)
+						if CP and HC > -1 then
+							CastSpell(_R, CP.x, CP.z)
+						end
+					end
+				else
+					ActiveChannels[enemy.networkID] = nil
+				end
 			end
 		end
 	end
-end)
+end
 
-function CastW()
+function Ashe_CreateMenu()
+	Menu = scriptConfig('PewAshe', 'PewAshe')
+	Menu:addParam('space', '', SCRIPT_PARAM_INFO, '') 
+	Menu:addParam('info', 'Uses Pewalks hotkeys.', SCRIPT_PARAM_INFO, '') 
+	Menu:addParam('space', '', SCRIPT_PARAM_INFO, '') 
+	Menu:addParam('info', '-Ranger\'s Focus-', SCRIPT_PARAM_INFO, '') 
+	Menu:addParam('CarryQ', 'Use in Carry Mode', SCRIPT_PARAM_ONOFF, true)
+	Menu:addParam('ClearQ', 'Use in Skill Lane Clear', SCRIPT_PARAM_ONOFF, true)
+
+	Menu:addParam('space', '', SCRIPT_PARAM_INFO, '') 
+	Menu:addParam('info', '-Volley-', SCRIPT_PARAM_INFO, '') 
+	Menu:addParam('CarryW', 'Use in Carry Mode', SCRIPT_PARAM_ONOFF, true)
+	Menu:addParam('MixedW', 'Harass in Mixed Mode', SCRIPT_PARAM_ONOFF, true)
+	Menu:addParam('ClearW', 'Harass in Lane Clear', SCRIPT_PARAM_ONOFF, true)
+	Menu:addParam('HarassMana', 'Minimum Harass Mana', SCRIPT_PARAM_SLICE, 40, 0, 100)
+
+	Menu:addParam('space', '', SCRIPT_PARAM_INFO, '') 
+	Menu:addParam('info', '-Hawkshot-', SCRIPT_PARAM_INFO, '')
+	Menu:addParam('LoseVision', 'Use on lose vision of killable target.', SCRIPT_PARAM_ONOFF, true)
+	Menu:addParam('info', '(While in Carry Mode only!)', SCRIPT_PARAM_INFO, '')
+
+	Menu:addParam('space', '', SCRIPT_PARAM_INFO, '') 
+	Menu:addParam('info', '-Enchanted Crystal Arrow-', SCRIPT_PARAM_INFO, '')
+	Menu:addParam('CastR', 'Cast Key', SCRIPT_PARAM_ONKEYDOWN, false, ('C'):byte())
+	Menu:addParam('MaxRange', 'Max Target Range', SCRIPT_PARAM_SLICE, 1100, 500, 3000)
+	
+	Menu:addSubMenu('Channels', 'Channels')
+		Menu.Channels:addParam('info', 'Auto Cast R to break Channels', SCRIPT_PARAM_INFO, '') 
+		Menu.Channels:addParam('space', '', SCRIPT_PARAM_INFO, '') 
+		for charName, channel in pairs(Channels) do
+			for spellName, menuName in pairs(channel) do
+				Menu.Channels:addParam(spellName, menuName, SCRIPT_PARAM_ONOFF, true) 
+			end
+		end
+end
+
+function Ashe_Animation(unit, animation)
+	if unit.valid and unit.type == 'AIHeroClient' and unit.team ~= myHero.team and Channels[unit.charName] then		
+		if unit.spell and Channels[unit.charName][unit.spell.name:lower()] then
+			if Menu.Channels[unit.spell.name:lower()] then
+				ActiveChannels[unit.networkID] = os.clock() + 2
+			end
+		end
+	end
+end
+
+function Ashe_CastW()
 	if myHero:CanUseSpell(_W) == READY then
 		local t = _Pewalk.GetTarget(1000,true)
 		if t then
