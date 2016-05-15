@@ -1,3 +1,8 @@
+--1.13@
+-Added the first tick of Chaos Storm damage to the Advanced Kill Secure calculations, this will make it a bit more trigger happy, let me know if its a bit too much@
+-Advanced Kill Secure now correctly calculates the modified damage to Malzahar while his passive is available@
+-Added Malzahars Passive to the shield check for Harass, this disallows harass mode to target Malzahar while his passive is available (DOES NOT AFFECT CARRY MODE)@
+-Added support for proper HP bar drawings while using Pewtility@
 --1.12@
 -Updated for 6.9 changes@
 --1.11@
