@@ -7,6 +7,8 @@ local COLOR_TRANS_GREEN, COLOR_TRANS_RED, COLOR_TRANS_YELLOW, COLOR_ORANGE, COLO
 local MainMenu, IDBytes, GlobalAnchors = nil, nil, {}
 local menuKey = (GetSave('scriptConfig') and GetSave('scriptConfig')['Menu']) and GetSave('scriptConfig')['Menu']['menuKey'] or 16
 
+_G.PewtilityHPBars = {Active = false, Addon = {},}
+
 local _Game, _Map, _HUD
 
 local function GetGame2()
@@ -124,7 +126,7 @@ end
 -- end)
 
 AddLoadCallback(function()
-	local Version = 6.9
+	local Version = 6.91
 	TEAM_ALLY, TEAM_ENEMY = myHero.team, 300-myHero.team
 	MainMenu = scriptConfig('Pewtility', 'Pewtility')
 	MainMenu:addParam('update', 'Enable AutoUpdate', SCRIPT_PARAM_ONOFF, true)
@@ -1428,8 +1430,10 @@ function SKILLS:CreateMenu()
 end
 
 function SKILLS:Draw()
+	PewtilityHPBars.Active = true
 	local s = self.Menu.Scale
-	self.Sprite:SetScale(GetScale2(0.3, s), GetScale2(0.3, s))	
+	self.Sprite:SetScale(GetScale2(0.3, s), GetScale2(0.3, s))
+	local AddonText = {}
 	for _, info in ipairs(self.Heroes) do
 		if info.hero.valid and info.hero.visible and not info.hero.dead and ((info.hero.team == myHero.team and self.Menu.Ally) or (info.hero.team ~= myHero.team and self.Menu.Enemy)) then
 			local barX, barY = self:BarData(info.hero)
@@ -1439,7 +1443,38 @@ function SKILLS:Draw()
 				local hpMidX = barX + GetScale(102 + (187 * info.hero.health / (info.hero.maxHealth+info.hero.shield)), s)
 				local hpY = GetScale(17, s)
 				local hpFS = GetScale(30,s)
-				DrawLine(barX + GetScale(102,s), barY + hpY, hpMidX, barY + hpY,hpFS,info.hero.team==TEAM_ALLY and 0xFF0088FF or 0xFFFF4400)
+				local baseHP = barX + GetScale(102,s)
+				DrawLine(baseHP, barY + hpY, hpMidX, barY + hpY,hpFS,info.hero.team==TEAM_ALLY and 0xFF0088FF or 0xFFFF4400)
+				
+				if PewtilityHPBars.Addon[info.hero.networkID] then
+					local xOffset = hpMidX
+					for i, barInfo in ipairs(PewtilityHPBars.Addon[info.hero.networkID]) do
+						local damageOffset = GetScale(187 - (187 * (info.hero.maxHealth-barInfo.damage) / (info.hero.maxHealth+info.hero.shield)), s)
+						local newOffset = xOffset - damageOffset
+						if newOffset < baseHP then
+							newOffset = baseHP - 1
+							table.insert(AddonText, {
+								text = PewtilityHPBars.Addon[info.hero.networkID].bMana and 'Not enough Mana!' or 'Can Kill!',
+								size = GetScale(16, s),
+								x = baseHP,
+								y = barY - GetScale(10, s)
+							})	
+						end						
+						DrawLine(xOffset,barY + hpY,newOffset,barY + hpY,hpFS,barInfo.color)
+						if barInfo.text then
+							table.insert(AddonText, {
+								text = barInfo.text,
+								size = GetScale(13, s),
+								x = newOffset+2,
+								y = barY + GetScale(6, s)
+							})
+						end
+						if newOffset < baseHP then break end
+						xOffset = newOffset
+					end	
+					PewtilityHPBars.Addon[info.hero.networkID] = nil
+				end
+				
 				if info.hero.shield > 0 then
 					local shieldMidX = hpMidX + GetScale(187 * info.hero.shield / info.hero.maxHealth, s)
 					DrawLine(hpMidX, barY + hpY, shieldMidX,barY + hpY,hpFS,0xFFCCCCCC)
@@ -1506,6 +1541,10 @@ function SKILLS:Draw()
 				
 				self.Sprite:Draw(barX, barY, 255)
 				
+				for _, tDraw in ipairs(AddonText) do
+					DrawText(tDraw.text,tDraw.size,tDraw.x,tDraw.y,0xFFFFFFFF)					
+				end
+				
 				if self.Menu.Text then
 					local hText = ('%u / %u'):format(info.hero.health + info.hero.shield, info.hero.maxHealth)
 					local hTextArea = GetTextArea(hText, hpY)
@@ -1523,6 +1562,7 @@ function SKILLS:Draw()
 end
 
 function SKILLS:DrawOLD()
+	PewtilityHPBars.Active = false
 	for _, info in ipairs(self.Heroes) do
 		if info.hero.valid and info.hero.visible and not info.hero.dead and ((info.hero.team == myHero.team and self.Menu.Ally) or (info.hero.team ~= myHero.team and self.Menu.Enemy)) then
 			local barX, barY = self:BarData(info.hero)
