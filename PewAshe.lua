@@ -63,7 +63,7 @@ else
 end
 
 AddLoadCallback(function()
-	local version = 0.04
+	local version = 0.05
 	for i=1, heroManager.iCount do
 		local h = heroManager:getHero(i)
 		if h and h.team~=myHero.team then
@@ -93,7 +93,7 @@ AddLoadCallback(function()
 			AddTickCallback(function() Ashe_Tick() end)
 			AddAnimationCallback(function(...) Ashe_Animation(...) end)
 			initComplete = true
-		elseif initStart + 2 < os.clock() then
+		elseif initStart + 20 < os.clock() then
 			Print('Pewalk not found!', true)			
 			initComplete = true
 		end
