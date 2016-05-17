@@ -63,7 +63,7 @@ else
 end
 
 AddLoadCallback(function()
-	local version = 0.05
+	local version = 0.06
 	for i=1, heroManager.iCount do
 		local h = heroManager:getHero(i)
 		if h and h.team~=myHero.team then
@@ -156,7 +156,7 @@ function Ashe_Tick()
 		end
 		for i, enemy in ipairs(Enemies) do
 			if ActiveChannels[enemy.networkID] and enemy.spell then
-				if ActiveChannels[enemy.networkID] > os.clock() and unit.spell then
+				if ActiveChannels[enemy.networkID] > os.clock() and enemy.spell then
 					if _Pewalk.ValidTarget(enemy,1200) then
 						local CP, HC = HP:GetPredict(HP_R, enemy, myHero)
 						if CP and HC > -1 then
