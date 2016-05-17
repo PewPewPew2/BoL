@@ -1,3 +1,13 @@
+--0.93@
+-Updated Tarics W range for 6.9@
+-Fixed error spam on Cassiopeia W@
+-Improved Double Click to Remove! (aesthetic improvement only)@
+-Fixed TF Q, Talon W, KhaZix W and Ashe W occasionally not detecting a projectile@
+-Fixed Fiora Parry, Nautilus shield and Diana shield@
+-Fixed a bug that would occasionally allow you to auto attack while evading@
+-Added option Strictly Obey Angle, this prohibits Dancing Shoes from path finding outside of the Maximum Evasion Angle (this is a humanizer feature, be warned, if you turn this on, evasion rates will drop!!)@
+-Disable Evasion option renamed to Disable Movement Evasion, now allows the script to still shield/dash while active (unless of course you have them disabled as well)@
+-Added option Maximum Dash Angle to all dashes, this sets the maximum angle the script is allowed to in respect to the active anchor@
 --0.92@
 -Updated for 6.9 patch, too many changes to list here, check the thread if you'd like a detailed explanation@
 --0.91@
