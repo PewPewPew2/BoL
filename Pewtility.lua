@@ -126,7 +126,7 @@ end
 -- end)
 
 AddLoadCallback(function()
-	local Version = 6.92
+	local Version = 6.93
 	TEAM_ALLY, TEAM_ENEMY = myHero.team, 300-myHero.team
 	MainMenu = scriptConfig('Pewtility', 'Pewtility')
 	MainMenu:addParam('update', 'Enable AutoUpdate', SCRIPT_PARAM_ONOFF, true)
@@ -1674,7 +1674,7 @@ function TIMERS:__init()
 			[0xFFFF8F1F] = { ['pos'] = Vector(9689, -190, 9524), ['time'] = 300, ['mapPos'] = GetMinimap(Vector(9689, -190, 9524)), }, --Top Inhibitor			
 		},
 	} or GetGameVersion():sub(1,4) == '6.10' and {
-		['Jungle'] = { ['Header'] = 0x0046, ['campPos'] = 15, ['idPos'] = 20,},
+		['Jungle'] = { ['Header'] = 0x0046, ['campPos'] = 20, ['idPos'] = 10,},
 		['Inhibitor'] = { ['Header'] = 0x0056, ['pos'] = 2, },  --pick the one that is size 19
 		['Dragon'] = { ['pos'] =  Vector(9866, 60, 4414), ['time'] = 360, ['mapPos'] = GetMinimap(Vector(9866, 60, 4414)),  },
 		['Baron'] = { ['pos'] = Vector(4950, 60, 10400), ['time'] = 420, ['mapPos'] = GetMinimap(Vector(4950, 60, 10400)), }, 
