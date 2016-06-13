@@ -1,3 +1,12 @@
+--0.41@
+-Fixed some errors that would sometimes occur with Pewalk API usage@
+-Fixed Kennens W bonus damage@
+-Added special targeting conditions for Jhin (4th shot) and Kennen (W Passive) while in Lane Clear, similar to Caitlyn@
+-Attack speed limiter max increased to 5 (for KogMaw)@
+-Added an option to prioritize harass over attacking minions in lane clear (doesn't prioritize over lasthits though)@
+-Added a new hotkey that attempts to freeze the lane (only affects Farm mode)@
+-Reworked Skills clear for jungle mobs@
+-Added a bunch more spells for spell last hitting, check the forum for a complete list@
 --0.40@
 -Updated packets for 6.10@
 -Added support for Taliyah@
