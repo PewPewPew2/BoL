@@ -1,3 +1,12 @@
+--0.42@
+-Improved AA reset timing when the target attacked dies immediately after an attack is issued@
+-Improved AA reset timings when cancelled by spells (should greatly improve orbwalking with scripts that are not properly integrated with Pewalk)@
+-Added Teemo Q to skill farm@
+-Updated mastery damage for 6.12 changes@
+-Improved target selection for tertiary targets such as wards, GP barrels, etc.@
+-Now properly calculates last hit damage to minions with baron buff@
+-Fixed an error with Illaoi that would cause the script not to load@
+-Now targets Zac rebirth blobs, Mordekaiser R spectres, Yorick R spectres, and Illaoi E spectres as heroes in carry mode@
 --0.41@
 -Fixed some errors that would sometimes occur with Pewalk API usage@
 -Fixed Kennens W bonus damage@
