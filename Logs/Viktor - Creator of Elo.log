@@ -1,3 +1,7 @@
+--1.15@
+-Fixed a bug with Self Cast W@
+-Fixed Windwall collision check@
+-Removed Q Last Hit option as Pewalk already handles it (if its not working after this update, make sure you have it enabled in your Pewalk options!!)@
 --1.13@
 -Added the first tick of Chaos Storm damage to the Advanced Kill Secure calculations, this will make it a bit more trigger happy, let me know if its a bit too much@
 -Advanced Kill Secure now correctly calculates the modified damage to Malzahar while his passive is available@
