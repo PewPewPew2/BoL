@@ -126,7 +126,7 @@ end
 -- end)
 
 AddLoadCallback(function()
-	local Version = 6.96
+	local Version = 6.97
 	TEAM_ALLY, TEAM_ENEMY = myHero.team, 300-myHero.team
 	MainMenu = scriptConfig('Pewtility', 'Pewtility')
 	MainMenu:addParam('update', 'Enable AutoUpdate', SCRIPT_PARAM_ONOFF, true)
@@ -858,7 +858,20 @@ function MISS:__init()
 			['stringPos'] = 6, 
 			['tpPos'] = 72, 
 			['isTP'] = 0x08, 
-			['bytes'] = {[0x60] = 0x00,[0xE0] = 0x40,[0x11] = 0x1A,[0xE1] = 0x20,[0xE7] = 0x1D,[0xE9] = 0x1C,[0xD7] = 0x1F,[0xD9] = 0x1E,[0xD1] = 0x22,[0xCF] = 0x23,[0xDF] = 0x21,},
+			['bytes'] = {
+				[0x60] = 0x00,
+				[0xE0] = 0x40,
+				[0x11] = 0x1A,
+				[0x0F] = 0x1B,
+				[0xE9] = 0x1C,
+				[0xE7] = 0x1D,
+				[0xD9] = 0x1E,
+				[0xD7] = 0x1F,
+				[0xE1] = 0x20,
+				[0xDF] = 0x21,
+				[0xD1] = 0x22,
+				[0xCF] = 0x23,
+			},
 		},
 		['Reset'] = { ['Header'] = 0x0048, ['pos'] = 2, ['pos2'] = 11, },
 		['Aggro'] = { ['Header'] = 0X0079, ['pos'] = 2, },
@@ -1455,7 +1468,7 @@ function SKILLS:Draw()
 						if newOffset < baseHP then
 							newOffset = baseHP - 1
 							table.insert(AddonText, {
-								text = PewtilityHPBars.Addon[info.hero.networkID].bMana and 'Not enough Mana!' or 'Can Kill!',
+								text = PewtilityHPBars.Addon[info.hero.networkID].bMana and 'Can Kill!' or 'Not enough Mana!',
 								size = GetScale(16, s),
 								x = baseHP,
 								y = barY - GetScale(10, s)
@@ -1540,7 +1553,8 @@ function SKILLS:Draw()
 					DrawText(mText,sumFS,barX+GetScale(46.5,s)-(mTextArea.x*0.5),barY+GetScale(24,s)-(mTextArea.y*0.5),0xFFFFFFFF)
 				end
 				
-				self.Sprite:Draw(barX, barY, 255)
+				self.Sprite:Draw(barX, barY, 255)				
+				-- self.Sprite:DrawEx(Rect(0,0,1025,151), D3DXVECTOR3(0, 0, 0), D3DXVECTOR3(barX+1025, barY+151, 0), 0xFF)
 				
 				for _, tDraw in ipairs(AddonText) do
 					DrawText(tDraw.text,tDraw.size,tDraw.x,tDraw.y,0xFFFFFFFF)					
