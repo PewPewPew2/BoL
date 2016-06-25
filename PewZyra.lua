@@ -59,6 +59,7 @@ AddLoadCallback(function()
 	DPExist = FileExist(LIB_PATH..'DivinePred.lua')
 	if DPExist then require('DivinePred') end
 	if FileExist(LIB_PATH..'HPrediction.lua') then require('HPrediction') end
+	if FileExist(LIB_PATH..'FHPrediction.lua') then require('FHPrediction') end
 	
 	TEAM_ALLY, TEAM_ENEMY = myHero.team, 300 - myHero.team
 	
@@ -82,7 +83,7 @@ function Zyra:__init()
 	-----------------------
 	--Update
 	-----------------------
-	local version = 2.4 --0.1 increments
+	local version = 2.5 --0.1 increments
 	local Downloads = {
 		[1] = {
 			version = version,
@@ -442,7 +443,7 @@ function Zyra:CreateObj(o)
 		if o.name == 'Seed' and o.team == myHero.team and GetDistanceSqr(o) > 10000 then
 			local duration = 46
 			for time, endPos in pairs(self.wCasts) do
-				if clock() - time < 1 then
+				if clock() - time < 1 and GetDistanceSqr(endPos, o) < 2500 then
 					duration = 61
 				end
 				self.wCasts[time] = nil
