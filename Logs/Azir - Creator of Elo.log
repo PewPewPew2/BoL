@@ -1,3 +1,7 @@
+--0.32@
+-Adjusted some of the Auto-Dash points to improve reliability@
+-Added Q Last Hit (ON by default, in Q settings)@
+-Tweaked R casting for improved reliability, though this may decrease responsiveness (hopefully not very much)@
 --0.31@
 -Removed W on turret option@
 --0.30@
