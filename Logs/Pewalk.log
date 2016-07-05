@@ -1,3 +1,6 @@
+--0.44@
+-Fixed attacking ally GP barrels@
+-Added Stream Mode (in Drawing Options)@
 --0.43@
 -Fixed a bug that could occasionally cause Pewalk to target invulnerable units@
 -Fixed a bug that would cause turret aggro to negatively affect jungle clear@
