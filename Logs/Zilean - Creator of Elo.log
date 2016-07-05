@@ -1,4 +1,17 @@
--0.06@
+--0.07@
+-Fixes for Chronoshift:@
+-Fixed Master Yis Double Strike not accounting for on hit effects@
+-Master Yis Wuju Style active is now calculated as true damage (was physical)@
+-Fixed auto attacks not applying on hit effects from items (BoTRK, Bloodrazor, etc.)@
+-Fixed some errors with DoT calculations@
+-Fixed Thunderlords calculations@
+- @
+-Added Escape Mode@
+-Added Keys Menu, all hotkeys are now grouped there@
+-Added descriptions for each hotkey function@
+-Added Use Reduced Hit Chance key to mode indicator (next to HP bar)@
+-Fixed occasionally double casting E on targets@
+--0.06@
 -Updated damage changes for 6.13@
 -Fixed some R bugs vs. Riven@
 -Fixed some potential error spam@
