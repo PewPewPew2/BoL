@@ -1,3 +1,7 @@
+--0.45@
+-Fixed bug with Thresh standing still while tethered to a target with Death Sentence@
+-Fixed Vayne W bonus damage calculations@
+-Fixed AllowAttack API@
 --0.44@
 -Fixed attacking ally GP barrels@
 -Added Stream Mode (in Drawing Options)@
