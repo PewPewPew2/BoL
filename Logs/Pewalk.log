@@ -1,3 +1,7 @@
+--0.47@
+-Now automatically gets masteries@
+-Fixed some minor mastery damage calculations@
+-Remove Mastery menu, no longer needed@
 --0.45@
 -Fixed bug with Thresh standing still while tethered to a target with Death Sentence@
 -Fixed Vayne W bonus damage calculations@
