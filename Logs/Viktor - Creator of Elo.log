@@ -1,3 +1,8 @@
+--1.16@
+-Now gets masteries automatically@
+-Remove Mastery menu@
+-Improved Advance Kill Secure damage calculations@
+-Added an option to block off screen spell casts@
 --1.15@
 -Fixed a bug with Self Cast W@
 -Fixed Windwall collision check@
