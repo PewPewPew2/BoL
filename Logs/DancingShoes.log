@@ -1,3 +1,18 @@
+--0.98@
+-Removed the Order Blocking menu, the options it held are now contained in the General menu@
+-Added an AFK disable, this can be disabled and adjusted in the General menu@
+-Rewrote much of the shield and lifesaver code, performance should be greatly improved@
+-The Mode Indicator now also shows when the script is disabled by other means than the disable key, ex. AFK, channeling@
+-Minor improvements to the evasion algorithm@
+-The Global Delay option now applies to shielding@
+-Fixed evasion issues with both Sivir and Ahri Q returns@
+-Removed the Do NOT Shield this Spell option@
+-Added options to adjust the color and width of the spell drawings in the General menu@
+-Fixed a bug that would cause the script to block attacks that did not need to be blocked@
+-Added Kayle R to the disable buffs@
+-Added Galio W to shields@
+-Now retrieves masteries for each player in the game, greatly improving all damage calculations@
+-Probably more that I forgot about, this was a big update@
 --0.97@
 -Damage calculations updated for 6.13@
 --0.96@
