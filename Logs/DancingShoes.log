@@ -12,6 +12,7 @@
 -Added Kayle R to the disable buffs@
 -Added Galio W to shields@
 -Now retrieves masteries for each player in the game, greatly improving all damage calculations@
+-Updated stat changes for patch 6.14@
 -Probably more that I forgot about, this was a big update@
 --0.97@
 -Damage calculations updated for 6.13@
