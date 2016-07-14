@@ -1,3 +1,7 @@
+--0.08@
+-More improvements to Chronoshift calculations@
+-Will now print a message when writing damage calculations to the log, this can be turned off in the Chronoshift menu@
+-Now blocks AAs while Reduced Hit Chance mode is active while and Q or WQ could be cast@
 --0.07@
 -Fixes for Chronoshift:@
 -Fixed Master Yis Double Strike not accounting for on hit effects@
