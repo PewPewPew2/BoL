@@ -1,3 +1,6 @@
+--0.53@
+-Added support for Kassadin Q for spell last hitting@
+-Updated packet and damage changes for 6.15@
 --0.51@
 -Fixed error spam from Vayne W@
 -Fixed Miss Fortune bonus damage from passive@
