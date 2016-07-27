@@ -1,3 +1,5 @@
+--0.10@
+-Updated damage changes for 6.15@
 --0.08@
 -More improvements to Chronoshift calculations@
 -Will now print a message when writing damage calculations to the log, this can be turned off in the Chronoshift menu@
