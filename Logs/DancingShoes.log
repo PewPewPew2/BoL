@@ -1,3 +1,7 @@
+--1.01@
+-Fixed Taliyah W@
+-Fixed Sivir and Nocturnes spell shields not blocking certain attack based spells like Twisted Fates Gold Card@
+-Updated damage calculations to for 6.15@
 --0.98@
 -Removed the Order Blocking menu, the options it held are now contained in the General menu@
 -Added an AFK disable, this can be disabled and adjusted in the General menu@
