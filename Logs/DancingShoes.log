@@ -1,3 +1,17 @@
+--1.03@
+-Fixed a bug that was that was causing some menu options to not be saved correctly@
+-Fixed some timing errors that would disable orbwalkers longer than intended@
+-No longer prematurely casts shields on spells with long delays such as Caitlyn R@
+-Miss Fortunes R no longer kills FPS@
+-Jayce Q detects Acceleration Gates much faster now@
+-Global spells such as Jinxs R lengths increased@
+-Veigar E reworked@
+-Item shield flat damage max increased@
+-Jhin R added to Disable Triggers@
+-Added Shield Delay option to each spell, this is a humanizer just for shielding@
+-Can now disable the script from casting shields on certain allies@
+-Added Annie E, Garen W, Gragas W, Rammus W and Sona W as shield spells@
+-Rewrote the Profiles backend fixing many bugs related to profiles, due to the large amounts of changes old profiles will not be compatible with the new version.  A default profile page will be downloaded that has three premade generic profiles, I recommend you take the time to create your own that suit your playstyle.@
 --1.01@
 -Fixed Taliyah W@
 -Fixed Sivir and Nocturnes spell shields not blocking certain attack based spells like Twisted Fates Gold Card@
