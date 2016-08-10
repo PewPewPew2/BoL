@@ -1,3 +1,9 @@
+--1.04@
+-Fixed a bug that was causing the hotkeys to get stuck on until the menu was opened@
+-Fixed a bug that would cause the script to block Azirs AAs when not needed@
+-Fixed Dr Mundo W getting stuck on@
+-Added Lee Sin R as an evadible spell (the secondary damage, not the unit Lee Sin targeted)@
+-Added evasion support for all of Kleds spells@
 --1.03@
 -Fixed a bug that was that was causing some menu options to not be saved correctly@
 -Fixed some timing errors that would disable orbwalkers longer than intended@
