@@ -1,3 +1,5 @@
+--1.20@
+-Reverted Chaos Storm changes that were made in 1.19 (thanks rito)@
 --1.19@
 -Will now target Viktor with the Chaos Storm if the target is less than the storms radius (325 units) from Viktor, this allows the storm to travel at max speed@
 --1.17@
