@@ -1,3 +1,7 @@
+--0.57@
+-Fixed a bug with Distance From Hero menu option@
+-Fixed a bug that was reducing Azirs attack range@
+-Updated minion health bar drawings@
 --0.56@
 -Added support for Kled@
 --0.55@
