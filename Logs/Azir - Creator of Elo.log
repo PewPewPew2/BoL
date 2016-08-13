@@ -1,3 +1,10 @@
+--0.36@
+-Removed support for Divine Pred, sorry to anyone who was still using this@
+-Fixed a bug with the AA range in Pewalk though it heavily affects this script as well@
+-Made slight changes to Q usage in Carry Mode@
+-Hit Probability option in Q menu has been changed from percent to hit chance, 0-3 for HPred and 0-2 for FHPred@
+-Partially reworked some of the insec code, this will increase accuracy@
+-Added special checks for Zed R, Fizz E and Pantheon R so that they dont inadvertently trigger R casts in Safety mode@
 --0.35@
 -Updated broken encryption@
 --0.33@
