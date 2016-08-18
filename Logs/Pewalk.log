@@ -1,3 +1,8 @@
+--0.60@
+-Fixed a bug with lane clear targeting@
+-Fixed some bugs with AA resets@
+-Fixed super minion HP bar drawings@
+-Fixed a bug that could potentially cause bugsplats, though Im not sure if it actually was causing any@
 --0.57@
 -Fixed a bug with Distance From Hero menu option@
 -Fixed a bug that was reducing Azirs attack range@
