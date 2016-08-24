@@ -1,3 +1,11 @@
+--1.05@
+-Added Kled E to dashes@
+-Added Ahri R to dashes@
+-Fixed a bug with some spell drawings@
+-Reworked auto disable with Channels, should be much more reliable now@
+-Fixed some issues with the evasion algorithm when blocking movement commands@
+-Fixed a bug with the Global Delay option, now works as intended@
+-Updated spell stat changes for 6.17@
 --1.04@
 -Fixed a bug that was causing the hotkeys to get stuck on until the menu was opened@
 -Fixed a bug that would cause the script to block Azirs AAs when not needed@
