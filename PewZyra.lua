@@ -83,7 +83,7 @@ function Zyra:__init()
 	-----------------------
 	--Update
 	-----------------------
-	local version = 2.5 --0.1 increments
+	local version = 2.6 --0.1 increments
 	local Downloads = {
 		[1] = {
 			version = version,
@@ -225,7 +225,7 @@ function Zyra:__init()
 		['SRU_BlueMini']  = true,		
 		['SRU_BlueMini2']  = true,		
 	}		
-	self.Ignite = myHero:GetSpellData(SUMMONER_1).name == 'summonerdot' and SUMMONER_1 or myHero:GetSpellData(SUMMONER_2).name == 'summonerdot' and SUMMONER_2 or nil
+	self.Ignite = myHero:GetSpellData(SUMMONER_1).name:lower() == 'summonerdot' and SUMMONER_1 or myHero:GetSpellData(SUMMONER_2).name:lower() == 'summonerdot' and SUMMONER_2 or nil
 	self.ePolygon = CreatePolygon({['x'] = 0, ['z'] = 0,},{['x'] = 0, ['z'] = 0,},{['x'] = 0, ['z'] = 0,},{['x'] = 0, ['z'] = 0,})
 	self.wZones = {}
 	self.wCount = 0
@@ -297,7 +297,7 @@ function Zyra:CarryE()
 	local target = _Pewalk.GetTarget(self.Spells[_E].range)
 	if target then
 		local CastPos, HitChance = self:GetPrediction(target, 'E', true)
-		if CastPos and HitChance > (self.Menu.E.HitChance / 33.4) then
+		if CastPos and HitChance > self.Menu.E.HitChance2 then
 			self:SetWZone(CastPos, _E, 0.22 + (GetDistance(CastPos) / self.Spells[_E].speed), target)
 			CastSpell(_E, CastPos.x, CastPos.z)
 		end
@@ -308,7 +308,7 @@ function Zyra:CarryQ()
 	local target = _Pewalk.GetTarget(self.Spells[_Q].range + self.Spells[_Q].radius)
 	if target then
 		local CastPos, HitChance = self:GetPrediction(target, 'Q', false)
-		if CastPos and HitChance > (self.Menu.Q.HitChance / 33.4) then
+		if CastPos and HitChance > self.Menu.Q.HitChance2 then
 			self:SetWZone(CastPos, _Q, 0.9, target)
 			CastSpell(_Q, CastPos.x, CastPos.z)
 		end
@@ -371,7 +371,6 @@ end
 
 function Zyra:CreateMenu()
 	self.Menu = scriptConfig('Pew Zyra', 'Zyra')
-	self.Menu.load = function() return end
 	self.Menu:addSubMenu('Keys', 'Keys')
 		self.Menu.Keys:addSubMenu('-Skills-', 'SkillsInfo')
 		self.Menu.Keys:addKey('Jungle', 'Jungle Clear', 17, false)
@@ -393,10 +392,11 @@ function Zyra:CreateMenu()
 		self.Menu.Q:addParam('HarassMixed', 'Harass in Mixed Mode', SCRIPT_PARAM_ONOFF, true)
 		self.Menu.Q:addParam('CombatCarry', 'Use in Carry Mode', SCRIPT_PARAM_ONOFF, true)
 		self.Menu.Q:addParam('CombatKS', 'Use to Killsteal', SCRIPT_PARAM_ONOFF, true)
-		self.Menu.Q:addParam('HitChance', 'Hit Probability (%)', SCRIPT_PARAM_SLICE, 70, 20, 100)
+		self.Menu.Q:addParam('HitChance2', 'Hit Probability', SCRIPT_PARAM_SLICE, 1.8, 0, 3, 1)
 		self.Menu.Q:addParam('space', '', SCRIPT_PARAM_INFO, '')
 		self.Menu.Q:addParam('info', '-Miscellaneous-', SCRIPT_PARAM_INFO, '')
 		self.Menu.Q:addParam('Draw', 'Draw Range', SCRIPT_PARAM_LIST, 3, { 'Low FPS', 'Normal', 'None', })
+		self.Menu.Q:addParam('Prediction', 'Prediction Selection', SCRIPT_PARAM_LIST, 1, { 'HPrediction', FHPrediction and 'Fun House Prediction' or 'Fun House Prediction Not Found!', })
 	self.Menu:addSubMenu('Rampant Growth (W)', 'W')
 		self.Menu.W:addParam('info', '-Combat-', SCRIPT_PARAM_INFO, '')
 		self.Menu.W:addParam('CombatCarry', 'Use in Carry Mode', SCRIPT_PARAM_ONOFF, true)
@@ -419,23 +419,56 @@ function Zyra:CreateMenu()
 		self.Menu.E:addParam('HarassMixed', 'Harass in Mixed Mode', SCRIPT_PARAM_ONOFF, true)
 		self.Menu.E:addParam('CombatCarry', 'Use in Carry Mode', SCRIPT_PARAM_ONOFF, true)
 		self.Menu.E:addParam('CombatKS', 'Use to Killsteal', SCRIPT_PARAM_ONOFF, true)
-		self.Menu.E:addParam('HitChance', 'Hit Probability (%)', SCRIPT_PARAM_SLICE, 70, 20, 100)
+		self.Menu.E:addParam('HitChance2', 'Hit Probability', SCRIPT_PARAM_SLICE, 0.9, 0, 3, 1)
 		self.Menu.E:addParam('space', '', SCRIPT_PARAM_INFO, '')
 		self.Menu.E:addParam('info', '-Miscellaneous-', SCRIPT_PARAM_INFO, '')
 		self.Menu.E:addParam('Draw', 'Draw Range', SCRIPT_PARAM_LIST, 3, { 'Low FPS', 'Normal', 'None', })
 		self.Menu.E:addParam('DrawPrediction', 'Draw Prediction', SCRIPT_PARAM_ONOFF, true)
+		self.Menu.E:addParam('Prediction', 'Prediction Selection', SCRIPT_PARAM_LIST, 1, { 'HPrediction', FHPrediction and 'Fun House Prediction' or 'Fun House Prediction Not Found!', })
 	self.Menu:addSubMenu('Stranglethorns (R)', 'R')
 		self.Menu.R:addParam('info', '-Combat-', SCRIPT_PARAM_INFO, '')
-		self.Menu.R:addParam('CombatKS', 'Use in Combo', SCRIPT_PARAM_ONOFF, true)
+		self.Menu.R:addParam('CombatKS', 'Use in Advanced Kill Secure', SCRIPT_PARAM_ONOFF, true)
+		self.Menu.R:addParam('Efficiency', 'Minimum A.K.S. Efficiency', SCRIPT_PARAM_SLICE, .25, 0, 1, 2)
 		self.Menu.R:addParam('AutoAlways', 'Auto Use if Can Hit (Anytime)', SCRIPT_PARAM_SLICE, 3, 2, 5)
 		self.Menu.R:addParam('AutoCarry', 'Auto Use if Can Hit (Carry Mode)', SCRIPT_PARAM_SLICE, 2, 2, 5)
 		self.Menu.R:addParam('space', '', SCRIPT_PARAM_INFO, '')
 		self.Menu.R:addParam('3', '-Miscellaneous-', SCRIPT_PARAM_INFO, '')
 		self.Menu.R:addParam('Draw', 'Draw Range', SCRIPT_PARAM_LIST, 3, { 'Low FPS', 'Normal', 'None', })
 
-	self.Menu:addParam('Prediction', 'Prediction Selection', SCRIPT_PARAM_LIST, 1, { 'HPrediction', DPExist and 'Divine Prediction' or 'Divine Prediction Not Found!', FHPrediction and 'Fun House Prediction' or 'Fun House Prediction Not Found!', })
-
-	self:Load()
+	
+	self.CurrentQPred = self.Menu.Q.Prediction
+	self.CurrentEPred = self.Menu.E.Prediction
+	
+	AddTickCallback(function()
+		if self.CurrentQPred~=self.Menu.Q.Prediction then
+			for i, param in ipairs(self.Menu.Q._param) do
+				if param.var == 'HitChance2' then
+					if self.Menu.Q.Prediction == 1 then
+						param.max = 3
+						self.Menu.Q.HitChance2 = 1.8
+					else
+						param.max = 2
+						self.Menu.Q.HitChance2 = 1.3
+					end
+				end
+			end
+			self.CurrentQPred = self.Menu.Q.Prediction
+		end
+		if self.CurrentEPred~=self.Menu.E.Prediction then
+			for i, param in ipairs(self.Menu.E._param) do
+				if param.var == 'HitChance2' then
+					if self.Menu.E.Prediction == 1 then
+						param.max = 3
+						self.Menu.E.HitChance2 = 0.9
+					else
+						param.max = 2
+						self.Menu.E.HitChance2 = 0.8
+					end
+				end
+			end			
+			self.CurrentEPred = self.Menu.E.Prediction
+		end
+	end)
 end
 
 function Zyra:CreateObj(o)
@@ -451,15 +484,6 @@ function Zyra:CreateObj(o)
 			
 			insert(self.Seeds, #self.Seeds+1, o)
 			self.Seeds[#self.Seeds].endTime = clock() + duration
-		end
-		if o.type == 'MissileClient' and o.spellOwner then
-			if o.spellOwner.charName == 'Yasuo' and o.spellOwner.team == TEAM_ENEMY then
-				if o.spellName == 'yasuowmovingwallmisl' then
-					self.WindWallLeft = o
-				elseif o.spellName == 'yasuowmovingwallmisr' then
-					self.WindWallRight = o
-				end
-			end
 		end
 	end
 end
@@ -518,7 +542,7 @@ function Zyra:Draw()
 			self.PredictionDrawing[6].z = EndPos.z	
 			self.PredictionDrawing[7] = self.PredictionDrawing[1]
 			local EndIndicator = NormalizeX(EndPos, StartArrow, (self.Spells[_E].range-102) * self.DrawPrediction.Ratio)
-			local HitChanceIndicator = NormalizeX(EndPos, StartArrow, (self.Spells[_E].range-102) * (self.Menu.E.HitChance * 0.01))
+			local HitChanceIndicator = NormalizeX(EndPos, StartArrow, (self.Spells[_E].range-102) * (self.Menu.E.HitChance2 / (self.Menu.E.Prediction==1 and 3 or 2)))
 			DrawLine3D(
 				HitChanceIndicator.x + (Perpindicular.x*(-30)),
 				myHero.y,
@@ -547,18 +571,20 @@ function Zyra:Draw()
 	
 	self:GetCombo()
 	
-	local bar = GetUnitHPBarPos(myHero)
-	local x, y = bar.x - 68, bar.y - 16 + ((GetUnitHPBarOffset(myHero).y + 0.4) * 44)
-	DrawLine(x,y,x-30,y,23,0x64000000)
-	DrawLines2({D3DXVECTOR2(x,y-11),D3DXVECTOR2(x-30,y-11),D3DXVECTOR2(x-30,y+12),D3DXVECTOR2(x,y+12),},2,0xFF474D49)
-	local mode = _Pewalk.GetActiveMode()
-	local text1 = mode.Farm and 'FARM' or mode.LaneClear and 'CLEAR' or mode.Mixed and 'MIXED' or mode.Carry and 'CARRY' or self.Menu.Keys.Escape and 'ECP.' or '-----'
-	DrawText(text1,9,x-14-(GetTextArea(text1, 9).x / 2),y-8,0xFFFFFFFF)
-	local text2, color = 'OFF', 0xFFFFFFFF
-	if self.Menu.Keys.Combo then
-		text2, color = 'ACTIVE', 0xFF00FF00
+	if GetInGameTimer() > 4 then
+		local bar = GetUnitHPBarPos(myHero)
+		local x, y = bar.x - 68, bar.y - 16 + ((GetUnitHPBarOffset(myHero).y + 0.4) * 44)
+		DrawLine(x,y,x-30,y,23,0x64000000)
+		DrawLines2({D3DXVECTOR2(x,y-11),D3DXVECTOR2(x-30,y-11),D3DXVECTOR2(x-30,y+12),D3DXVECTOR2(x,y+12),},2,0xFF474D49)
+		local mode = _Pewalk.GetActiveMode()
+		local text1 = mode.Farm and 'FARM' or mode.LaneClear and 'CLEAR' or mode.Mixed and 'MIXED' or mode.Carry and 'CARRY' or self.Menu.Keys.Escape and 'ECP.' or '-----'
+		DrawText(text1,9,x-14-(GetTextArea(text1, 9).x / 2),y-8,0xFFFFFFFF)
+		local text2, color = 'OFF', 0xFFFFFFFF
+		if self.Menu.Keys.Combo then
+			text2, color = 'ACTIVE', 0xFF00FF00
+		end
+		DrawText(text2,9,x-14-(GetTextArea(text2, 9).x / 2),y+2,color)		
 	end
-	DrawText(text2,9,x-14-(GetTextArea(text2, 9).x / 2),y+2,color)		
 end
 
 function Zyra:FarmQ()
@@ -643,7 +669,7 @@ function Zyra:GetCombo()
 			end
 			if self.rReady then
 				rDamage = self.Spells[_R].damage() * magicReduction
-				if distance < 490000 and tDamage < enemy.health then
+				if distance < 490000 and tDamage < enemy.health and enemy.health - tDamage > rDamage * self.Menu.R.Efficiency then
 					finalCombo[#finalCombo + 1] = {slot=_R, pos=CP}
 					tDamage = tDamage + rDamage
 					RemainingMana = RemainingMana - self.Spells[_R].mana()
@@ -657,58 +683,98 @@ function Zyra:GetCombo()
 				end
 			end
 			if self.Menu.Combo.DrawDC == 2 or (self.Menu.Combo.DrawDC == 1 and self.Menu.Keys.Combo) then
-				local Center = GetUnitHPBarPos(enemy)
-				if Center.x > -100 and Center.x < WINDOW_W+100 and Center.y > -100 and Center.y < WINDOW_H+100 then
-					local Offset = GetUnitHPBarOffset(enemy)
-					local y = Center.y + (Offset.y * 53) + 2
-					local x = Center.x + ((self.xOffsets[enemy.charName] or 0) * 140) - 66
-					local xo = x + ((enemy.health / enemy.maxHealth) * 104)
-					if qDamage > 0 and xo > x then
-						local ax = (qDamage / enemy.maxHealth) * 104
-						local bx = xo - ax
-						DrawLine(bx>x and bx or x,y,xo,y,9,0xAAFFAABB)
-						DrawText('Q',11,xo+2,y-4,0xFFFFFFFF)
-						xo = bx
-						if xo < x then return end
+				if PewtilityHPBars and PewtilityHPBars.Active then
+					PewtilityHPBars.Addon[enemy.networkID] = {}
+					if qDamage > 0 then
+						insert(PewtilityHPBars.Addon[enemy.networkID], {
+							['color'] = 0xAAFFAABB,
+							['damage'] = qDamage,
+							['text'] = 'Q',
+						})
 					end
-					if wDamage > 0 and xo > x then
-						local ax = (wDamage / enemy.maxHealth) * 104
-						local bx = xo - ax
-						DrawLine(bx>x and bx or x,y,xo,y,9,0xAA99AA00)
-						DrawText('W',11,xo+2,y-4,0xFFFFFFFF)
-						xo = bx
-						if xo < x then return end
+					if wDamage > 0 then
+						insert(PewtilityHPBars.Addon[enemy.networkID], {
+							['color'] = 0xAA99AA00,
+							['damage'] = wDamage,
+							['text'] = 'W',
+						})
 					end
-					if eDamage > 0 and xo > x then
-						local ax = (eDamage / enemy.maxHealth) * 104
-						local bx = xo - ax					
-						DrawLine(bx>x and bx or x,y,xo,y,9,0xAA0099BB)
-						DrawText('E',11,xo+2,y-4,0xFFFFFFFF)
-						xo = bx
-						if xo < x then return end
+					if eDamage > 0 then
+						insert(PewtilityHPBars.Addon[enemy.networkID], {
+							['color'] = 0xAA0099BB,
+							['damage'] = eDamage,
+							['text'] = 'E',
+						})
 					end
-					if rDamage > 0 and xo > x then
-						local ax = (rDamage / enemy.maxHealth) * 104
-						local bx = xo - ax
-						DrawLine(bx>x and bx or x,y,xo,y,9,0xAA336644)
-						DrawText('R',11,xo+2,y-4,0xFFFFFFFF)
-						xo = bx			
+					if rDamage > 0 then
+						insert(PewtilityHPBars.Addon[enemy.networkID], {
+							['color'] = 0xAA336644,
+							['damage'] = rDamage,
+							['text'] = 'R',
+						})
 					end
-					if iDamage > 0 and xo > x then
-						local ax = (iDamage / enemy.maxHealth) * 104
-						local bx = xo - ax
-						DrawLine(bx>x and bx or x,y,xo,y,9,0xAA22BB94)
-						DrawText('I',11,xo+2,y-4,0xFFFFFFFF)
-						xo = bx			
+					if iDamage > 0 then
+						insert(PewtilityHPBars.Addon[enemy.networkID], {
+							['color'] = 0xAA22BB94,
+							['damage'] = iDamage,
+							['text'] = 'I',
+						})
 					end
-					if self.Menu.Combo.DrawKN < 3 and tDamage > enemy.health then
-						DrawText(
-							RemainingMana > 0 and 'Can Kill!' or 'Need More Mana!!',
-							16,
-							x,
-							y + (self.Menu.Combo.DrawKN == 1 and -22 or 14),
-							0xFFFFFFFF
-						)
+					PewtilityHPBars.Addon[enemy.networkID].bMana = RemainingMana > 0
+				else	
+					local Center = GetUnitHPBarPos(enemy)
+					if Center.x > -100 and Center.x < WINDOW_W+100 and Center.y > -100 and Center.y < WINDOW_H+100 then
+						local Offset = GetUnitHPBarOffset(enemy)
+						local y = Center.y + (Offset.y * 53) + 2
+						local x = Center.x + ((self.xOffsets[enemy.charName] or 0) * 140) - 66
+						local xo = x + ((enemy.health / enemy.maxHealth) * 104)
+						if qDamage > 0 and xo > x then
+							local ax = (qDamage / enemy.maxHealth) * 104
+							local bx = xo - ax
+							DrawLine(bx>x and bx or x,y,xo,y,9,0xAAFFAABB)
+							DrawText('Q',11,xo+2,y-4,0xFFFFFFFF)
+							xo = bx
+							if xo < x then return end
+						end
+						if wDamage > 0 and xo > x then
+							local ax = (wDamage / enemy.maxHealth) * 104
+							local bx = xo - ax
+							DrawLine(bx>x and bx or x,y,xo,y,9,0xAA99AA00)
+							DrawText('W',11,xo+2,y-4,0xFFFFFFFF)
+							xo = bx
+							if xo < x then return end
+						end
+						if eDamage > 0 and xo > x then
+							local ax = (eDamage / enemy.maxHealth) * 104
+							local bx = xo - ax					
+							DrawLine(bx>x and bx or x,y,xo,y,9,0xAA0099BB)
+							DrawText('E',11,xo+2,y-4,0xFFFFFFFF)
+							xo = bx
+							if xo < x then return end
+						end
+						if rDamage > 0 and xo > x then
+							local ax = (rDamage / enemy.maxHealth) * 104
+							local bx = xo - ax
+							DrawLine(bx>x and bx or x,y,xo,y,9,0xAA336644)
+							DrawText('R',11,xo+2,y-4,0xFFFFFFFF)
+							xo = bx			
+						end
+						if iDamage > 0 and xo > x then
+							local ax = (iDamage / enemy.maxHealth) * 104
+							local bx = xo - ax
+							DrawLine(bx>x and bx or x,y,xo,y,9,0xAA22BB94)
+							DrawText('I',11,xo+2,y-4,0xFFFFFFFF)
+							xo = bx			
+						end
+						if self.Menu.Combo.DrawKN < 3 and tDamage > enemy.health then
+							DrawText(
+								RemainingMana > 0 and 'Can Kill!' or 'Need More Mana!!',
+								16,
+								x,
+								y + (self.Menu.Combo.DrawKN == 1 and -22 or 14),
+								0xFFFFFFFF
+							)
+						end
 					end
 				end
 			end
@@ -725,39 +791,23 @@ function Zyra:GetCombo()
 	end
 end
 
-function Zyra:GetPrediction(target, spell, draw, hpOnly)		
-	local buffTable = _Pewalk.GetBuffs(target)
-	if buffTable then
-		for i, buff in pairs(buffTable) do
-			if self.CrowdControl[buff.type] then
-				return target, 3
-			end
+function Zyra:GetPrediction(target, spell, draw, hpOnly)
+	for i, buff in pairs(_Pewalk.GetBuffs(target)) do
+		if self.CrowdControl[buff.type] then
+			return target, 3
 		end
 	end
-	if self.Menu.Prediction == 3 and FHPrediction and not hpOnly then
+	if self.Menu[spell].Prediction == 2 and FHPrediction and not hpOnly then
 		self.FH_Q.radius = 95 + target.boundingRadius
 		local CastPos, HitChance = FHPrediction.GetPrediction(self['FH_'..spell], target, myHero)
 		if draw and CastPos then
 			self.DrawPrediction.EndPos = CastPos
 			self.DrawPrediction.StartPos = myHero
 			self.DrawPrediction.Time = clock() + 1
-			self.DrawPrediction.Ratio = HitChance * 0.5
+			self.DrawPrediction.Ratio = math.min(1, HitChance / self.Menu.E.HitChance2)
 			self.DrawPrediction.Color = ARGB(185, (1.25-self.DrawPrediction.Ratio) * 255, self.DrawPrediction.Ratio * 200, 0)
 		end
-		return CastPos, HitChance * 1.5		
-	elseif self.Menu.Prediciton == 2 and self.DivineInitialized and not hpOnly then
-		local Status, CastPos, Percent = self.DP:predict(spell,target)
-		if draw and Percent and CastPos then
-			self.DrawPrediction.EndPos = CastPos
-			self.DrawPrediction.StartPos = {x=myHero.x, y=myHero.y, z=myHero.z}
-			self.DrawPrediction.Time = clock() + 1
-			self.DrawPrediction.Ratio = self.Menu.E.HitChance < Percent and 1 or Percent / self.Menu.E.HitChance
-			self.DrawPrediction.Color = ARGB(255, (1-self.DrawPrediction.Ratio) * 255, self.DrawPrediction.Ratio * 255, 0)
-		end
-		if Status == SkillShot.STATUS.SUCCESS_HIT then
-			return CastPos, (Percent / 100) * 3
-		end
-		return CastPos, 0	
+		return CastPos, HitChance
 	else
 		self.HP_Q.Properties.Raw.radius = 95 + target.boundingRadius
 		local CastPos, HitChance = self.HP:GetPredict(self['HP_'..spell], target, myHero)
@@ -765,11 +815,11 @@ function Zyra:GetPrediction(target, spell, draw, hpOnly)
 			self.DrawPrediction.EndPos = CastPos
 			self.DrawPrediction.StartPos = {x=myHero.x, y=myHero.y, z=myHero.z}
 			self.DrawPrediction.Time = clock() + 1
-			self.DrawPrediction.Ratio = self.Menu.E.HitChance < HitChance * 33.4 and 1 or  (HitChance * 33.4) / self.Menu.E.HitChance
+			self.DrawPrediction.Ratio = math.min(1, HitChance / self.Menu.E.HitChance2)
 			self.DrawPrediction.Color = ARGB(255, (1-self.DrawPrediction.Ratio) * 255, self.DrawPrediction.Ratio * 255, 0)
 			self.DrawPrediction.Chance = HitChance
 		end
-		return CastPos, HitChance + 1
+		return CastPos, HitChance
 	end
 end
 
@@ -878,31 +928,6 @@ function Zyra:LaneQ()
 	end
 end
 
-function Zyra:Load()
-	if SAVE_FILE.Menu then
-		for i, entry in ipairs(self.Menu._param) do
-			for k, v in pairs(SAVE_FILE.Menu[entry.var]) do
-				if k=='key' then entry[k] = v end
-			end
-			self.Menu[entry.var] = SAVE_FILE.Menu[entry.var].Value
-		end
-		local function iterateMenu(m)
-			for i, subMenu in ipairs(m._subInstances) do
-				iterateMenu(subMenu)
-				for _, entry in ipairs(subMenu._param) do
-					if entry.var:find('Target') == nil and SAVE_FILE.Menu[subMenu.name] and SAVE_FILE.Menu[subMenu.name][entry.var] then
-						for k, v in pairs(SAVE_FILE.Menu[subMenu.name][entry.var]) do
-							if k=='key' then entry[k] = v end
-						end
-						subMenu[entry.var] = SAVE_FILE.Menu[subMenu.name][entry.var].Value
-					end
-				end
-			end
-		end
-		iterateMenu(self.Menu)
-	end
-end
-
 function Zyra:NewPath(unit,startPos,endPos,isDash,dashSpeed,dashGravity,dashDistance)
 	if unit.valid and unit.type == 'AIHeroClient' and unit.team == TEAM_ENEMY then
 		if isDash then
@@ -998,7 +1023,12 @@ function Zyra:Tick()
 	self.eReady = myHero:CanUseSpell(_E) == READY
 	self.rReady = myHero:CanUseSpell(_R) == READY
 	self.iReady = self.Ignite and myHero:CanUseSpell(self.Ignite) == READY
-	self.wCount = self.wReady and ReadDWORD(GetPtrS(myHero:GetSpellData(_W))+0x18) or 0
+	self.wCount = self.wReady and myHero:GetSpellData(_W).stacks or 0 --ReadDWORD(GetPtrS(myHero:GetSpellData(_W))+0x18)
+	
+	local OM = _Pewalk.GetActiveMode()
+	
+	_Pewalk.AllowAttack(not (OM.Carry and self.eReady))
+	
 	if self.wReady then
 		if self.Menu.W.Vision and self.wCount > self.Menu.W.Vision2-1 then
 			for i=#self.Spells[_W].Active, 1, -1 do
@@ -1048,7 +1078,6 @@ function Zyra:Tick()
 			self:JungleE()
 		end
 	end
-	local OM = _Pewalk.GetActiveMode()
 	if OM.Carry then
 		if self.Menu.Q.CombatCarry and self.qReady then
 			self:CarryQ()
@@ -1092,21 +1121,41 @@ function Zyra:Tick()
 	end
 end
 
-function Zyra:WindWalkCheck(S, E)
-	if self.WindWallLeft and self.WindWallLeft.valid and self.WindWallRight and self.WindWallRight.valid then
-		local WL, WR = self.WindWallLeft.pos, self.WindWallRight.pos
-		local p = Normalize(WL.x-(WL.x-(WL.z-WR.z)), WL.z-(WL.z+(WL.x-WR.x)))
-		local p = CreatePolygon(
-			{['x'] = WL.x + p.x*-70, ['z'] = WL.z + p.z*-70},  
-			{['x'] = WL.x + p.x*70,  ['z'] = WL.z + p.z*70 }, 
-			{['x'] = WR.x + p.x*70,  ['z'] = WR.z + p.z*70 }, 
-			{['x'] = WR.x + p.x*-70, ['z'] = WR.z + p.z*-70}
-		)		
-		local d = Normalize(S.x-(S.x-(S.z-E.z)), S.z-(S.z+(S.x-E.x)))
-		local c1 = p:intersects(S.x + d.x*-80, S.z + d.z*-80, E.x + d.x*-80, E.z + d.z*-80)
-		local c2 = p:intersects(S.x + d.x*80, S.z + d.z*80, E.x + d.x*80, E.z + d.z*80)
-		if c1 or c2 then
-			return false
+function Zyra:WindWallCheck(StartPos, EndPos)
+	if self.WindWall == nil then
+		self.WindWall = {}
+		for i, enemy in ipairs(self.Enemies) do
+			if enemy.charName == 'Yasuo' then
+				AddCreateObjCallback(function(o)
+					if o.valid and o.type == 'MissileClient' and o.spellOwner then
+						if o.spellOwner.charName == 'Yasuo' and o.spellOwner.team ~= myHero.team then
+							if o.spellName:lower() == 'yasuowmovingwallmisl' then
+								self.WindWall.Left = o
+							elseif o.spellName:lower() == 'yasuowmovingwallmisr' then
+								self.WindWall.Right = o
+							end
+						end
+					end
+				end)
+			end
+		end
+	end
+	if self.WindWall.Left and self.WindWall.Left.valid and self.WindWall.Right and self.WindWall.Right.valid then
+		local wL, wR = NormalizeX(self.WindWall.Right, self.WindWall.Left, -85), NormalizeX(self.WindWall.Left, self.WindWall.Right, -85)
+		local cS, cE = NormalizeX(EndPos, StartPos, -85), NormalizeX(StartPos, EndPos, -85)
+	
+		local ab = ((wR.z - cS.z) * (wL.x - cS.x) - (wL.z - cS.z) * (wR.x - cS.x) <= 0)	
+		local ba = ((wR.z - cE.z) * (wL.x - cE.x) - (wL.z - cE.z) * (wR.x - cE.x) <= 0)
+		if ab ~= ba then
+			local cd = ((wL.z - cS.z) * (cE.x - cS.x) - (cE.z - cS.z) * (wL.x - cS.x) <= 0)		
+			local dc = ((wR.z - cS.z) * (cE.x - cS.x) - (cE.z - cS.z) * (wR.x - cS.x) <= 0)		
+			if cd ~= dc then
+				wL.x,wR.x,cS.x,cE.x=wL.x+.0001,wR.x+.001,cS.x+.01,cE.x+.1
+				local a, b, c, d = cS.x - cE.x, wL.x - wR.x, cS.z - cE.z, wL.z - wR.z
+				if b * c - d * a ~= 0 then
+					return false
+				end
+			end
 		end
 	end
 	return true
@@ -1219,7 +1268,6 @@ function ScriptUpdate:__init(LocalVersion,UseHttps, Host, VersionPath, ScriptPat
     self.CallbackNoUpdate = CallbackNoUpdate
     self.CallbackNewVersion = CallbackNewVersion
     self.CallbackError = CallbackError
-    AddDrawCallback(function() self:OnDraw() end)
     self:CreateSocket(self.VersionPath)
     self.DownloadStatus = 'Connect to Server for VersionInfo'
     AddTickCallback(function() self:GetOnlineVersion() end)
@@ -1320,6 +1368,7 @@ function ScriptUpdate:GetOnlineVersion()
                 end
                 self:CreateSocket(self.ScriptPath)
                 self.DownloadStatus = 'Connect to Server for ScriptDownload'
+				AddDrawCallback(function() self:OnDraw() end)
                 AddTickCallback(function() self:DownloadUpdate() end)
             else
                 if self.CallbackNoUpdate and type(self.CallbackNoUpdate) == 'function' then
