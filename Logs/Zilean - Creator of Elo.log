@@ -1,3 +1,6 @@
+--0.14@
+-Updated damage calculations for 6.17@
+-Reduced tick rate to 0.5s for DoT spells@
 --0.13@
 -Fixed a bug when playing vs. Veigar@
 --0.12@
