@@ -1,2 +1,8 @@
+--0.06@
+-Added off screen cast blocking@
+-Added Emote on kill@
+-Added Windwall checks@
+-Added Threaded Volley prediction drawing@
+-Added Flee Mode@
 --0.05@
 -Release@
