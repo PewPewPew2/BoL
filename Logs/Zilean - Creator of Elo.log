@@ -1,3 +1,7 @@
+--0.15@
+-Added offscreen spell blocking@
+-Added Emote on kill@
+-Added Calulation Interval option for R, increase this if you are having FPS issues@
 --0.14@
 -Updated damage calculations for 6.17@
 -Reduced tick rate to 0.5s for DoT spells@
