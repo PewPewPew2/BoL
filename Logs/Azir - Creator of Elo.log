@@ -1,3 +1,7 @@
+--0.38@
+-Added Auto Level@
+-Added Emote on kill@
+-Added off screen cast blocking@
 --0.36@
 -Removed support for Divine Pred, sorry to anyone who was still using this@
 -Fixed a bug with the AA range in Pewalk though it heavily affects this script as well@
