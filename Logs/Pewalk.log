@@ -1,3 +1,8 @@
+--0.65@
+-Fixed some bugs that could occur when your mouse was directly on your hero@
+-Fixed some bugs involving ally wards that was causing erattic behaviour@
+-Fixed some issues with Oriannas spell farming@
+-Fixed a bug in skill farming that was causing the script to ignore some minions@
 --0.64@
 -Greatly improved turret farming@
 -Updated stat changes for 6.17@
