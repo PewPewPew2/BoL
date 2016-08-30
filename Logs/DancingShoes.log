@@ -1,3 +1,7 @@
+--1.06@
+-Zacs Elastic Slingshot is now evaded from FoW@
+-Fixed a major bug with movement blocking@
+-Fixed DancingShoes_IsSafe and DancingShoes_EvadingPos API@
 --1.05@
 -Added Kled E to dashes@
 -Added Ahri R to dashes@
