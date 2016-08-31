@@ -1,3 +1,7 @@
+--0.66@
+-Fixed Spoils of War bonus damage (Targons)@
+-Fixed super minion HP bar drawings@
+-Fixed a bug with _Pewalk.ForcePoint API@
 --0.65@
 -Fixed some bugs that could occur when your mouse was directly on your hero@
 -Fixed some bugs involving ally wards that was causing erratic behavior@
