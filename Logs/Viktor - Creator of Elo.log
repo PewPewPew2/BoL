@@ -1,3 +1,6 @@
+--1.23@
+-Fixed a bug with Advanced Kill Secure using spells even when disabled in the menu@
+-All hotkeys have been moved to the Keys menu@
 --1.22@
 -Removed support for Divine Prediction@
 -Added Auto Level@
