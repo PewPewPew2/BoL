@@ -1,3 +1,6 @@
+--0.07@
+-Added key, Cast R - No Auto Ride, this is to bypass the automatic ride feature in case you just want to place the wall@
+-Added key, Force W Cast, this will bypass some of the internal conditions to cast W, hitchance still applies@
 --0.06@
 -Added off screen cast blocking@
 -Added Emote on kill@
