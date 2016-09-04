@@ -126,7 +126,7 @@ end
 -- end)
 
 AddLoadCallback(function()
-	local Version = 7.03
+	local Version = 7.04
 	TEAM_ALLY, TEAM_ENEMY = myHero.team, 300-myHero.team
 	MainMenu = scriptConfig('Pewtility', 'Pewtility')
 	MainMenu:addParam('update', 'Enable AutoUpdate', SCRIPT_PARAM_ONOFF, true)
@@ -393,10 +393,7 @@ function WARD:__init()
 		['SightWard'] 			= { ['color'] = ARGB(255,0,255,0),			['duration'] = 150,  ['isWard'] = true,  },
 		['VisionWard']  		= { ['color'] = ARGB(255, 255, 50, 255), 	['duration'] = huge, ['isWard'] = true,  },
 		['TeemoMushroom'] 		= { ['color'] = COLOR_RED,					['duration'] = 600,  ['isWard'] = false, },
-		['CaitlynTrap'] 		= { ['color'] = COLOR_RED,					['duration'] = 90,   ['isWard'] = false, },
-		['Nidalee_Spear'] 		= { ['color'] = COLOR_RED,					['duration'] = 120,  ['isWard'] = false, },
 		['ShacoBox'] 			= { ['color'] = COLOR_RED,					['duration'] = 60, 	 ['isWard'] = false, },
-		['DoABarrelRoll'] 		= { ['color'] = COLOR_RED,					['duration'] = 35, 	 ['isWard'] = false, },
 	}
 	self.OnSpell = {
 		['trinkettotemlvl1'] 	= { ['color'] = COLOR_YELLOW,			 	['duration'] = 60,   ['isWard'] = true,  },
@@ -404,10 +401,7 @@ function WARD:__init()
 		['itemghostward'] 		= { ['color'] = ARGB(255,0,255,0),			['duration'] = 150,  ['isWard'] = true,  },
 		['visionward']  		= { ['color'] = ARGB(255, 255, 50, 255), 	['duration'] = huge, ['isWard'] = true,  },
 		['bantamtrap'] 		 	= { ['color'] = COLOR_RED,					['duration'] = 600,  ['isWard'] = false, },
-		['caitlynyordletrap']	= { ['color'] = COLOR_RED,					['duration'] = 90,   ['isWard'] = false, },
-		['bushwhack'] 		 	= { ['color'] = COLOR_RED,					['duration'] = 120,  ['isWard'] = false, },
 		['jackinthebox'] 		= { ['color'] = COLOR_RED,					['duration'] = 60, 	 ['isWard'] = false, },
-		['maokaisapling'] 		= { ['color'] = COLOR_RED,					['duration'] = 35, 	 ['isWard'] = false, },
 	}
 	
 	self.BGColor = ARGB(100, 0, 0, 0)
@@ -621,7 +615,7 @@ end
 function WARD:WndMsg(m,k)
 	if m==WM_LBUTTONDBLCLK then
 		for i, ward in ipairs(self.Known) do
-			if GetDistanceSqr(mousePos, ward.pos) < 5625 then			
+			if GetDistanceSqr(mousePos, ward.pos) < 15625 then
 				table.remove(self.Known, i)
 				return
 			end			
@@ -1552,12 +1546,17 @@ function SKILLS:Draw()
 				for i=_Q, _R do
 					local d = info.hero:GetSpellData(i)
 					local color = d.level == 0 and 0xFF000000 or 0==d.currentCd and 0xFF00AA00 or 0xFFAA0000
-					local h = (d.level == 0 or 0==d.currentCd) and 24 or 24*(d.cd>0 and d.currentCd/d.cd or 0)
+					local cd = DwordToFloat(ReadDWORD(GetPtrS(d)+0x3C))
+					local h = (d.level == 0 or 0==d.currentCd) and 24 or 24*(cd>0 and d.currentCd/cd or 0)
 					local cdMid = barY+GetScale(29-h, s)
 					local cdX = GetScale(68+(i*7.5), s)
 					local cdFS = GetScale(7,s)
 					DrawLine(barX+cdX,barY+GetScale(29, s),barX+cdX,cdMid,cdFS,color)
 					DrawLine(barX+cdX,cdMid,barX+cdX,barY+GetScale(5,s),cdFS,0xFF000000)
+					-- for k=1, d.level do
+						-- local y = barY+GetScale(29-((i==_R and 8 or 5)*k), s)
+						-- DrawLine(barX+cdX-3, y, barX+cdX+3, y, 1, 0xFF000000)
+					-- end
 				end
 		
 				--Summoners
@@ -1619,9 +1618,11 @@ function SKILLS:DrawOLD()
 					local y = barY+44
 					if data.level > 0 then
 						if data.currentCd ~= 0 then
-							local cd = data.cd-(data.cd-data.currentCd)
-							DrawLine(x, y, x+((cd / data.cd) * 21), y, 12, COLOR_ORANGE)
-							DrawLine(x+((cd / data.cd) * 21), y, x+21, y, 12, COLOR_GREY)
+							local cda = DwordToFloat(ReadDWORD(GetPtrS(data)+0x3C))
+							cda=cda>0 and cda or 0
+							local cd = cda-(cda-data.currentCd)
+							DrawLine(x, y, x+((cd / cda) * 21), y, 12, COLOR_ORANGE)
+							DrawLine(x+((cd / cda) * 21), y, x+21, y, 12, COLOR_GREY)
 							if self.Menu.Text then
 								local text = ('%i'):format(cd)
 								local tA = GetTextArea(text, 14)
@@ -1640,9 +1641,11 @@ function SKILLS:DrawOLD()
 					local y = barY+47
 					local text = info['t'..(i-3)]
 					if data.currentCd ~= 0 then
-						local cd = data.cd-(data.cd-data.currentCd)
-						DrawLine(x, y+11, x+((cd / data.cd) * 42), y+11, 12, COLOR_ORANGE)
-						DrawLine(x+((cd / data.cd) * 42), y+11, x+42, y+11, 12, COLOR_GREY)
+						local cda = DwordToFloat(ReadDWORD(GetPtrS(data)+0x3C))
+						cda=cda>0 and cda or 0
+						local cd = cda-(cda-data.currentCd)
+						DrawLine(x, y+11, x+((cd / cda) * 42), y+11, 12, COLOR_ORANGE)
+						DrawLine(x+((cd / cda) * 42), y+11, x+42, y+11, 12, COLOR_GREY)
 						--self.CallTimers[enemy.charName] = {x=x, y=y+5,t=floor(data.currentCd+GetInGameTimer()), text=text}
 					else
 						DrawLine(x, y+11, x+42, y+11, 12, COLOR_GREEN)								
@@ -2007,7 +2010,7 @@ function OTHER:Draw()
 						end
 					end
 					if draw then
-						DrawLines2(points, 2, COLOR_RED)
+						DrawLines2(points, 1, COLOR_RED)
 						local x, y = points[#points].x, points[#points].y
 						DrawText(('%.2f'):format(sqrt(pathLength)/(e.ms))..'\n'..e.charName,12,x,y,COLOR_WHITE)
 					end
