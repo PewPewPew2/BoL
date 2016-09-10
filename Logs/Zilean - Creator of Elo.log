@@ -1,3 +1,8 @@
+--0.18@
+-Use Reduced Hit Chance key renamed to Force Q, Reduced Hit Chance removed@
+-Zoom mode no longer casts while in the fountain@
+-Fixed some bugs that were causing error spam@
+-Fixed some errors with R damage calculations@
 --0.16@
 -Temp fixed cooldown issues, thought BoL would have been updated more quickly@
 --0.15@
