@@ -1,3 +1,6 @@
+--0.19@
+-Updated damage calculations for patch 6.19@
+-Fixed error spam when [Humanizer] Block Off Screen Casts option was ON@
 --0.18@
 -Use Reduced Hit Chance key renamed to Force Q, Reduced Hit Chance removed@
 -Zoom mode no longer casts while in the fountain@
