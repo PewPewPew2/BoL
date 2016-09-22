@@ -1,3 +1,7 @@
+--1.09@
+-Added support for Hextech Protobelt-01, settings are available in the Items menu@
+-Fixed a bug with Xerath ult that could cause it to draw in the incorrect position@
+-Updated stat changes for 6.19@
 --1.08@
 -Added support for Yoricks E@
 -Added support for Summoner Barrier@
