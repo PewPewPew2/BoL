@@ -1,3 +1,6 @@
+--0.74@
+-Fixed a bug with buffs created in the 6.19 patch@
+-Fixed Jhin auto attack timings@
 --0.72@
 -Updated damage changes for 6.19@
 -Attack Speed Limit (attacks / s) option max reduced to 2.5@
