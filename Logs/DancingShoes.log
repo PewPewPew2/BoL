@@ -1,3 +1,8 @@
+--1.10@
+-Added evasion support for Ivern Q@
+-Added shielding support for Ivern E@
+-Modifications to the evasion algorithm@
+-Added option, Ignore Circular Spells in Combat Mode, in the General menu@
 --1.09@
 -Added support for Hextech Protobelt-01, settings are available in the Items menu@
 -Fixed a bug with Xerath ult that could cause it to draw in the incorrect position@
