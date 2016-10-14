@@ -1,3 +1,7 @@
+--0.20@
+-Updated damage calculations for patch 6.20@
+-Added Q health bar drawings@
+-Now will target minions with Q that have bombs in Carry Mode to land stuns on enemies@
 --0.19@
 -Updated damage calculations for patch 6.19@
 -Fixed error spam when [Humanizer] Block Off Screen Casts option was ON@
