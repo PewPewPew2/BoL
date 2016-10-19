@@ -1,3 +1,8 @@
+--1.11@
+-More improvements to the evasion algorithm@
+-Fixed an error that was affecting most dashes@
+-Fixed stat errors for Nautilus Q, LeeSin Q, Blitz Q, Amumu Q and Lux Q@
+-Updated stat changes for 6.21@
 --1.10@
 -Added evasion support for Ivern Q@
 -Added shielding support for Ivern E@
