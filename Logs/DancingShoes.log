@@ -1,3 +1,5 @@
+--1.12@
+-Bug fixes in evasion algorithm@
 --1.11@
 -More improvements to the evasion algorithm@
 -Fixed an error that was affecting most dashes@
