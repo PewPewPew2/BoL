@@ -6,8 +6,6 @@ local clock = os.clock
 local pairs, ipairs = pairs, ipairs
 local insert, remove = table.insert, table.remove
 local TEAM_ALLY, TEAM_ENEMY
-local DPExist = FileExist(LIB_PATH..'DivinePred.lua')
-local KPExist = FileExist(LIB_PATH..'KPrediction.lua')
 
 local function Normalize(x,z)
     local length  = sqrt(x * x + z * z)
@@ -45,26 +43,9 @@ AddLoadCallback(function()
 			function() Print('There was an error downloading HPrediction.') end
 		)
 		return
-	end	
-	if not FileExist(LIB_PATH..'/PewPacketLib.lua') then
-		ScriptUpdate(
-			0,
-			true,
-			'raw.githubusercontent.com', 
-			'/PewPewPew2/BoL/master/Versions/PewPacketLib.version', 
-			'/PewPewPew2/BoL/master/PewPacketLib.lua',
-			LIB_PATH..'/PewPacketLib.lua',
-			function() Print('PewPacketLib Download Complete. Please reload.') end, 
-			function() return end, 
-			function() Print('PewPacketLib cannot be found, downloading now...') end,
-			function() Print('There was an error downloading PewPacketLib.') end
-		)
-		return
 	end
-	require 'PewPacketLib'
+	if FileExist(LIB_PATH..'PewPacketLib.lua') then require('PewPacketLib') end
 	require 'HPrediction'
-	if DPExist then require('DivinePred') end
-	if KPExist then require('KPrediction') end
 	local isLoaded, loadTime = false, clock()
 	AddTickCallback(function() 
 		if _Pewalk and not isLoaded then
@@ -81,7 +62,7 @@ end)
 class 'Caitlyn'
  
 function Caitlyn:__init()
-	local version = 3.0
+	local version = 3.1
 	ScriptUpdate(
 		version,
 		true,
@@ -252,24 +233,10 @@ function Caitlyn:__init()
 	
 	self:CreateMenu()
 	
-	self.Packets = GetLoseVisionPacketData()
+	if FileExist(LIB_PATH..'PewPacketLib.lua') then self.Packets = GetLoseVisionPacketData() end
 	
 	self.HP = HPrediction()
 	self.HP_Q = HPSkillshot({type = 'DelayLine', delay = 0.625, range = 1300, width = 180, speed = 2200})
-	if DPExist then
-		AddTickCallback(function()
-			if not self.DivineInitialized and DivinePred.isAuthed() then
-				self.DP = DivinePred()
-				self.DP_Q = LineSS(2200, 1300, 90, 625, huge)
-				self.DP:bindSS('Q', self.DP_Q, 0, 0)
-				self.DivineInitialized = true
-			end		
-		end)
-	end
-	if KPExist then
-		self.KP = KPrediction()
-		self.KP_Q = KPSkillshot({type = 'DelayLine', delay = 0.625, range = 1300, speed = 2200, width = 180})
-	end
 	if FHPrediction then
 		self.FH_Q = {range = 1300,speed = 2200,delay = 0.625,radius = 90,type = SkillShotType.SkillshotMissileLine,}
 	end	
@@ -401,7 +368,7 @@ function Caitlyn:CreateMenu()
 		self.Menu.R:addParam('Indicator', 'Draw Health Remaining Indicator', SCRIPT_PARAM_ONOFF, true)
 		self.Menu.R:addParam('Auto', 'Use Automatically', SCRIPT_PARAM_ONOFF, false)
 	self.Menu:addParam('Combo', 'E - Q Combo', SCRIPT_PARAM_ONKEYDOWN, false, ('T'):byte())
-	self.Menu:addParam('Prediction', 'Prediction Selection', SCRIPT_PARAM_LIST, 1, {'HPrediction', 'Korean Prediction', 'Fun House Prediction', 'Divine Prediction',})
+	self.Menu:addParam('Prediction2', 'Prediction Selection', SCRIPT_PARAM_LIST, 1, {'HPrediction', 'Fun House Prediction',})
 end
 
 function Caitlyn:CreateObj(o)
@@ -460,82 +427,50 @@ function Caitlyn:Draw()
 	end
 	if self.Menu.R.Indicator and self.rReady then
 		local range = self:GetUltRange()
-		for i, enemy in ipairs(self.Enemies) do
-			if _Pewalk.ValidTarget(enemy) then
-				local Center = GetUnitHPBarPos(enemy)
-				if Center.x > -100 and Center.x < WINDOW_W+100 and Center.y > -100 and Center.y < WINDOW_H+100 then
-					local off = GetUnitHPBarOffset(enemy)
-					local y=Center.y + (off.y * 53) + 2
-					local xOff = ({['AniviaEgg'] = -0.1,['Darius'] = -0.05,['Renekton'] = -0.05,['Sion'] = -0.05,['Thresh'] = -0.03,})[enemy.charName]
-					local x = Center.x + ((xOff or 0) * 140) - 66
-					local rmn = enemy.health - self:RDamage(enemy)
-					DrawLine(x + ((enemy.health / enemy.maxHealth) * 104),y, x+(((rmn > 0 and rmn or 0) / enemy.maxHealth) * 104),y,9, GetDistance(enemy) < range and 0x78FF7D00 or 0x78FFFFFF)
+		if PewtilityHPBars and PewtilityHPBars.Active then
+			for i, enemy in ipairs(self.Enemies) do
+				if enemy.valid and not enemy.dead and enemy.visible then
+					PewtilityHPBars.Addon[enemy.networkID] = {}					
+          if self.qReady then
+            insert(PewtilityHPBars.Addon[enemy.networkID], {
+              ['color'] = 0x7300FF00,
+              ['damage'] = self:RDamage(enemy),
+              ['text'] = 'R',
+            })
+          end
+					PewtilityHPBars.Addon[enemy.networkID].bMana = myHero.mana > 100
 				end
 			end
-		end
+    else
+      for i, enemy in ipairs(self.Enemies) do
+        if _Pewalk.ValidTarget(enemy) then
+          local Center = GetUnitHPBarPos(enemy)
+          if Center.x > -100 and Center.x < WINDOW_W+100 and Center.y > -100 and Center.y < WINDOW_H+100 then
+            local off = GetUnitHPBarOffset(enemy)
+            local y=Center.y + (off.y * 53) + 2
+            local xOff = ({['AniviaEgg'] = -0.1,['Darius'] = -0.05,['Renekton'] = -0.05,['Sion'] = -0.05,['Thresh'] = -0.03,})[enemy.charName]
+            local x = Center.x + ((xOff or 0) * 140) - 66
+            local rmn = enemy.health - self:RDamage(enemy)
+            DrawLine(x + ((enemy.health / enemy.maxHealth) * 104),y, x+(((rmn > 0 and rmn or 0) / enemy.maxHealth) * 104),y,9, GetDistance(enemy) < range and 0x78FF7D00 or 0x78FFFFFF)
+          end
+        end
+      end
+    end
 	end
-end
-
-function Caitlyn:GetCollision(unit, CastPos)
-	if self.Menu.Q.Collision then
-		local Collision = self:MinionCollision(myHero, CastPos, 90, unit, 0.625, 2200)
-		return Collision==false
-	end
-	return true
 end
 
 function Caitlyn:GetPrediction(unit, hitchance)
-	if self.Menu.Prediction==4 and DPExist then
-		if self.DivineInitialized then
-			local Status, CastPos, Percent = self.DP:predict('Q', target, StartPos)
-			return CastPos and Status == SkillShot.STATUS.SUCCESS_HIT and Percent * 0.03 >= hitchance and self:GetCollision(unit, CastPos), CastPos 
-		end			
-	elseif self.Menu.Prediction==3 and FHPrediction then
-		local CastPos, HitChance = FHPrediction.GetPrediction(self.FH_Q, unit, myHero)
-		return CastPos and HitChance >= hitchance and self:GetCollision(unit, CastPos), CastPos
-	elseif self.Menu.Prediction==2 and KPExist then
-		local CastPos, HitChance = self.KP:GetPrediction(self.KP_Q, unit, myHero)
-		return CastPos and HitChance >= hitchance * 0.5 and self:GetCollision(unit, CastPos), CastPos
+	if self.Menu.Prediction2==2 and FHPrediction then
+		local CastPos, HitChance = FHPrediction.GetPrediction(self.FH_Q, unit, myHero) 
+		return CastPos and HitChance >= hitchance and _Pewalk.GetCollision(unit, CastPos, {length=2000, width=90, delay=0.625}, myHero)==false, CastPos
 	end
 	
 	local CastPos, HitChance = self.HP:GetPredict(self.HP_Q, unit, myHero)
-	return CastPos and HitChance >= hitchance * 0.5 and self:GetCollision(unit, CastPos), CastPos
+	return CastPos and HitChance >= hitchance * 0.5 and _Pewalk.GetCollision(unit, CastPos, {length=2000, width=90, delay=0.625}, myHero)==false, CastPos
 end
 
 function Caitlyn:GetUltRange()
 	return (500 * myHero:GetSpellData(_R).level) + 1500
-end
-
-function Caitlyn:MinionCollision(sPos, ePos, width, unit, delay, speed)
-	width = width + 65
-	local range = GetDistanceSqr(sPos, ePos)
-	local collision = {}
-	local d1 = Normalize(sPos.x-(sPos.x-(sPos.z-ePos.z)), sPos.z-(sPos.z+(sPos.x-ePos.x)))
-	local poly = CreatePolygon(
-		{['x'] = sPos.x + (d1.x*(-width)), ['z'] = sPos.z + (d1.z*(-width))},  
-		{['x'] = sPos.x + (d1.x*width), ['z'] = sPos.z + (d1.z*width)}, 
-		{['x'] = ePos.x + (d1.x*width), ['z'] = ePos.z + (d1.z*width)}, 
-		{['x'] = ePos.x + (d1.x*(-width)), ['z'] = ePos.z + (d1.z*(-width))})
-	for _, minion in ipairs(_Pewalk.GetMinions()) do
-		if minion and minion ~= unit and GetDistanceSqr(minion, sPos) < (range*1.15) then
-			if poly:contains(minion.x, minion.z) then
-				collision[#collision + 1] = minion
-			end
-			if minion.hasMovePath then
-				local pPos = self:MinionPrediction(minion, delay + 1, width, speed, sPos)
-				if pPos then
-					local real = NormalizeX(pPos, minion, 400)
-					local d2 = Normalize(real.x-(real.x-(minion.z-real.z)), real.z-(real.z+(minion.x-real.x)))
-					local bR = minion.boundingRadius
-					if poly:intersects(minion.x + (d2.x*(-bR)), minion.z + (d2.z*(-bR)), real.x + (d2.x*(-bR)), real.z + (d2.z*(-bR))) 
-					or poly:intersects(minion.x + (d2.x*bR), minion.z + (d2.z*bR), real.x + (d2.x*bR), real.z + (d2.z*bR)) then
-						collision[#collision + 1] = minion
-					end
-				end
-			end
-		end
-	end
-	return #collision > 0, #collision, collision
 end
 
 function Caitlyn:MinionPrediction(unit, delay, width, speed, from)
@@ -599,18 +534,23 @@ function Caitlyn:Tick()
 	self.rReady = myHero:CanUseSpell(_R) == READY
 	local OM = _Pewalk.GetActiveMode()
 	
-	if self.qCombo and self.qCombo.Time < clock() then
+	if self.qCombo and self.qCombo.Time < clock() then		
 		local CastPos, HitChance = self.HP:GetPredict(self.HP_Q, self.qCombo.target, Vector(self.qCombo.x, myHero.y, self.qCombo.z))	
-		if CastPos then	
-			CastSpell(_Q, CastPos.x, CastPos.z)
-			self.qCombo = nil
+		if CastPos then
+			if self.qCombo.useW then
+				CastSpell(_W, CastPos.x, CastPos.z)
+				self.qCombo = nil
+			else
+				CastSpell(_Q, CastPos.x, CastPos.z)
+				self.qCombo.useW = true
+			end
 		end
 	end
 	
 	if Evade then return end
 	if self.qReady and self.eReady and self.Menu.Combo and not self.qCombo then
 		if 115 + (10 * myHero:GetSpellData(_Q).level) < myHero.mana then
-			local target = _Pewalk.GetTarget(1000)
+			local target = _Pewalk.GetTarget(800)
 			if target then
 				local bCast, CastPos = self:GetPrediction(target, 0.25)
 				if CastPos then
@@ -716,7 +656,7 @@ function Caitlyn:Tick()
 			local t = _Pewalk.GetSkillFarmTarget(0.125, d, 2000, 1000, true)
 			if t and GetDistanceSqr(t, self.SpawnPos) > GetDistanceSqr(self.SpawnPos)  then
 				local CastPos = self:MinionPrediction(t, 0.125, 80, 2000, myHero)
-				if CastPos and not self:MinionCollision(myHero, CastPos, 80, t, 0.125, 2000) then
+				if CastPos and not _Pewalk.GetCollision(t, CastPos, {length=1000, width=80, delay=0.125}, myHero)	 then
 					self.AllowECast = {x=CastPos.x, z=CastPos.z}
 					CastSpell(_E, CastPos.x, CastPos.z)
 				end
@@ -735,63 +675,6 @@ function Caitlyn:Tick()
 			end
 		end
 	end
-end
-
-class 'CreatePolygon'
-
-function CreatePolygon:__init(...)
-	self.points = {...}
-end
-
-function CreatePolygon:contains(px, pz)
-	if #self.points == 3 then
-		local p1, p2, p3 = self.points[1], self.points[2], self.points[3]
-		local VERTEX_A = ((pz - p1.z) * (p2.x - p1.x)) - ((px - p1.x) * (p2.z - p1.z))
-		local VERTEX_B = ((pz - p2.z) * (p3.x - p2.x)) - ((px - p2.x) * (p3.z - p2.z))
-		local VERTEX_C = ((pz - p3.z) * (p1.x - p3.x)) - ((px - p3.x) * (p1.z - p3.z))
-		return (VERTEX_A * VERTEX_B >= 0 and VERTEX_B * VERTEX_C >= 0)
-	else
-		for j, triangle in ipairs(self:triangulate()) do
-			if triangle:contains(px, pz) then
-				return true
-			end
-		end
-		return false
-	end
-end
-
-function CreatePolygon:triangulate()
-	if not self.triangles then
-		self.triangles = {}
-		local nVertices = #self.points
-		if nVertices > 3 then			
-			if nVertices == 4 then
-				insert(self.triangles, CreatePolygon(self.points[1], self.points[2], self.points[3]))
-				insert(self.triangles, CreatePolygon(self.points[1], self.points[3], self.points[4]))
-			end
-		elseif nVertices == 3 then
-			insert(self.triangles, self)
-		end
-	end
-	return self.triangles
-end
-
-function CreatePolygon:intersects(x1, z1, x2, z2)
-	for i=1, #self.points-1 do
-		local lx1, lz1, lx2, lz2 = self.points[i].x, self.points[i].z, self.points[i+1].x, self.points[i+1].z
-		if ((z2 - lz1) * (x1 - lx1) - (z1 - lz1) * (x2 - lx1) <= 0) ~= ((z2 - lz2) * (x1 - lx2) - (z1 - lz2) * (x2 - lx2) <= 0) then
-			if ((z1 - lz1) * (lx2 - lx1) - (lz2 - lz1) * (x1 - lx1) <= 0) ~= ((z2 - lz1) * (lx2 - lx1) - (lz2 - lz1) * (x2 - lx1) <= 0) then
-				return true
-			end
-		end
-	end
-	local lx1, lz1, lx2, lz2 = self.points[1].x, self.points[1].z, self.points[#self.points].x, self.points[#self.points].z
-    if ((z2 - lz1) * (x1 - lx1) - (z1 - lz1) * (x2 - lx1) <= 0) ~= ((z2 - lz2) * (x1 - lx2) - (z1 - lz2) * (x2 - lx2) <= 0) then
-		if ((z1 - lz1) * (lx2 - lx1) - (lz2 - lz1) * (x1 - lx1) <= 0) ~= ((z2 - lz1) * (lx2 - lx1) - (lz2 - lz1) * (x2 - lx1) <= 0) then
-			return true
-		end
-	end
-	return false
 end
 
 class "ScriptUpdate"
