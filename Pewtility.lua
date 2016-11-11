@@ -126,7 +126,7 @@ end
 -- end)
 
 AddLoadCallback(function()
-	local Version = 7.09
+	local Version = 7.10
 	TEAM_ALLY, TEAM_ENEMY = myHero.team, 300-myHero.team
   -- TEAM_ENEMY = myHero.team
 	MainMenu = scriptConfig('Pewtility', 'Pewtility')
@@ -1689,19 +1689,19 @@ function TIMERS:__init()
 		['Inhibitor'] = { ['Header'] = 0x00A3, ['pos'] = 2, },  --pick the one that is size 19
 		['SummonerRift'] = {
 			[0x09] = { ['pos'] = Vector(3850, 60, 7880),  ['time'] = 300, ['spawn'] = 100, ['mapPos'] = GetMinimap(Vector(3850, 60, 7880)),  }, --Blue Side Blue Buff
-			[0xEF] = { ['pos'] = Vector(3800, 60, 6500),  ['time'] = 100, ['spawn'] = 97,  ['mapPos'] = GetMinimap(Vector(3800, 60, 6500)),  }, --Blue Side Wolves
-			[0x47] = { ['pos'] = Vector(7000, 60, 5400),  ['time'] = 100, ['spawn'] = 97,  ['mapPos'] = GetMinimap(Vector(7000, 60, 5400)),  }, --Blue Side Raptors
+			[0xEF] = { ['pos'] = Vector(3800, 60, 6500),  ['time'] = 150, ['spawn'] = 97,  ['mapPos'] = GetMinimap(Vector(3800, 60, 6500)),  }, --Blue Side Wolves
+			[0x47] = { ['pos'] = Vector(7000, 60, 5400),  ['time'] = 150, ['spawn'] = 97,  ['mapPos'] = GetMinimap(Vector(7000, 60, 5400)),  }, --Blue Side Raptors
 			[0xEB] = { ['pos'] = Vector(7800, 60, 4000),  ['time'] = 300, ['spawn'] = 100, ['mapPos'] = GetMinimap(Vector(7800, 60, 4000)),  }, --Blue Side Red Buff
-			[0x68] = { ['pos'] = Vector(8400, 60, 2700),  ['time'] = 100, ['spawn'] = 110, ['mapPos'] = GetMinimap(Vector(8400, 60, 2700)),  }, --Blue Side Krugs
+			[0x68] = { ['pos'] = Vector(8400, 60, 2700),  ['time'] = 150, ['spawn'] = 110, ['mapPos'] = GetMinimap(Vector(8400, 60, 2700)),  }, --Blue Side Krugs
 			[0xDD] = { ['pos'] = Vector(9866, 60, 4414),  ['time'] = 360, ['spawn'] = 150, ['mapPos'] = GetMinimap(Vector(9866, 60, 4414)),  ['isDragon'] = true, }, --Dragon
 			[0xF4] = { ['pos'] = Vector(10950, 60, 7030), ['time'] = 300, ['spawn'] = 100, ['mapPos'] = GetMinimap(Vector(10950, 60, 7030)), }, --Red Side Blue Buff
-			[0x14] = { ['pos'] = Vector(11000, 60, 8400), ['time'] = 100, ['spawn'] = 97,  ['mapPos'] = GetMinimap(Vector(11000, 60, 8400)), }, --Red Side Wolves	
-			[0xB5] = { ['pos'] = Vector(7850, 60, 9500),  ['time'] = 100, ['spawn'] = 97,  ['mapPos'] = GetMinimap(Vector(7850, 60, 9500)),  }, --Red Side Raptors
+			[0x14] = { ['pos'] = Vector(11000, 60, 8400), ['time'] = 150, ['spawn'] = 97,  ['mapPos'] = GetMinimap(Vector(11000, 60, 8400)), }, --Red Side Wolves	
+			[0xB5] = { ['pos'] = Vector(7850, 60, 9500),  ['time'] = 150, ['spawn'] = 97,  ['mapPos'] = GetMinimap(Vector(7850, 60, 9500)),  }, --Red Side Raptors
 			[0x44] = { ['pos'] = Vector(7100, 60, 10900), ['time'] = 300, ['spawn'] = 100, ['mapPos'] = GetMinimap(Vector(7100, 60, 10900)), }, --Red Side Red Buff
-			[0xA4] = { ['pos'] = Vector(6400, 60, 12250), ['time'] = 100, ['spawn'] = 110, ['mapPos'] = GetMinimap(Vector(6400, 60, 12250)), }, --Red Side Krugs
+			[0xA4] = { ['pos'] = Vector(6400, 60, 12250), ['time'] = 150, ['spawn'] = 110, ['mapPos'] = GetMinimap(Vector(6400, 60, 12250)), }, --Red Side Krugs
 			[0x53] = { ['pos'] = Vector(4950, 60, 10400), ['time'] = 420,                  ['mapPos'] = GetMinimap(Vector(4950, 60, 10400)), }, --Baron
-			[0x96] = { ['pos'] = Vector(2200, 60, 8500),  ['time'] = 100, ['spawn'] = 110, ['mapPos'] = GetMinimap(Vector(2200, 60, 8500)),  }, --Blue Side Gromp
-			[0xE0] = { ['pos'] = Vector(12600, 60, 6400), ['time'] = 100, ['spawn'] = 110, ['mapPos'] = GetMinimap(Vector(12600, 60, 6400)), }, --Red Side Gromp
+			[0x96] = { ['pos'] = Vector(2200, 60, 8500),  ['time'] = 150, ['spawn'] = 110, ['mapPos'] = GetMinimap(Vector(2200, 60, 8500)),  }, --Blue Side Gromp
+			[0xE0] = { ['pos'] = Vector(12600, 60, 6400), ['time'] = 150, ['spawn'] = 110, ['mapPos'] = GetMinimap(Vector(12600, 60, 6400)), }, --Red Side Gromp
 			[0x84] = { ['pos'] = Vector(10500, 60, 5170), ['time'] = 180, ['spawn'] = 145, ['mapPos'] = GetMinimap(Vector(10500, 60, 5170)), }, --Dragon Crab
 			[0xA9] = { ['pos'] = Vector(4400, 60, 9600),  ['time'] = 180, ['spawn'] = 145, ['mapPos'] = GetMinimap(Vector(4400, 60, 9600)),  }, --Baron Crab
 			[0xFFD23C3E] = { ['pos'] = Vector(1170, 90, 3570),   ['time'] = 300, ['mapPos'] = GetMinimap(Vector(1170, 91, 3570)),   }, --Blue Top Inhibitor
@@ -1738,19 +1738,19 @@ function TIMERS:__init()
 		['Inhibitor'] = { ['Header'] = 0x0062, ['pos'] = 2, },  --pick the one that is size 19
 		['SummonerRift'] = {
 			[0x09] = { ['pos'] = Vector(3850, 60, 7880),  ['time'] = 300, ['spawn'] = 100, ['mapPos'] = GetMinimap(Vector(3850, 60, 7880)),  }, --Blue Side Blue Buff
-			[0xEF] = { ['pos'] = Vector(3800, 60, 6500),  ['time'] = 100, ['spawn'] = 97,  ['mapPos'] = GetMinimap(Vector(3800, 60, 6500)),  }, --Blue Side Wolves
-			[0x47] = { ['pos'] = Vector(7000, 60, 5400),  ['time'] = 100, ['spawn'] = 97,  ['mapPos'] = GetMinimap(Vector(7000, 60, 5400)),  }, --Blue Side Raptors
+			[0xEF] = { ['pos'] = Vector(3800, 60, 6500),  ['time'] = 150, ['spawn'] = 97,  ['mapPos'] = GetMinimap(Vector(3800, 60, 6500)),  }, --Blue Side Wolves
+			[0x47] = { ['pos'] = Vector(7000, 60, 5400),  ['time'] = 150, ['spawn'] = 97,  ['mapPos'] = GetMinimap(Vector(7000, 60, 5400)),  }, --Blue Side Raptors
 			[0xEB] = { ['pos'] = Vector(7800, 60, 4000),  ['time'] = 300, ['spawn'] = 100, ['mapPos'] = GetMinimap(Vector(7800, 60, 4000)),  }, --Blue Side Red Buff
-			[0x68] = { ['pos'] = Vector(8400, 60, 2700),  ['time'] = 100, ['spawn'] = 110, ['mapPos'] = GetMinimap(Vector(8400, 60, 2700)),  }, --Blue Side Krugs
+			[0x68] = { ['pos'] = Vector(8400, 60, 2700),  ['time'] = 150, ['spawn'] = 110, ['mapPos'] = GetMinimap(Vector(8400, 60, 2700)),  }, --Blue Side Krugs
 			[0xDD] = { ['pos'] = Vector(9866, 60, 4414),  ['time'] = 360, ['spawn'] = 150, ['mapPos'] = GetMinimap(Vector(9866, 60, 4414)),  ['isDragon'] = true, }, --Dragon
 			[0xF4] = { ['pos'] = Vector(10950, 60, 7030), ['time'] = 300, ['spawn'] = 100, ['mapPos'] = GetMinimap(Vector(10950, 60, 7030)), }, --Red Side Blue Buff
-			[0x14] = { ['pos'] = Vector(11000, 60, 8400), ['time'] = 100, ['spawn'] = 97,  ['mapPos'] = GetMinimap(Vector(11000, 60, 8400)), }, --Red Side Wolves	
-			[0xB5] = { ['pos'] = Vector(7850, 60, 9500),  ['time'] = 100, ['spawn'] = 97,  ['mapPos'] = GetMinimap(Vector(7850, 60, 9500)),  }, --Red Side Raptors
+			[0x14] = { ['pos'] = Vector(11000, 60, 8400), ['time'] = 150, ['spawn'] = 97,  ['mapPos'] = GetMinimap(Vector(11000, 60, 8400)), }, --Red Side Wolves	
+			[0xB5] = { ['pos'] = Vector(7850, 60, 9500),  ['time'] = 150, ['spawn'] = 97,  ['mapPos'] = GetMinimap(Vector(7850, 60, 9500)),  }, --Red Side Raptors
 			[0x44] = { ['pos'] = Vector(7100, 60, 10900), ['time'] = 300, ['spawn'] = 100, ['mapPos'] = GetMinimap(Vector(7100, 60, 10900)), }, --Red Side Red Buff
-			[0xA4] = { ['pos'] = Vector(6400, 60, 12250), ['time'] = 100, ['spawn'] = 110, ['mapPos'] = GetMinimap(Vector(6400, 60, 12250)), }, --Red Side Krugs
+			[0xA4] = { ['pos'] = Vector(6400, 60, 12250), ['time'] = 150, ['spawn'] = 110, ['mapPos'] = GetMinimap(Vector(6400, 60, 12250)), }, --Red Side Krugs
 			[0x53] = { ['pos'] = Vector(4950, 60, 10400), ['time'] = 420,                  ['mapPos'] = GetMinimap(Vector(4950, 60, 10400)), }, --Baron
-			[0x96] = { ['pos'] = Vector(2200, 60, 8500),  ['time'] = 100, ['spawn'] = 110, ['mapPos'] = GetMinimap(Vector(2200, 60, 8500)),  }, --Blue Side Gromp
-			[0xE0] = { ['pos'] = Vector(12600, 60, 6400), ['time'] = 100, ['spawn'] = 110, ['mapPos'] = GetMinimap(Vector(12600, 60, 6400)), }, --Red Side Gromp
+			[0x96] = { ['pos'] = Vector(2200, 60, 8500),  ['time'] = 150, ['spawn'] = 110, ['mapPos'] = GetMinimap(Vector(2200, 60, 8500)),  }, --Blue Side Gromp
+			[0xE0] = { ['pos'] = Vector(12600, 60, 6400), ['time'] = 150, ['spawn'] = 110, ['mapPos'] = GetMinimap(Vector(12600, 60, 6400)), }, --Red Side Gromp
 			[0x84] = { ['pos'] = Vector(10500, 60, 5170), ['time'] = 180, ['spawn'] = 145, ['mapPos'] = GetMinimap(Vector(10500, 60, 5170)), }, --Dragon Crab
 			[0xA9] = { ['pos'] = Vector(4400, 60, 9600),  ['time'] = 180, ['spawn'] = 145, ['mapPos'] = GetMinimap(Vector(4400, 60, 9600)),  }, --Baron Crab
 			[0xFFD23C3E] = { ['pos'] = Vector(1170, 90, 3570),   ['time'] = 300, ['mapPos'] = GetMinimap(Vector(1170, 91, 3570)),   }, --Blue Top Inhibitor
