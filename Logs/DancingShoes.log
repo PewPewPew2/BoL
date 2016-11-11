@@ -1,3 +1,16 @@
+--1.16@
+-Fixed some more bugs in the evasion algorithm@
+-Updated the following spells:@
+-Talons Q, W, E, R, Passive and removed his old dash as a defensive dash@
+-Katarinas Q, W, E and R@
+-LeBlancs Q, W, E, R and Passive@
+-Rengars Q, W, E and added Q as a defensive dash@
+-Fizzs Q, W, E and R
+-KhaZix Q@
+-Akali E, R and Passive@
+-Alistar E and Passive@
+-Updated damage calculations for new and updated Masteries@
+-Updated damage calculations for new and updated items@
 --1.14@
 -More bug fixes@
 --1.13@
