@@ -126,7 +126,7 @@ end
 -- end)
 
 AddLoadCallback(function()
-	local Version = 7.11
+	local Version = 7.12
 	TEAM_ALLY, TEAM_ENEMY = myHero.team, 300-myHero.team
   -- TEAM_ENEMY = myHero.team
 	MainMenu = scriptConfig('Pewtility', 'Pewtility')
@@ -1630,8 +1630,7 @@ function SKILLS:DrawOLD()
 					local y = barY+44
 					if data.level > 0 then
 						if data.currentCd ~= 0 then
-							local cda = DwordToFloat(ReadDWORD(GetPtrS(data)+0x3C))
-							cda=cda>0 and cda or 0
+							local cda=data.cd>0 and data.cd or 0
 							local cd = cda-(cda-data.currentCd)
 							DrawLine(x, y, x+((cd / cda) * 21), y, 12, COLOR_ORANGE)
 							DrawLine(x+((cd / cda) * 21), y, x+21, y, 12, COLOR_GREY)
@@ -1653,10 +1652,10 @@ function SKILLS:DrawOLD()
 					local y = barY+47
 					local text = info['t'..(i-3)]
 					if data.currentCd ~= 0 then
-						data.cd=data.cd>0 and data.cd or 0
-						local cd = data.cd-(data.cd-data.currentCd)
-						DrawLine(x, y+11, x+((cd / data.cd) * 42), y+11, 12, COLOR_ORANGE)
-						DrawLine(x+((cd / data.cd) * 42), y+11, x+42, y+11, 12, COLOR_GREY)
+						local cda = data.cd>0 and data.cd or 0
+						local cd = cda-(cda-data.currentCd)
+						DrawLine(x, y+11, x+((cd / cda) * 42), y+11, 12, COLOR_ORANGE)
+						DrawLine(x+((cd / cda) * 42), y+11, x+42, y+11, 12, COLOR_GREY)
 						--self.CallTimers[enemy.charName] = {x=x, y=y+5,t=floor(data.currentCd+GetInGameTimer()), text=text}
 					else
 						DrawLine(x, y+11, x+42, y+11, 12, COLOR_GREEN)								
