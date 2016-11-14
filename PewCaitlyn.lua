@@ -53,7 +53,7 @@ AddLoadCallback(function()
 			Caitlyn()
 			isLoaded = true
 		elseif loadTime + 5 < clock() and not isLoaded then
-			Print('Standalone Pewalk is now required, check forum!!', true)
+			Print('Pewalk is required!', true)
 			isLoaded = true
 		end
 	end)
@@ -62,7 +62,7 @@ end)
 class 'Caitlyn'
  
 function Caitlyn:__init()
-	local version = 3.1
+	local version = 3.2
 	ScriptUpdate(
 		version,
 		true,
@@ -157,7 +157,6 @@ function Caitlyn:__init()
 		['DamageMods'] = {
 			['ferocioushowl'] = function(source) return 0.3 end,
 			['garenw'] = function(source) return 0.7 end,
-			['katarinaereduction'] = function(source) return 0.85 end,
 			['maokaidrain3defense'] = function(source) return 0.8 end,
 			['galioidolofdurand'] = function(source) return 0.5 end,
 			['vladimirhemoplaguedebuff'] = function(source) return 1.12 end,
@@ -268,6 +267,12 @@ function Caitlyn:ApplyBuff(source, unit, buff)
 	end
 end
 
+function Caitlyn:CalcArmor(target)
+	local bonusArmorPenPercent = DwordToFloat(ReadDWORD(myHero.ptr+0xCFC))
+	local baseArmor = target.armor-target.bonusArmor
+	return 100 / (100 + (((target.bonusArmor * bonusArmorPenPercent) + baseArmor) * myHero.armorPenPercent) - ((myHero.lethality * .4) + ((myHero.lethality * .6) * (myHero.level / 18))))
+end
+
 function Caitlyn:CastSpell(iSlot,startPos,endPos,target)
 	if iSlot == _E and not self.Menu.E.NeverBlock then
 		if ceil(self.AllowECast.x)~=ceil(endPos.x) or ceil(self.AllowECast.z)~=ceil(endPos.z) then
@@ -293,10 +298,10 @@ end
 function Caitlyn:CreateMenu()
 	self.Menu = scriptConfig('PewCaitlyn', 'Caitlyn')
 	self.Menu:addSubMenu('Piltover Peacemaker', 'Q')		
-		self.Menu.Q:addParam('info', '-Farming-', SCRIPT_PARAM_INFO, '')
+		self.Menu.Q:addParam('info', '---Farming---', SCRIPT_PARAM_INFO, '')
 		self.Menu.Q:addParam('LastHit', 'Use for Last Hits', SCRIPT_PARAM_ONOFF, true)
 		self.Menu.Q:addParam('space', '', SCRIPT_PARAM_INFO, '')
-		self.Menu.Q:addParam('info', '-Combat-', SCRIPT_PARAM_INFO, '')
+		self.Menu.Q:addParam('info', '---Combat---', SCRIPT_PARAM_INFO, '')
 		self.Menu.Q:addParam('Carry', 'Use in Carry Mode', SCRIPT_PARAM_ONOFF, true)
 		self.Menu.Q:addParam('Mixed', 'Harass in Mixed Mode', SCRIPT_PARAM_ONOFF, true)
 		self.Menu.Q:addParam('Clear', 'Harass in Clear Mode', SCRIPT_PARAM_ONOFF, true)
@@ -320,11 +325,11 @@ function Caitlyn:CreateMenu()
 		self.Menu.Q:addParam('HitChance', 'Cast HitChance [3==Highest]', SCRIPT_PARAM_SLICE, 1.25, 0.5, 3, 1)
 		self.Menu.Q:addParam('Collision', 'Check for minion Collision', SCRIPT_PARAM_ONOFF, true)
 		self.Menu.Q:addParam('space', '', SCRIPT_PARAM_INFO, '')
-		self.Menu.Q:addParam('info', '-Miscellaneous-', SCRIPT_PARAM_INFO, '')
+		self.Menu.Q:addParam('info', '---Miscellaneous---', SCRIPT_PARAM_INFO, '')
 		self.Menu.Q:addParam('Mana', 'Always Save Mana for E', SCRIPT_PARAM_ONOFF, true)
 		self.Menu.Q:addParam('Draw', 'Draw Peacemaker Range', SCRIPT_PARAM_LIST, 1, { 'Low FPS', 'Normal', 'None', })
 	self.Menu:addSubMenu('Yordle Snap Trap', 'W')
-		self.Menu.W:addParam('info', '-Combat-', SCRIPT_PARAM_INFO, '')
+		self.Menu.W:addParam('info', '---Combat---', SCRIPT_PARAM_INFO, '')
 		self.Menu.W:addParam('Path', 'Cast on Target Path', SCRIPT_PARAM_ONOFF, true)
 		self.Menu.W:addParam('Channel', 'Trap Channel Spells', SCRIPT_PARAM_ONOFF, true)
 		self.Menu.W:addParam('CrowdControl', 'Trap Crowd Control', SCRIPT_PARAM_ONOFF, true)
@@ -344,25 +349,26 @@ function Caitlyn:CreateMenu()
 			end
 		end
 		self.Menu.W:addParam('space', '', SCRIPT_PARAM_INFO, '')
-		self.Menu.W:addParam('info', '-Miscellaneous-', SCRIPT_PARAM_INFO, '')
+		self.Menu.W:addParam('info', '---Miscellaneous---', SCRIPT_PARAM_INFO, '')
 		self.Menu.W:addParam('Mana', 'Always Save Mana for E', SCRIPT_PARAM_ONOFF, true)
 		self.Menu.W:addParam('Draw', 'Draw Active Trap Timers', SCRIPT_PARAM_ONOFF, true)
 	self.Menu:addSubMenu('90 Caliber Net', 'E')
-		self.Menu.E:addParam('info', '-Keys-', SCRIPT_PARAM_INFO, '')
+		self.Menu.E:addParam('info', '---Keys---', SCRIPT_PARAM_INFO, '')
+    _Pewalk.AddMenuHeader('---Keys---')
 		self.Menu.E:addParam('Mouse', 'Net To Mouse', SCRIPT_PARAM_ONKEYDOWN, false, ('E'):byte())
 		self.Menu.E:addParam('space', '', SCRIPT_PARAM_INFO, '')
-		self.Menu.E:addParam('info', '-Farming-', SCRIPT_PARAM_INFO, '')
+		self.Menu.E:addParam('info', '---Farming---', SCRIPT_PARAM_INFO, '')
 		self.Menu.E:addParam('LastHit', 'Use for Last Hits', SCRIPT_PARAM_ONOFF, false)
 		self.Menu.E:addParam('space', '', SCRIPT_PARAM_INFO, '')
-		self.Menu.E:addParam('info', '-Miscellaneous-', SCRIPT_PARAM_INFO, '')
+		self.Menu.E:addParam('info', '---Miscellaneous---', SCRIPT_PARAM_INFO, '')
 		self.Menu.E:addParam('NeverBlock', 'Never block E Casts', SCRIPT_PARAM_ONOFF, false)
 		self.Menu.E:addParam('Block', 'Block Failed Wall Jumps', SCRIPT_PARAM_ONOFF, true)
 		self.Menu.E:addParam('MinimumBlock', 'Do Not Block if Will Jump This Far', SCRIPT_PARAM_SLICE, 350, 20, 490)
 	self.Menu:addSubMenu('Ace in the Hole', 'R')
-		self.Menu.R:addParam('info', '-Keys-', SCRIPT_PARAM_INFO, '')
+		self.Menu.R:addParam('info', '---Keys---', SCRIPT_PARAM_INFO, '')
 		self.Menu.R:addParam('Key', 'Kill Key', SCRIPT_PARAM_ONKEYDOWN, false, ('R'):byte())
-		self.Menu.R:addParam('info', '-Miscellaneous-', SCRIPT_PARAM_INFO, '')
 		self.Menu.R:addParam('space', '', SCRIPT_PARAM_INFO, '')
+		self.Menu.R:addParam('info', '---Miscellaneous---', SCRIPT_PARAM_INFO, '')
 		self.Menu.R:addParam('CrossHair', 'Draw Can Kill Alert', SCRIPT_PARAM_ONOFF, true)
 		self.Menu.R:addParam('Line', 'Draw Line to Killable Character', SCRIPT_PARAM_ONOFF, true)
 		self.Menu.R:addParam('Indicator', 'Draw Health Remaining Indicator', SCRIPT_PARAM_ONOFF, true)
@@ -502,7 +508,7 @@ function Caitlyn:ProcessSpell(u, s)
 end
 
 function Caitlyn:RDamage(unit)
-	local baseDmg = (((225 * myHero:GetSpellData(_R).level) + (myHero.addDamage * 2)) * (100 / (100 + ((unit.armor * myHero.armorPenPercent) - myHero.armorPen)))) - (unit.hpRegen * (1 + (GetDistance(unit) / 3000)))
+	local baseDmg = ((225 * myHero:GetSpellData(_R).level) + (myHero.addDamage * 2)) * self:CalcArmor(unit)
 	for _, buff in ipairs(_Pewalk.GetBuffs(unit)) do
 		if self.OnBuff.DamageMods[buff.name] and buff.endT > GetGameTimer() + 1 then
 			baseDmg = baseDmg * self.OnBuff.DamageMods[buff.name]
