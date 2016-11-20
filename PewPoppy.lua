@@ -1,73 +1,15 @@
 if myHero.charName~='Poppy' then return end
 
-require('HPrediction')
+local version = 0.04
 
 local pi, pi2, atan, cos, sin, sqrt = math.pi, math.pi*2, math.atan, math.cos, math.sin, math.sqrt
 local Sector = pi * (110 / 180)
 local Sector4 = Sector / 3
-local Dashing, Reciprocal, KeepersVerdictChannel = 0, 0, 0
+local Dashing, KeepersVerdictChannel = 0, 0
+local DrawP, DrawS = 35, true
 local HP, HP_Q, HP_R, HP_R2, FlashSlot, Menu
 local Pillar, Buckler
-local IceBlocks, Soldiers, J4Wall, Enemies = {}, {}, {}, {}
-local PushDistance = {
-	[70] = 310,
-	[80] = 310,
-	[90] = 310,
-	[100] = 310,
-	[110] = 310,
-	[120] = 310,
-	[130] = 310,
-	[140] = 310,
-	[150] = 410,
-	[160] = 420,
-	[170] = 430,
-	[180] = 350,
-	[190] = 270,
-	[200] = 280,
-	[210] = 290,
-	[220] = 390,
-	[230] = 310,
-	[240] = 410,
-	[250] = 330,
-	[260] = 430,
-	[270] = 350,
-	[280] = 360,
-	[290] = 370,
-	[300] = 380,
-	[310] = 390,
-	[320] = 400,
-	[330] = 410,
-	[340] = 420,
-	[360] = 350,
-	[370] = 360,
-	[380] = 370,
-	[390] = 380,
-	[400] = 390,
-	[410] = 400,
-	[430] = 420,
-	[440] = 430,
-	[450] = 350,
-	[460] = 270,
-	[470] = 370,
-	[480] = 380,
-	[490] = 390,
-	[500] = 400,
-	[510] = 310,
-	[520] = 420,
-	[530] = 430,
-	[540] = 350,
-	[550] = 360,
-	[560] = 370,
-	[570] = 380,
-	[580] = 390,
-	[590] = 400,
-	[600] = 410,
-	[610] = 420,
-	[620] = 430,
-	[630] = 350,
-	[640] = 360,
-	[650] = 370,
-}		
+local IceBlocks, Soldiers, J4Wall, Enemies = {}, {}, {}, {}	
 
 function Normalize(x,z)
     local length  = sqrt(x * x + z * z)
@@ -156,11 +98,11 @@ end
 function AnalyzeCharge(t, from)
 	local myPos = from or NormalizeX(GetPath(myHero), myHero, (GetLatency()*0.0005)*myHero.ms)
 	local d1 = GetDistance(t, myPos)	
-	local p1 = NormalizeX(t, myPos, (d1 + (PushDistance[math.round(d1 * 0.1, 0)*10] or 350)))
+	local p1 = NormalizeX(t, myPos, (d1 + 400))
 	if IsWallCollision(t, p1) then
 		if t.hasMovePath then
 			local pp = NormalizeX(GetPath(t), t, (d1 / 1800) * t.ms)
-			local p2 = NormalizeX(pp, myPos, (GetDistance(pp, myPos) + (PushDistance[math.round(GetDistance(myPos, pp) * 0.1, 0)*10] or 350)))
+			local p2 = NormalizeX(pp, myPos, (GetDistance(pp, myPos) + 400))
 			if IsWallCollision(pp, p2) then
 				return true
 			end						
@@ -227,29 +169,21 @@ function CalcArmor(unit, target)
 end
 
 AddLoadCallback(function()
-  if not _Pewalk then
-    Print('Pewalk is required!', true)
+  if FileExist(LIB_PATH..'HPrediction.lua') then
+    require('HPrediction')
+    HP = HPrediction()
+    HP_Q = HPSkillshot({type = 'PromptLine', delay = 0.375, range = 350, width = 150, speed = math.huge})
+    HP_R = HPSkillshot({type = 'PromptLine', delay = 0.450, range = 550, width = 275, speed = math.huge})
+    HP_R2 = HPSkillshot({type = 'DelayLine', delay = 0, range = 1200, width = 275, speed = 1600})
+  else
+    Print('HPrediction required, please download manually!', true)
     return
   end
-
-	local version = 0.03
-	ScriptUpdate(
-		version,
-		true, 
-		'raw.githubusercontent.com', 
-		'/PewPewPew2/BoL/master/Versions/PewPoppy.version', 
-		'/PewPewPew2/BoL/master/PewPoppy.lua', 
-		SCRIPT_PATH.._ENV.FILE_NAME, 
-		function() Print('Update Complete. Please reload. (F9 F9)') end, 
-		function() Print('Loaded latest version. v'..version..'.') end, 
-		function() Print('New version found, downloading now...') end,
-		function() Print('There was an error during update.') end
-	)
+  if not _Pewalk then
+    Print('Pewalk required, please download manually!', true)
+    return
+  end
   
-  HP = HPrediction()
-  HP_Q = HPSkillshot({type = 'PromptLine', delay = 0.375, range = 350, width = 150, speed = math.huge})
-  HP_R = HPSkillshot({type = 'PromptLine', delay = 0.450, range = 550, width = 275, speed = math.huge})
-  HP_R2 = HPSkillshot({type = 'DelayLine', delay = 0, range = 1200, width = 275, speed = 1600})
   FlashSlot = myHero:GetSpellData(SUMMONER_1).name:lower() == 'summonerflash' and SUMMONER_1 or (myHero:GetSpellData(SUMMONER_2).name:lower() == 'summonerflash') and SUMMONER_2 or nil	
  
   for i=1, heroManager.iCount do
@@ -261,37 +195,50 @@ AddLoadCallback(function()
   
   Menu = scriptConfig('PewPoppy', 'PewPoppy')
   Menu:addParam('info', '---General---', SCRIPT_PARAM_INFO, '')
-  _Pewalk.AddMenuHeader('---General---')
-  Menu:addParam('KS', 'Killsteal', SCRIPT_PARAM_ONKEYTOGGLE, true, ('T'):byte())
-  Menu:addParam('space', '', SCRIPT_PARAM_INFO, '')
+    _Pewalk.AddMenuHeader('---General---')
+    Menu:addParam('KS', 'Killsteal', SCRIPT_PARAM_ONKEYTOGGLE, true, ('T'):byte())
+    Menu:addParam('space', '', SCRIPT_PARAM_INFO, '')
   Menu:addParam('info', '---Hammer Shock---', SCRIPT_PARAM_INFO, '')
-  _Pewalk.AddMenuHeader('---Hammer Shock---')
-  Menu:addParam('KSQ', 'Killsteal Q', SCRIPT_PARAM_ONOFF, true)
-  Menu:addParam('space', '', SCRIPT_PARAM_INFO, '')
-  Menu:addParam('info', '---Steadfast Presence---', SCRIPT_PARAM_INFO, '')
+    _Pewalk.AddMenuHeader('---Hammer Shock---')
+    Menu:addParam('KSQ', 'Killsteal Q', SCRIPT_PARAM_ONOFF, true)
+    Menu:addParam('space', '', SCRIPT_PARAM_INFO, '')
+    Menu:addParam('info', '---Steadfast Presence---', SCRIPT_PARAM_INFO, '')
   _Pewalk.AddMenuHeader('---Steadfast Presence---')
-  for _, enemy in ipairs(Enemies) do
-    Menu:addParam(enemy.charName, 'Allow Cast On: '..enemy.charName, SCRIPT_PARAM_ONOFF, true)
-  end  
-  Menu:addParam('space', '', SCRIPT_PARAM_INFO, '')
+    for _, enemy in ipairs(Enemies) do
+      Menu:addParam(enemy.charName, 'Allow Cast On: '..enemy.charName, SCRIPT_PARAM_ONOFF, true)
+    end  
+    Menu:addParam('space', '', SCRIPT_PARAM_INFO, '')
   Menu:addParam('info', '---Heroic Charge---', SCRIPT_PARAM_INFO, '')
-  _Pewalk.AddMenuHeader('---Heroic Charge---')
-  Menu:addParam('FlashKey', 'Flash E', SCRIPT_PARAM_ONKEYDOWN, false, ('C'):byte())
-  Menu:addParam('ForceE', 'Force E (No Wall Check)', SCRIPT_PARAM_ONKEYDOWN, false, 20)
-  Menu:addParam('space', '  Carry Key must be ON for Force', SCRIPT_PARAM_INFO, '')
-  Menu:addParam('space', '', SCRIPT_PARAM_INFO, '')
-  Menu:addParam('info', '---Keeper\'s Verdict---', SCRIPT_PARAM_INFO, '')
+    _Pewalk.AddMenuHeader('---Heroic Charge---')
+    Menu:addParam('FlashKey', 'Flash E', SCRIPT_PARAM_ONKEYDOWN, false, ('C'):byte())
+    Menu:addParam('ForceE', 'Force E (No Wall Check)', SCRIPT_PARAM_ONKEYDOWN, false, 20)
+    Menu:addParam('space', '  Carry Key must be ON for Force', SCRIPT_PARAM_INFO, '')
+    Menu:addParam('space', '', SCRIPT_PARAM_INFO, '')
+    Menu:addParam('info', '---Keeper\'s Verdict---', SCRIPT_PARAM_INFO, '')
   _Pewalk.AddMenuHeader('---Keeper\'s Verdict---')
-  Menu:addParam('ForceR', 'Force R', SCRIPT_PARAM_ONKEYDOWN, false, ('M'):byte())
-  Menu:addParam('KSR', 'Killsteal R', SCRIPT_PARAM_ONOFF, true)
-  Menu:addParam('MinR', 'Cast R if can hit X', SCRIPT_PARAM_SLICE, 3, 2, 5)
-  Menu:addParam('SecondCast', 'Allow Auto Second Cast', SCRIPT_PARAM_ONOFF, true)
+    Menu:addParam('KSR', 'Killsteal R', SCRIPT_PARAM_ONOFF, true)
+    Menu:addParam('ForceR', 'Force Snap Cast R', SCRIPT_PARAM_ONKEYDOWN, false, ('M'):byte())
+    Menu:addParam('MinR', 'Snap Cast R If Can Hit X', SCRIPT_PARAM_SLICE, 3, 2, 5)
+    Menu:addParam('SecondCast', 'Allow Auto Charged Cast', SCRIPT_PARAM_ONOFF, true)
   
   AddNewPathCallback(NewPath)
   AddCreateObjCallback(CreateObj)
   AddTickCallback(Tick)
   AddDrawCallback(Draw)
   AddAnimationCallback(Animation)
+	
+  ScriptUpdate(
+		version,
+		true, 
+		'raw.githubusercontent.com', 
+		'/PewPewPew2/BoL/master/Versions/PewPoppy.version', 
+		'/PewPewPew2/BoL/master/PewPoppy.lua', 
+		SCRIPT_PATH.._ENV.FILE_NAME, 
+		function() Print('Update Complete. Please reload. (F9 F9)') end, 
+		function() Print('Loaded latest version. v'..version..'.') end, 
+		function() Print('New version found, downloading now...') end,
+		function() Print('There was an error during update.') end
+	)
 end)
 
 function NewPath(unit,startPos,endPos,isDash,dashSpeed,dashGravity,dashDistance)
@@ -330,22 +277,6 @@ end
 
 function Tick()
 	if _Pewalk.GetActiveMode().Carry then
-		if myHero:CanUseSpell(_Q) == READY then
-			local t = _Pewalk.GetTarget(375)
-			if t then
-				local CP, HC = HP:GetPredict(HP_Q, t, Vector(myHero))
-				if CP then
-					if HC > 1.4 then
-						CastSpell(_Q, CP.x, CP.z)
-					elseif Menu.KS and Menu.KSQ then
-						local qDamage = 15 + (25 * myHero:GetSpellData(_Q).level) + (.8 * myHero.addDamage) + (.07 * t.maxHealth)
-						if qDamage > t.health * CalcArmor(myHero, t) then
-							CastSpell(_Q, CP.x, CP.z)
-						end
-					end
-				end
-			end
-		end
 		if myHero:CanUseSpell(_E) == READY then
 			local t = _Pewalk.GetTarget(425 + myHero.boundingRadius, true)
 			if t then
@@ -359,6 +290,22 @@ function Tick()
 				if e~=t and _Pewalk.ValidTarget(e, 425 + myHero.boundingRadius, true) and not IsImmune(e) then
 					if _Pewalk.IsHighPriority(e, 2) and AnalyzeCharge(e) then
 						CastSpell(_E, e)
+					end
+				end
+			end
+		end
+		if myHero:CanUseSpell(_Q) == READY then
+			local t = _Pewalk.GetTarget(375)
+			if t then
+				local CP, HC = HP:GetPredict(HP_Q, t, Vector(myHero))
+				if CP then
+					if HC > 1.4 then
+						CastSpell(_Q, CP.x, CP.z)
+					elseif Menu.KS and Menu.KSQ then
+						local qDamage = 15 + (25 * myHero:GetSpellData(_Q).level) + (.8 * myHero.addDamage) + (.07 * t.maxHealth)
+						if qDamage > t.health * CalcArmor(myHero, t) then
+							CastSpell(_Q, CP.x, CP.z)
+						end
 					end
 				end
 			end
@@ -410,11 +357,55 @@ function Tick()
 	if KeepersVerdictChannel + 4 > os.clock() and Menu.SecondCast then
 		local windUp = os.clock() - KeepersVerdictChannel
 		if windUp > 1 then
-			local t = _Pewalk.GetTarget(1200)
-			if t then
-				local CP, HC = HP:GetPredict(HP_R2, t, Vector(myHero))
-				if CP and HC > 0.5 then
-					CastSpell2(_R, D3DXVECTOR3(CP.x, myHero.y, CP.z))
+			local InRange = {}     
+      for i, enemy in ipairs(Enemies) do
+        if _Pewalk.ValidTarget(enemy, 1200) then
+          local CP, HC = HP:GetPredict(HP_R2, enemy, Vector(myHero))
+          table.insert(InRange, {
+            unit=enemy,
+            pred=CP,
+            hc=HC,
+          })
+        end
+      end
+      
+      local MaxHit, MaxHitPos = 0, nil
+      for i, t1 in ipairs(InRange) do
+        if t1.pred and t1.hc > .5 then
+          local CurrentHit = 1
+          for k, t2 in ipairs(InRange) do
+            if i~=k then
+              if GetDistanceSqr(t1.pred, t2.pred) < 90000 then
+                CurrentHit = CurrentHit + 1
+              else
+                local CollisionPoint, IsOnLine = GetLinePoint(myHero.x, myHero.z, t1.pred.x, t1.pred.z, t2.pred.x, t2.pred.z)
+                if IsOnLine and GetDistanceSqr(CollisionPoint, t2.pred) < 62500 and GetDistanceSqr(CollisionPoint) < GetDistanceSqr(t1.pred) then
+                  CurrentHit = 0
+                  break
+                end
+              end
+            end
+          end
+          if CurrentHit > MaxHit then
+            MaxHit, MaxHitPos = CurrentHit, t1.pred
+          end
+        end
+      end
+      if MaxHit > 1 and MaxHitPos then
+        CastSpell2(_R, D3DXVECTOR3(MaxHitPos.x, myHero.y, MaxHitPos.z))
+      end
+      
+      local TankiestTarget, Ratio = nil, 0
+      for i, t in ipairs(InRange) do
+        local CurrentRatio = t.unit.health * t.unit.armor * t.unit.magicArmor
+        if not TankiestTarget or Ratio < CurrentRatio then
+          TankiestTarget, Ratio = t, CurrentRatio
+        end
+      end
+      
+			if TankiestTarget then
+				if TankiestTarget.pred and TankiestTarget.hc > 0.5 then
+					CastSpell2(_R, D3DXVECTOR3(TankiestTarget.pred.x, myHero.y, TankiestTarget.pred.z))
 				end
 			end
 		end
@@ -428,13 +419,26 @@ function Draw()
 			DrawText3D(('%.2f'):format(tr),Buckler.x,Buckler.y + 150,Buckler.z,36,0xFFFF9900,true)
 		end
 	end
+  
 	if Menu.KS then
-		local sr = 70 * (sin(Reciprocal) + 2.5)
-		local cr = 70 * (cos(Reciprocal) + 2.5)
-		DrawCircle(myHero.x, myHero.y, myHero.z, sr, RGB(300-sr, 0, sr-70))
-		DrawCircle(myHero.x, myHero.y, myHero.z, cr, RGB(300-cr, 0, cr-70))
-		Reciprocal = Reciprocal+0.02
-	end
+    local v = WorldToScreen(D3DXVECTOR3(myHero.x,myHero.y,myHero.z))
+    if v.x > -200 and v.x < WINDOW_W + 200 and v.y > -200 and v.y < WINDOW_W + 200 then    
+      local points = {}
+      local R, r = 84, 49    
+      DrawP=DrawS and DrawP+1 or DrawP-1
+      if DrawP>120 then
+        DrawS=false
+      elseif DrawP<10 then
+        DrawS=true
+      end
+      
+      for i=1, 270 do
+        local v = WorldToScreen(D3DXVECTOR3(myHero.x+((R+r)*cos(i) + DrawP*cos((R+r)*i/r)),myHero.y,myHero.z+((R+r)*sin(i) + DrawP*sin((R+r)*i/r))))
+        points[i] = D3DXVECTOR2(v.x, v.y)
+      end
+      DrawLines2(points,1,ARGB(0x99, 0, 0x55, 0x44 + DrawP))
+    end
+  end
 end
 
 function Animation(unit, animation, hash)
@@ -470,7 +474,7 @@ end
 
 function ScriptUpdate:OnDraw()
     if self.DownloadStatus ~= 'Downloading Script (100%)' and self.DownloadStatus ~= 'Downloading VersionInfo (100%)'then
-        DrawText('Download Status: '..(self.DownloadStatus or 'Unknown'),50,10,50,ARGB(0xFF,0xFF,0xFF,0xFF))
+        DrawText('Download Status: '..(self.DownloadStatus or 'Unknown'),20,10,50,ARGB(0xFF,0xFF,0xFF,0xFF))
     end
 end
 
