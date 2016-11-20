@@ -5,15 +5,15 @@ end
 AddLoadCallback(function()
   if _Pewalk then
     PewItems()
-    ScriptUpdate_Items(1.5,
+    ScriptUpdate_Items(1.6,
       true,
       'raw.githubusercontent.com', 
-      '/PewPewPew2/BoL/master/Versions/Items.version', 
-      '/PewPewPew2/BoL/master/Items.lua', 
+      '/PewPewPew2/BoL/master/Versions/Pewalk%3A%20Items.version', 
+      '/PewPewPew2/BoL/master/Pewalk%3A%20Items.lua', 
       SCRIPT_PATH.._ENV.FILE_NAME, 
       function() Print('Download complete.') end, 
       function() 
-        DelayAction(function() Print('Loaded') end, 2) 
+        DelayAction(function() Print('Loaded.') end, 2) 
       end, 
       function() Print('New version found...') end,
       function() Print('Download Error') end
@@ -86,22 +86,22 @@ function PewItems:__init()
 		[3074] = { --Ravenous Hydra (ItemTiamatCleave)
 			['type'] = 'Cleave',
 			['range'] = 0, 
-			['req'] = function()
-				return self.Menu.RH.Enable
+			['menuHandle'] = function()
+				return self.Menu.RH
 			end,
 		},
 		[3748] = { --Titanic Hydra (ItemTitanicHydraCleave)
 			['type'] = 'Cleave',
 			['range'] = 0,
-			['req'] = function()
-				return self.Menu.TH.Enable
+			['menuHandle'] = function()
+				return self.Menu.TH
 			end,
 		},
 		[3077] = { --Tiamat (ItemTiamatCleave)
 			['type'] = 'Cleave',
 			['range'] = 0, 
-			['req'] = function()
-				return self.Menu.Tiamat.Enable
+			['menuHandle'] = function()
+				return self.Menu.Tiamat
 			end,
 		},
 		[3144] = { --Bilgewater Cutlass (BilgewaterCutlass)
@@ -126,39 +126,19 @@ function PewItems:__init()
 			end, 
 		},
 		[3142] = { --Youmuus Ghostblade (YoumusBlade)
-			['type'] = 'Cleave',
-			['range'] = 0,
-			['req'] = function(t)
-				return self.Menu.YG.Enable and self.Menu.YG.MaxHP *.01 > t.health / t.maxHealth
-			end,
+			['type'] = 'Youmuus',
 		},
 		[2138] = { --Elixir Of Iron (ElixirOfIron)
-			['type'] = 'Cleave', 
-			['range'] = 0, 
-			['req'] = function()
-				return self.Menu.Elixers.Enable
-			end,
+			['type'] = 'Elixers', 
 		},
 		[2137] = { --Elixir Of Ruin (ElixirOfRuin)
-			['type'] = 'Cleave',
-			['range'] = 0, 
-			['req'] = function()
-				return self.Menu.Elixers.Enable
-			end,
+			['type'] = 'Elixers',
 		},
 		[2139] = { --Elixir Of Sorcery (ElixirOfSorcery)
-			['type'] = 'Cleave',
-			['range'] = 0, 
-			['req'] = function()
-				return self.Menu.Elixers.Enable
-			end,
+			['type'] = 'Elixers',
 		},
 		[2140] = { --Elixir Of Wrath (ElixirOfWrath)	
-			['type'] = 'Cleave',
-			['range'] = 0, 
-			['req'] = function()
-				return self.Menu.Elixers.Enable
-			end,
+			['type'] = 'Elixers',
 		},
 	}
 	self.HPBuffs = {
@@ -243,9 +223,25 @@ function PewItems:ApplyBuff(source, unit, buff)
 end
 
 function PewItems:Cleave(slot, target, info)
-	if _Pewalk.GetActiveMode().Carry and info.req(target) and target.type == 'AIHeroClient' and myHero:CanUseSpell(slot) == READY then
+	local AM = _Pewalk.GetActiveMode()
+  local Menu = info.menuHandle()
+  if AM.Carry and Menu.Enable and target.type == 'AIHeroClient' and myHero:CanUseSpell(slot) == READY then
 		CastSpell(slot)
-	end
+  elseif AM.SkillClear and AM.LaneClear and Menu.Clear then
+    if target.team==300 then
+      CastSpell(slot)
+      return
+    end
+    local t = _Pewalk.GetSkillFarmTarget(.25,function() return myHero.totalDamage * .6 end, math.huge, 325, false, false)
+    if t and t ~= target then
+      CastSpell(slot)
+    end
+	elseif (AM.LaneClear or AM.Farm) and Menu.Farm then
+    local t = _Pewalk.GetSkillFarmTarget(.25,function() return myHero.totalDamage * .6 end, math.huge, 325, false, false)
+    if t and t ~= target then
+      CastSpell(slot)
+    end    
+  end
 end
 
 function PewItems:CreateMenu()
@@ -271,10 +267,16 @@ function PewItems:CreateMenu()
 			self.Menu.ToS:addParam('Enable', 'Enable', SCRIPT_PARAM_ONOFF, true)
 		self.Menu:addSubMenu('Tiamat', 'Tiamat')
 			self.Menu.Tiamat:addParam('Enable', 'Enable', SCRIPT_PARAM_ONOFF, true)
+			self.Menu.Tiamat:addParam('space', '', SCRIPT_PARAM_INFO, '')
+			self.Menu.Tiamat:addParam('Clear', 'Use in Skill Clear', SCRIPT_PARAM_ONOFF, true)
+			self.Menu.Tiamat:addParam('Farm', 'Use to Last Hit', SCRIPT_PARAM_ONOFF, true)
 		self.Menu:addSubMenu('Titanic Hydra', 'TH')
 			self.Menu.TH:addParam('Enable', 'Enable', SCRIPT_PARAM_ONOFF, true)
 		self.Menu:addSubMenu('Ravenous Hydra', 'RH')
 			self.Menu.RH:addParam('Enable', 'Enable', SCRIPT_PARAM_ONOFF, true)
+			self.Menu.RH:addParam('space', '', SCRIPT_PARAM_INFO, '')
+			self.Menu.RH:addParam('Clear', 'Use in Skill Clear', SCRIPT_PARAM_ONOFF, true)
+			self.Menu.RH:addParam('Farm', 'Use to Last Hit', SCRIPT_PARAM_ONOFF, true)
 		self.Menu:addSubMenu('Youmuus Ghostblade', 'YG')
 			self.Menu.YG:addParam('Enable', 'Enable', SCRIPT_PARAM_ONOFF, true)
 			self.Menu.YG:addParam('MaxHP', 'Maximum Target HP (%)', SCRIPT_PARAM_SLICE, 50, 10, 100)
@@ -307,6 +309,12 @@ function PewItems:CrowdControl2(slot, info)
 		end
 	end
 	if count >= info.req() then
+		CastSpell(slot)
+	end
+end
+
+function PewItems:Elixers(slot, target, info)
+	if _Pewalk.GetActiveMode().Carry and self.Menu.Elixers.Enable and target.type == 'AIHeroClient' and myHero:CanUseSpell(slot) == READY then
 		CastSpell(slot)
 	end
 end
@@ -373,7 +381,7 @@ function PewItems:Linear(slot)
     local t = _Pewalk.GetTarget(800)
     if t then
       local cp = _Pewalk.GetCastPos(t, {delay=0, speed=1800,})
-      if cp and not _Pewalk.GetCollision(t, cp, {length=800, width=50, delay=0}, myHero) then
+      if cp and _Pewalk.GetCollision(t, cp, {length=800, width=50, delay=0}, myHero) then
         CastSpell(slot, cp.x, cp.z)
       end
     end
@@ -435,6 +443,16 @@ function PewItems:Tick()
 				self[self.Defensive[Item.id].type](self, i, self.Defensive[Item.id])
 			end
 		end
+	end
+end
+
+function PewItems:Youmuus(slot, target, info)
+	if _Pewalk.GetActiveMode().Carry and self.Menu.YG.Enable then
+    if target.type == 'AIHeroClient' and self.Menu.YG.MaxHP *.01 > target.health / target.maxHealth and myHero:CanUseSpell(slot) == READY then
+      if _Pewalk.ValidTarget(attack.target, myHero.range+myHero.boundingRadius, true) then
+        CastSpell(slot)
+      end
+    end
 	end
 end
 
