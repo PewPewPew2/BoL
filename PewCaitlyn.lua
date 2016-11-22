@@ -62,7 +62,7 @@ end)
 class 'Caitlyn'
  
 function Caitlyn:__init()
-	local version = 3.2
+	local version = 3.3
 	ScriptUpdate(
 		version,
 		true,
@@ -268,9 +268,8 @@ function Caitlyn:ApplyBuff(source, unit, buff)
 end
 
 function Caitlyn:CalcArmor(target)
-	local bonusArmorPenPercent = DwordToFloat(ReadDWORD(myHero.ptr+0xCFC))
 	local baseArmor = target.armor-target.bonusArmor
-	return 100 / (100 + (((target.bonusArmor * bonusArmorPenPercent) + baseArmor) * myHero.armorPenPercent) - ((myHero.lethality * .4) + ((myHero.lethality * .6) * (myHero.level / 18))))
+	return 100 / (100 + (((target.bonusArmor * myHero.bonusArmorPenPercent) + baseArmor) * myHero.armorPenPercent) - ((myHero.lethality * .4) + ((myHero.lethality * .6) * (myHero.level / 18))))
 end
 
 function Caitlyn:CastSpell(iSlot,startPos,endPos,target)
