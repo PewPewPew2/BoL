@@ -27,7 +27,7 @@ function Print(text, isError)
 end
 
 AddLoadCallback(function()
-	local version = 0.04
+	local version = 0.05
 	ScriptUpdate(
 		version,
 		true, 
@@ -138,7 +138,7 @@ function Taric_OnTick()
 			end
 		end
 		if myHero:CanUseSpell(_Q)==READY and DazzleChannel < clock() then
-			local s = ReadDWORD(GetPtrS(myHero:GetSpellData(_Q))+0x24) --myHero:GetSpellData(_Q).stacks
+			local s = myHero:GetSpellData(_Q).stacks
 			if s > 0 then
 				if Menu['MinHP'..s]==nil then print(s) return end
 				local m = Menu['MinHP'..s] * .01
