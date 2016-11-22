@@ -1,6 +1,6 @@
 if myHero.charName~='Poppy' then return end
 
-local version = 0.04
+local version = 0.05
 
 local pi, pi2, atan, cos, sin, sqrt = math.pi, math.pi*2, math.atan, math.cos, math.sin, math.sqrt
 local Sector = pi * (110 / 180)
@@ -163,9 +163,8 @@ function IsWall2(p)
 end
 
 function CalcArmor(unit, target)
-	local bonusArmorPenPercent = DwordToFloat(ReadDWORD(unit.ptr+0xCFC))
 	local baseArmor = target.armor-target.bonusArmor
-	return 100 / (100 + (((target.bonusArmor * bonusArmorPenPercent) + baseArmor) * unit.armorPenPercent) - ((unit.lethality * .4) + ((unit.lethality * .6) * (unit.level / 18))))
+	return 100 / (100 + (((target.bonusArmor * unit.bonusArmorPenPercent) + baseArmor) * unit.armorPenPercent) - ((unit.lethality * .4) + ((unit.lethality * .6) * (unit.level / 18))))
 end
 
 AddLoadCallback(function()
