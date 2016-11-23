@@ -6,6 +6,7 @@ local COLOR_WHITE, COLOR_GREEN, COLOR_RED, COLOR_YELLOW, COLOR_TRANS_WHITE, COLO
 local COLOR_TRANS_GREEN, COLOR_TRANS_RED, COLOR_TRANS_YELLOW, COLOR_ORANGE, COLOR_BLACK = ARGB(0x96,0x00,0xFF,0x00), ARGB(0x96,0xFF,0x00,0x00), ARGB(0x96,0xFF,0xFF,0x00), ARGB(255,255,125,000), ARGB(255,0,0,000)
 local MainMenu, GlobalAnchors = nil, {}
 local menuKey = (GetSave('scriptConfig') and GetSave('scriptConfig')['Menu']) and GetSave('scriptConfig')['Menu']['menuKey'] or 16
+local Missing = {}
 
 _G.PewtilityHPBars = {Active = false, Addon = {},}
 
@@ -45,31 +46,31 @@ local function GetGame2()
 						}
                         break
                     elseif math.floor(object.x) == 16 and math.floor(object.y) == 168 and math.floor(object.z) == 4452 then
-					    _Game.Map = { 
-							['Name'] = 'CrystalScar', 
-							['Min'] = { ['x'] = 52, ['y'] = 150 }, 
-							['Max'] = { ['x'] = 13911, ['y'] = 13703 }, 
-							['x'] = 13911, 
-							['y'] = 13703, 
-						}
+                      _Game.Map = { 
+                      ['Name'] = 'CrystalScar', 
+                      ['Min'] = { ['x'] = 52, ['y'] = 150 }, 
+                      ['Max'] = { ['x'] = 13911, ['y'] = 13703 }, 
+                      ['x'] = 13911, 
+                      ['y'] = 13703, 
+                    }
                         break
                     elseif math.floor(object.x) == 497 and math.floor(object.y) == -40 and math.floor(object.z) == 1932 then
-						_Game.Map = { 
-							['Name'] = 'HowlingAbyss', 
-							['Min'] = { ['x'] = -20, ['y'] = 40 }, 
-							['Max'] = { ['x'] = 12820, ['y'] = 12839 }, 
-							['x'] = 12876, 
-							['y'] = 12877, 
-						}
-                        break
-                    elseif math.floor(object.x) == 497 and math.floor(object.y) == -180 and math.floor(object.z) == 1932 then
-						_Game.Map = { 
-							['Name'] = 'ButchersBridge', 
-							['Min'] = { ['x'] = -20, ['y'] = 40 }, 
-							['Max'] = { ['x'] = 12820, ['y'] = 12839 }, 
-							['x'] = 12876, 
-							['y'] = 12877, 
-						}
+                      _Game.Map = { 
+                        ['Name'] = 'HowlingAbyss', 
+                        ['Min'] = { ['x'] = -20, ['y'] = 40 }, 
+                        ['Max'] = { ['x'] = 12820, ['y'] = 12839 }, 
+                        ['x'] = 12876, 
+                        ['y'] = 12877, 
+                      }
+                                  break
+                              elseif math.floor(object.x) == 497 and math.floor(object.y) == -180 and math.floor(object.z) == 1932 then
+                      _Game.Map = { 
+                        ['Name'] = 'ButchersBridge', 
+                        ['Min'] = { ['x'] = -20, ['y'] = 40 }, 
+                        ['Max'] = { ['x'] = 12820, ['y'] = 12839 }, 
+                        ['x'] = 12876, 
+                        ['y'] = 12877, 
+                      }
                         break
                     end
                 end
@@ -126,7 +127,7 @@ end
 -- end)
 
 AddLoadCallback(function()
-	local Version = 7.12
+	local Version = 7.13
 	TEAM_ALLY, TEAM_ENEMY = myHero.team, 300-myHero.team
   -- TEAM_ENEMY = myHero.team
 	MainMenu = scriptConfig('Pewtility', 'Pewtility')
@@ -416,8 +417,8 @@ function WARD:__init()
 	self.Known = {}
 	self.Last_LBUTTONDOWN = 0
 	self:CreateMenu()	
-	self.Packet = GetGameVersion():sub(1,4)=='6.21' and {
-		['Header'] = 0x0137,
+	self.Packet = GetGameVersion():sub(1,4)=='6.23' and {
+		['Header'] = 0x0011,
 		['sourcePos'] = 6,
 		['stringPos'] = 11,
 		['bytes'] = {[0x00] = 0xA7, [0x01] = 0xF2, [0x02] = 0x03, [0x03] = 0xB1, [0x04] = 0x30, [0x05] = 0x5C, [0x06] = 0x8F, [0x07] = 0xFE, [0x08] = 0x16, [0x09] = 0x0D, [0x0A] = 0xEC, [0x0B] = 0x04, [0x0C] = 0x62, [0x0D] = 0x98, [0x0E] = 0xAE, [0x0F] = 0x7D, [0x10] = 0x2B, [0x11] = 0xC9, [0x12] = 0xF9, [0x13] = 0xE7, [0x14] = 0xEA, [0x15] = 0xD0, [0x16] = 0x82, [0x17] = 0xBC, [0x18] = 0x73, [0x19] = 0xBF, [0x1A] = 0xD6, [0x1B] = 0xA3, [0x1C] = 0xE2, [0x1D] = 0x44, [0x1E] = 0xA0, [0x1F] = 0x3E, [0x20] = 0xA5, [0x21] = 0x40, [0x22] = 0x7E, [0x23] = 0xAB, [0x24] = 0x14, [0x25] = 0xB4, [0x26] = 0x67, [0x27] = 0xF1, [0x28] = 0x12, [0x29] = 0x6C, [0x2A] = 0xBE, [0x2B] = 0x74, [0x2C] = 0x06, [0x2D] = 0xD8, [0x2E] = 0xAF, [0x2F] = 0xC3, [0x30] = 0x32, [0x31] = 0x15, [0x32] = 0xB9, [0x33] = 0xC1, [0x34] = 0x5A, [0x35] = 0x1E, [0x36] = 0x4C, [0x37] = 0x59, [0x38] = 0xF3, [0x39] = 0x1C, [0x3A] = 0x8D, [0x3B] = 0x8B, [0x3C] = 0x33, [0x3D] = 0x3B, [0x3E] = 0xD9, [0x3F] = 0x65, [0x40] = 0xC0, [0x41] = 0xE6, [0x42] = 0x00, [0x43] = 0x38, [0x44] = 0xFB, [0x45] = 0xA6, [0x46] = 0xB2, [0x47] = 0x63, [0x48] = 0x79, [0x49] = 0x34, [0x4A] = 0xAC, [0x4B] = 0x97, [0x4C] = 0x83, [0x4D] = 0xB5, [0x4E] = 0x6F, [0x4F] = 0xE4, [0x50] = 0x0A, [0x51] = 0x41, [0x52] = 0xDC, [0x53] = 0x35, [0x54] = 0x3F, [0x55] = 0xE5, [0x56] = 0x31, [0x57] = 0x20, [0x58] = 0x01, [0x59] = 0xAD, [0x5A] = 0xF4, [0x5B] = 0x52, [0x5C] = 0x11, [0x5D] = 0x81, [0x5E] = 0x45, [0x5F] = 0x94, [0x60] = 0x18, [0x61] = 0x85, [0x62] = 0x91, [0x63] = 0x55, [0x64] = 0x08, [0x65] = 0x7F, [0x66] = 0x88, [0x67] = 0x46, [0x68] = 0xF7, [0x69] = 0x95, [0x6A] = 0x07, [0x6B] = 0x61, [0x6C] = 0xD5, [0x6D] = 0x9D, [0x6E] = 0x5D, [0x6F] = 0x87, [0x70] = 0xF8, [0x71] = 0x49, [0x72] = 0x21, [0x73] = 0xA8, [0x74] = 0x75, [0x75] = 0x6B, [0x76] = 0xD2, [0x77] = 0x76, [0x78] = 0x6D, [0x79] = 0x17, [0x7A] = 0x3D, [0x7B] = 0x90, [0x7C] = 0x50, [0x7D] = 0xC4, [0x7E] = 0x84, [0x7F] = 0xD7, [0x80] = 0x1A, [0x81] = 0x0F, [0x82] = 0xC6, [0x83] = 0xE1, [0x84] = 0xEB, [0x85] = 0x2E, [0x86] = 0x60, [0x87] = 0x29, [0x88] = 0x71, [0x89] = 0x92, [0x8A] = 0x4F, [0x8B] = 0x36, [0x8C] = 0xFA, [0x8D] = 0x42, [0x8E] = 0x54, [0x8F] = 0x9C, [0x90] = 0x37, [0x91] = 0xBA, [0x92] = 0x22, [0x93] = 0xF5, [0x94] = 0xDF, [0x95] = 0x48, [0x96] = 0x9E, [0x97] = 0x9A, [0x98] = 0xBB, [0x99] = 0x2A, [0x9A] = 0xA9, [0x9B] = 0xDA, [0x9C] = 0xA2, [0x9D] = 0x6E, [0x9E] = 0x3C, [0x9F] = 0x70, [0xA0] = 0xC8, [0xA1] = 0xF6, [0xA2] = 0xE3, [0xA3] = 0xCD, [0xA4] = 0xE8, [0xA5] = 0xED, [0xA6] = 0x8C, [0xA7] = 0x7B, [0xA8] = 0x39, [0xA9] = 0xE0, [0xAA] = 0x6A, [0xAB] = 0x68, [0xAC] = 0x0B, [0xAD] = 0x25, [0xAE] = 0xB6, [0xAF] = 0x7A, [0xB0] = 0xFF, [0xB1] = 0xD3, [0xB2] = 0x1B, [0xB3] = 0x80, [0xB4] = 0x9B, [0xB5] = 0x13, [0xB6] = 0xB8, [0xB7] = 0x77, [0xB8] = 0x27, [0xB9] = 0x2F, [0xBA] = 0xB0, [0xBB] = 0x89, [0xBC] = 0x51, [0xBD] = 0xCC, [0xBE] = 0x43, [0xBF] = 0x3A, [0xC0] = 0xD4, [0xC1] = 0x56, [0xC2] = 0x4D, [0xC3] = 0x5B, [0xC4] = 0x78, [0xC5] = 0x02, [0xC6] = 0xB7, [0xC7] = 0x66, [0xC8] = 0x1D, [0xC9] = 0x53, [0xCA] = 0xCA, [0xCB] = 0x05, [0xCC] = 0xE9, [0xCD] = 0x19, [0xCE] = 0xDB, [0xCF] = 0x8A, [0xD0] = 0x5E, [0xD1] = 0x93, [0xD2] = 0xFC, [0xD3] = 0x86, [0xD4] = 0xDE, [0xD5] = 0x9F, [0xD6] = 0x4A, [0xD7] = 0xCF, [0xD8] = 0x72, [0xD9] = 0x8E, [0xDA] = 0x5F, [0xDB] = 0x7C, [0xDC] = 0xEF, [0xDD] = 0xB3, [0xDE] = 0x2C, [0xDF] = 0xA1, [0xE0] = 0x10, [0xE1] = 0xF0, [0xE2] = 0x2D, [0xE3] = 0xFD, [0xE4] = 0xC5, [0xE5] = 0xAA, [0xE6] = 0x4E, [0xE7] = 0xCB, [0xE8] = 0xCE, [0xE9] = 0x28, [0xEA] = 0x99, [0xEB] = 0xDD, [0xEC] = 0xEE, [0xED] = 0x57, [0xEE] = 0xC7, [0xEF] = 0x1F, [0xF0] = 0xA4, [0xF1] = 0x24, [0xF2] = 0x4B, [0xF3] = 0xC2, [0xF4] = 0x23, [0xF5] = 0x09, [0xF6] = 0x69, [0xF7] = 0xD1, [0xF8] = 0x26, [0xF9] = 0x0E, [0xFA] = 0x96, [0xFB] = 0x47, [0xFC] = 0xBD, [0xFD] = 0x58, [0xFE] = 0x0C, [0xFF] = 0x64, }
@@ -736,7 +737,7 @@ function MISS:__init()
 			)
 		end
 	end
-	self.missing = {}
+	Missing = {}
 	self.VisibleSince = {}
 	self.ActiveRecalls = {}
 	self.Sprites = {}	
@@ -771,13 +772,13 @@ function MISS:__init()
 		if hero.team == TEAM_ENEMY then
 			self.Enemies[#self.Enemies + 1] = hero
 			self.VisibleSince[hero.networkID] = clock()
-			self.missing[hero.networkID] = nil
+			Missing[hero.networkID] = nil
 			if FileExist(SPRITE_PATH..'Pewtility\\CharacterIcons\\'..hero.charName..'.png') then
 				self.Sprites[hero.networkID] = createSprite(SPRITE_PATH..'Pewtility\\CharacterIcons\\'..hero.charName..'.png')			
 			else
 				self.Sprites[hero.networkID] = createSprite('Generic.png')
 			end
-            self.Sprites[hero.networkID]:SetScale(0.45, 0.45)
+      self.Sprites[hero.networkID]:SetScale(0.45, 0.45)
 			self.Sprites[hero.networkID].scale = 0.45
 		else
 			self.Allies[#self.Allies + 1] = hero
@@ -787,11 +788,11 @@ function MISS:__init()
 		v:SetScale(0.45, 0.45)
 		v.scale = 0.45
 	end
-	self.Packets = GetGameVersion():sub(1, 4) == '6.21' and {
-		['LoseVision'] = { ['Header'] = 0x0109, ['pos'] = 2, },
-		['GainVision'] = { ['Header'] = 0x013A, ['pos'] = 2, },
+	self.Packets = GetGameVersion():sub(1, 4) == '6.23' and {
+		['LoseVision'] = { ['Header'] = 0x010D, ['pos'] = 2, },
+		['GainVision'] = { ['Header'] = 0x0157, ['pos'] = 2, },
 		['Recall'] = { 
-			['Header'] = 0x0065, 
+			['Header'] = 0x00A7, 
 			['pos'] = 31, 
 			['stringPos'] = 6, 
 			['tpPos'] = 22, 
@@ -817,10 +818,10 @@ function MISS:__init()
 				[0x34] = 0x16,
 			},
 		},
-		['Reset'] = { ['Header'] = 0x0061, ['pos'] = 2, ['pos2'] = 11, },
-		['Aggro'] = { ['Header'] = 0X00CB, ['pos'] = 2, },
-		['AggroUpdate'] = { ['Header'] = 0x00F3, ['pos'] = 2, },
-		['Missile'] = { ['Header'] = 0x009D, ['pos'] = 2, },
+		['Reset'] = { ['Header'] = 0x0009, ['pos'] = 2, ['pos2'] = 11, },
+		['Aggro'] = { ['Header'] = 0X0027, ['pos'] = 2, },
+		['AggroUpdate'] = { ['Header'] = 0x00BF, ['pos'] = 2, },
+		['Missile'] = { ['Header'] = 0x00DE, ['pos'] = 2, },
 		['JunglePos'] = {
       [0x25279B5A] = { ['pos'] = GetMinimap(Vector(7800, 60, 4000)),  ['name'] = 'SRU_RedMini4.1.3',         ['text'] = 'Bot Red'      },
       [0xA6DE14EF] = { ['pos'] = GetMinimap(Vector(7800, 60, 4000)),  ['name'] = 'SRU_RedMini4.1.2',         ['text'] = 'Bot Red'      },
@@ -964,13 +965,13 @@ function MISS:RecvPacket(p)
 		local o = objManager:GetObjectByNetworkId(p:DecodeF())
 		if o and o.valid and o.type == 'AIHeroClient' and o.team == TEAM_ENEMY then
 			if o.dead then
-				self.missing[o.networkID] = {
+				Missing[o.networkID] = {
 					['pos'] = self.recallEndPos,
 					['name'] = o.charName, 
 					['mTime'] = clock(),
 				}			
 			else
-				self.missing[o.networkID] = {
+				Missing[o.networkID] = {
 					['pos'] = GetMinimap(Vector(o.pos)),
 					['pos2'] = Vector(o.pos),
 					['name'] = o.charName, 
@@ -978,7 +979,7 @@ function MISS:RecvPacket(p)
 					['unit'] = o,
 				}
 				if GetDistance(o, o.endPath) > 100 then
-					self.missing[o.networkID].direction = GetMinimap(Vector(o) + (Vector(o.endPath) - Vector(o)):normalized() * 1200)
+					Missing[o.networkID].direction = GetMinimap(Vector(o) + (Vector(o.endPath) - Vector(o)):normalized() * 1200)
 				end
 				return
 			end
@@ -988,7 +989,7 @@ function MISS:RecvPacket(p)
 		p.pos=self.Packets.GainVision.pos
 		local o = objManager:GetObjectByNetworkId(p:DecodeF())
 		if o and o.valid and o.type == 'AIHeroClient' and o.team == TEAM_ENEMY then
-			self.missing[o.networkID] = nil
+			Missing[o.networkID] = nil
 			self.VisibleSince[o.networkID] = clock()
 			return
 		end
@@ -1030,7 +1031,7 @@ function MISS:RecvPacket(p)
 					return
 				else
 					if not self.ActiveRecalls[o.networkID].isTP then
-						self.missing[o.networkID] = {pos = self.recallEndPos, name = o.charName, mTime = clock(),}
+						Missing[o.networkID] = {pos = self.recallEndPos, name = o.charName, mTime = clock(),}
 					end
 					self.ActiveRecalls[o.networkID].complete = clock() + 3
 					return
@@ -1137,7 +1138,7 @@ function MISS:Draw()
 	if not self.Menu.Enable then return end
 	local isMenuOpen = IsKeyDown(menuKey)
 	local mCount = 1
-	for _, info in pairs(self.missing) do
+	for _, info in pairs(Missing) do
 		if info then
 			local scale = (self.Sprites[_].scale * self.Sprites[_].width) * 0.5
 			if info.direction then
@@ -1315,6 +1316,7 @@ class 'SKILLS'
 
 function SKILLS:__init()
 	CreateDirectory(SPRITE_PATH..'Pewtility/')
+	CreateDirectory(SPRITE_PATH..'Pewtility/SideHud/')
 	local pngChecks = {
 		['barTemplate_r2.png'] = {
 			['localPath'] = SPRITE_PATH..'/Pewtility/barTemplate_r2.png',
@@ -1387,27 +1389,35 @@ function SKILLS:__init()
 				function() Print('An error occured downloading sprite') end
 			)			
 		end
-	end
+	end  
+  
+	self.Anchor = {
+		['x'] = GlobalAnchors.SideHUD and GlobalAnchors.SideHUD.x or WINDOW_W,
+		['y'] = GlobalAnchors.SideHUD and GlobalAnchors.SideHUD.y or WINDOW_H * .15,
+	}
 	self.SkillText = {
-		['summonerdot']      		= 'Ignite',
-		['summonerexhaust']  		= 'Exhaust',
-		['summonerflash']    		= 'Flash',
-		['summonerheal']     		= 'Heal',
-		['summonersmite']    		= 'Smite',
-		['summonerbarrier']  		= 'Barrier',
-		['summonerclairvoyance']    = 'Clairvoyance',
-		['summonermana']     		= 'Clarity',
+		['summonerdot']      		  = 'Ignite',
+		['summonerexhaust']  		  = 'Exhaust',
+		['summonerflash']    		  = 'Flash',
+		['summonerheal']     		  = 'Heal',
+		['summonersmite']    		  = 'Smite',
+		['summonerbarrier']  		  = 'Barrier',
+		['summonerclairvoyance']  = 'Clairvoyance',
+		['summonermana']     		  = 'Clarity',
 		['summonerteleport']     	= 'Teleport',
 		['summonerrevive']     		= 'Revive',
 		['summonerhaste']     		= 'Ghost',
 		['summonerboost']     		= 'Cleanse',
 	}
 	self.Heroes = {}
+  self.IsDead = {}
+  self.DeathTimers = {}
 	for i=1, heroManager.iCount do
 		local hero = heroManager:getHero(i)
 		if not hero.isMe then
 			self.Heroes[#self.Heroes+1] = {
 				['hero'] = hero,
+				['icon'] = createSprite('Pewtility/SideHud/'..hero.charName..'.png'),
 				['sum1'] = createSprite('Pewtility/'..hero:GetSpellData(SUMMONER_1).name..'.png'),
 				['sum2'] = createSprite('Pewtility/'..hero:GetSpellData(SUMMONER_2).name..'.png'),
 				['t1'] = self.SkillText[hero:GetSpellData(SUMMONER_1).name:lower()],
@@ -1440,27 +1450,8 @@ function SKILLS:__init()
 	
 	self.Sprite:SetScale(0.3,0.3)
 	
-	AddDrawCallback(function() self[self.Menu.UseOld and 'DrawOLD' or 'Draw'](self) end)
-	--[[
-	self.CallTimers = {}
-	AddMsgCallback(function(m,k)
-		if m==513 and k==1 then
-			if self.Menu.Key then
-				local cursor = GetCursorPos()
-				for k, v in pairs(self.CallTimers) do
-					if cursor.x > v.x and cursor.x < v.x + 44 and cursor.y > v.y and cursor.y < v.y+12 then
-						print(k:lower():sub(1,4)..' '..v.text:lower():gsub('summoner', '')..' '..('%d %.2d'):format(v.t/60, v.t%60))
-					end
-				end
-			end
-		end
-	end)
-	--]]
-	-- AddProcessSpellCallback(function(unit,spell)
-		-- if unit.valid and self.SkillText[spell.name:lower()] then
-			
-		-- end
-	-- end)
+	DelayAction(function() AddDrawCallback(function() self[self.Menu.UseOld and 'DrawOLD' or 'Draw'](self) end) end, 3)
+  AddMsgCallback(function(...) self:WndMsg(...) end)
 end
 
 function SKILLS:CreateMenu()
@@ -1470,21 +1461,111 @@ function SKILLS:CreateMenu()
 	self.Menu:addParam('Ally', 'Enable Ally Cooldown Tracker', SCRIPT_PARAM_ONOFF, true)
 	self.Menu:addParam('Scale', 'HP Bar Scale', SCRIPT_PARAM_SLICE, 75, 75, 100)
 	self.Menu:addParam('Text', 'Draw Text (Timers)', SCRIPT_PARAM_ONOFF, true)
+	self.Menu:addParam('SideHud', 'Draw Offscreen Characters On Side', SCRIPT_PARAM_ONOFF, true)
 	self.Menu:addParam('SPACE', '', SCRIPT_PARAM_INFO, '')
 	self.Menu:addParam('UseOld', 'Use Old', SCRIPT_PARAM_ONOFF, false)
-	--sM:addParam('Key', 'Chat Summoner Cooldowns', SCRIPT_PARAM_ONKEYDOWN, false, ('N'):byte())
 end
 
 function SKILLS:Draw()
+	for _, info in ipairs(self.Heroes) do
+    if info.hero.team==TEAM_ENEMY then
+      if info.hero.dead then
+        if not self.IsDead[info.hero.networkID] then
+          local duration
+          if _Game.Map.Name == 'HowlingAbyss' then
+            duration = info.hero.level * 2 + 4
+          else
+            local base = (info.hero.level * 2.5) + 7.5
+            local GT = GetInGameTimer()
+            local minutes = math.floor(GT/60)
+            if GT > 3210 then
+              duration = base * 1.5
+            elseif GT > 2700 then
+              duration = base + ((base / 100) * (minutes - 15) * 2 * 0.425) + ((base / 100) * (minutes - 30) * 2 * 0.30) + ((base / 100) * (minutes - 45) * 2 * 1.45)
+            elseif GT > 1800 then
+              duration = base + ((base / 100) * (minutes - 15) * 2 * 0.425) + ((base / 100) * (minutes - 30) * 2 * 0.30)
+            elseif GT > 900 then
+              duration = base + ((base / 100) * (minutes - 15) * 2 * 0.425)
+            else
+              duration = base
+            end
+          end          
+          self.IsDead[info.hero.networkID] = {
+            start = clock(),
+            duration = duration,
+          }
+        end
+      else
+        self.IsDead[info.hero.networkID] = nil
+      end
+    end
+  end
+  
+  local isMenuOpen = IsKeyDown(menuKey)
+	if isMenuOpen then
+    local x = self.Anchor.x - GetScale(343, self.Menu.Scale)
+    local w = GetScale(50,self.Menu.Scale) * 5
+    DrawLine(self.Anchor.x+3,self.Anchor.y+w*.5,x-3,self.Anchor.y+w*.5,w+6, 0x77FFFFFF)
+    DrawLine(self.Anchor.x,self.Anchor.y+w*.5,x,self.Anchor.y+w*.5,w, 0x77FFFFFF)
+    
+    local textSize = GetScale(18, self.Menu.Scale)
+    DrawText('Side HUD Position', textSize, self.Anchor.x - GetScale(343, self.Menu.Scale) * .5 - GetTextArea('Side HUD Position', textSize).x * .5,self.Anchor.y+w*.5,COLOR_WHITE)
+    
+    if self.IsMoving then
+      local CursorPos = GetCursorPos()
+      self.Anchor.x = CursorPos.x-self.MovingOffset.x
+      self.Anchor.y = CursorPos.y-self.MovingOffset.y
+      GlobalAnchors.SideHUD = {
+        ['x'] = self.Anchor.x,
+        ['y'] = self.Anchor.y,
+      }
+    end
+  end
 	PewtilityHPBars.Active = true
 	local s = self.Menu.Scale
 	self.Sprite:SetScale(GetScale2(0.3, s), GetScale2(0.3, s))
 	local AddonText = {}
+  local sideCount = 0
+  
 	for _, info in ipairs(self.Heroes) do
-		if info.hero.valid and info.hero.visible and not info.hero.dead and ((info.hero.team == myHero.team and self.Menu.Ally) or (info.hero.team ~= myHero.team and self.Menu.Enemy)) then
+		if info.hero.valid and ((info.hero.team == myHero.team and self.Menu.Ally) or (info.hero.team ~= myHero.team and self.Menu.Enemy)) then
 			local barX, barY = self:BarData(info.hero)
 			local barX, barY = barX - GetScale(100, s), barY+GetScale(15, s)
-			if barX > -100 and barX < WINDOW_W + 100 and barY > -100 and barY < WINDOW_H + 100 then
+      
+      local onScreen = barX > -100 and barX < WINDOW_W + 100 and barY > -100 and barY < WINDOW_H + 100
+      if info.hero.team == TEAM_ENEMY then
+        if not onScreen or not info.hero.visible or info.hero.dead then
+          if self.Menu.SideHud and not isMenuOpen then
+            info.icon:SetScale(GetScale2(0.27, s), GetScale2(0.27, s))
+            onScreen = true
+            barX = self.Anchor.x - GetScale(310, s)
+            barY = self.Anchor.y + (sideCount * GetScale(50,s))
+            
+            local iconWidth = GetScale(33, s)
+            local iconX, iconY = barX-iconWidth, barY+1
+            info.icon:Draw(iconX, iconY, 255)
+            if info.hero.dead and self.IsDead[info.hero.networkID] then -- 
+              DrawLine(iconX,iconY+iconWidth*.5,barX,iconY+iconWidth*.5,iconWidth,0xAABB0000)
+              local t = ('%d'):format(self.IsDead[info.hero.networkID].duration - (clock() - self.IsDead[info.hero.networkID].start))
+              local textSize = GetScale(26, s)
+              local ta = GetTextArea(t,textSize)
+              DrawText(t, textSize, iconX+iconWidth*.5-(ta.x*0.5), iconY+iconWidth*.5-(ta.y*0.5), 0xFFFFFFFF)
+            elseif not info.hero.visible and Missing[info.hero.networkID] then
+              DrawLine(iconX,iconY+iconWidth*.5,barX,iconY+iconWidth*.5,iconWidth,0xAA888888)
+              local t = ('%d'):format(clock()-Missing[info.hero.networkID].mTime)
+              local textSize = GetScale(26, s)
+              local ta = GetTextArea(t,textSize)
+              DrawText(t, textSize, iconX+iconWidth*.5-(ta.x*0.5), iconY+iconWidth*.5-(ta.y*0.5), 0xFFFFFFFF)
+            end            
+            sideCount=sideCount+1
+          end
+        end
+      else
+        onScreen = onScreen and info.hero.visible and not info.hero.dead
+      end
+      
+      
+			if onScreen then
 				--HP
 				local curHP = info.hero.charName == 'Kled' and info.hero.health + info.hero.mountHealth or info.hero.health
 				local maxHP = info.hero.charName == 'Kled' and info.hero.maxHealth + info.hero.mountMaxHealth or info.hero.maxHealth
@@ -1677,13 +1758,28 @@ function SKILLS:BarData(enemy)
 	return barPos.x + ((self.xOffsets[enemy.charName] or 0) * 140) - 38, barPos.y + (barOff.y * 53) - 22 - (self.yOffsets[enemy.charName] or 0)
 end
 
+function SKILLS:WndMsg(m, k)
+	if m==WM_LBUTTONDOWN and IsKeyDown(menuKey) then
+		local CursorPos = GetCursorPos()
+		if CursorPos.x < self.Anchor.x and CursorPos.x > self.Anchor.x - GetScale(343, self.Menu.Scale) then
+			if CursorPos.y > self.Anchor.y and CursorPos.y < self.Anchor.y + GetScale(50,self.Menu.Scale) * 5 then
+				self.IsMoving = true
+				self.MovingOffset = {x=CursorPos.x-self.Anchor.x, y=CursorPos.y-self.Anchor.y,}
+			end
+		end
+  end
+	if m==WM_LBUTTONUP and self.IsMoving then
+		self.IsMoving=false
+	end
+end
+
 class 'TIMERS'
 
 function TIMERS:__init()
 	self.map = GetGame2().Map.Name
-	self.Packets = GetGameVersion():sub(1,4) == '6.21' and {
-		['Jungle'] = { ['Header'] = 0x0122, ['campPos'] = 6, ['idPos'] = 10, ['idZero'] = 0x02020202, }, --size 24 
-		['Inhibitor'] = { ['Header'] = 0x00A3, ['pos'] = 2, },  --pick the one that is size 19
+	self.Packets = GetGameVersion():sub(1,4) == '6.23' and {
+		['Jungle'] = { ['Header'] = 0x012B, ['campPos'] = 6, ['idPos'] = 10, ['idZero'] = 0x02020202, }, --size 24 
+		['Inhibitor'] = { ['Header'] = 0x0086, ['pos'] = 2, },  --pick the one that is size 19
 		['SummonerRift'] = {
 			[0x09] = { ['pos'] = Vector(3850, 60, 7880),  ['time'] = 300, ['spawn'] = 100, ['mapPos'] = GetMinimap(Vector(3850, 60, 7880)),  }, --Blue Side Blue Buff
 			[0xEF] = { ['pos'] = Vector(3800, 60, 6500),  ['time'] = 150, ['spawn'] = 97,  ['mapPos'] = GetMinimap(Vector(3800, 60, 6500)),  }, --Blue Side Wolves
@@ -1926,9 +2022,9 @@ function OTHER:__init()
 	for i=1, heroManager.iCount do
 		local h = heroManager:getHero(i)
 		if h.team == TEAM_ALLY and not h.isMe and h.charName == 'Thresh' then
-			self.Packets = GetGameVersion():find('6.21.162.906') and {
-				['Header'] = 0x0108,
-				['vTable'] = 0xF2C744,
+			self.Packets = GetGameVersion():find('6.23.166.3007') and {
+				['Header'] = 0x0111,
+				['vTable'] = 0xFF1278,
 				['bytes'] = {[0x00] = 0x1A, [0x01] = 0x8B, [0x02] = 0xB5, [0x03] = 0xCE, [0x04] = 0x94, [0x05] = 0x24, [0x06] = 0xDD, [0x07] = 0x23, [0x08] = 0x34, [0x09] = 0x36, [0x0A] = 0xDC, [0x0B] = 0x0E, [0x0C] = 0xF4, [0x0D] = 0xB4, [0x0E] = 0x2C, [0x0F] = 0x8E, [0x10] = 0x62, [0x11] = 0xC3, [0x12] = 0x4B, [0x13] = 0x8F, [0x14] = 0xE8, [0x15] = 0xBB, [0x16] = 0x16, [0x17] = 0xF0, [0x18] = 0xB1, [0x19] = 0x20, [0x1A] = 0xDA, [0x1B] = 0x71, [0x1C] = 0x8C, [0x1D] = 0xEB, [0x1E] = 0x31, [0x1F] = 0x02, [0x20] = 0x7D, [0x21] = 0x76, [0x22] = 0xEA, [0x23] = 0xA2, [0x24] = 0xB8, [0x25] = 0xFB, [0x26] = 0x89, [0x27] = 0xFF, [0x28] = 0x51, [0x29] = 0x43, [0x2A] = 0x3B, [0x2B] = 0xC9, [0x2C] = 0x40, [0x2D] = 0x7A, [0x2E] = 0x0A, [0x2F] = 0xF8, [0x30] = 0x25, [0x31] = 0x15, [0x32] = 0x90, [0x33] = 0x1B, [0x34] = 0x2D, [0x35] = 0x0F, [0x36] = 0x87, [0x37] = 0xB3, [0x38] = 0x64, [0x39] = 0x12, [0x3A] = 0x06, [0x3B] = 0xA8, [0x3C] = 0x7E, [0x3D] = 0x38, [0x3E] = 0xBF, [0x3F] = 0x7B, [0x40] = 0xED, [0x41] = 0xD3, [0x42] = 0x81, [0x43] = 0x13, [0x44] = 0x32, [0x45] = 0x70, [0x46] = 0x75, [0x47] = 0x19, [0x48] = 0xBC, [0x49] = 0xE4, [0x4A] = 0x59, [0x4B] = 0x18, [0x4C] = 0xB7, [0x4D] = 0x9D, [0x4E] = 0xE2, [0x4F] = 0x82, [0x50] = 0x11, [0x51] = 0x68, [0x52] = 0x4E, [0x53] = 0xC7, [0x54] = 0xBA, [0x55] = 0x17, [0x56] = 0x45, [0x57] = 0xD9, [0x58] = 0xC0, [0x59] = 0xE6, [0x5A] = 0x73, [0x5B] = 0x6C, [0x5C] = 0x49, [0x5D] = 0x4F, [0x5E] = 0xAB, [0x5F] = 0x85, [0x60] = 0x3A, [0x61] = 0xF6, [0x62] = 0x69, [0x63] = 0xAC, [0x64] = 0x03, [0x65] = 0x21, [0x66] = 0x4C, [0x67] = 0x1C, [0x68] = 0x05, [0x69] = 0xE9, [0x6A] = 0x7C, [0x6B] = 0x61, [0x6C] = 0x28, [0x6D] = 0x8D, [0x6E] = 0x1D, [0x6F] = 0xBD, [0x70] = 0x2A, [0x71] = 0xCB, [0x72] = 0x08, [0x73] = 0x56, [0x74] = 0x39, [0x75] = 0xD4, [0x76] = 0x6A, [0x77] = 0xEC, [0x78] = 0xD0, [0x79] = 0x9E, [0x7A] = 0xD5, [0x7B] = 0xDE, [0x7C] = 0x9C, [0x7D] = 0xA6, [0x7E] = 0x63, [0x7F] = 0xFE, [0x80] = 0x07, [0x81] = 0xE7, [0x82] = 0x8A, [0x83] = 0x60, [0x84] = 0x3D, [0x85] = 0x52, [0x86] = 0x77, [0x87] = 0xAD, [0x88] = 0x65, [0x89] = 0xFD, [0x8A] = 0x1F, [0x8B] = 0x30, [0x8C] = 0xCD, [0x8D] = 0x44, [0x8E] = 0x6F, [0x8F] = 0xEF, [0x90] = 0x26, [0x91] = 0xC2, [0x92] = 0xF9, [0x93] = 0xEE, [0x94] = 0x78, [0x95] = 0x7F, [0x96] = 0xB0, [0x97] = 0x84, [0x98] = 0xC5, [0x99] = 0x72, [0x9A] = 0xBE, [0x9B] = 0x5F, [0x9C] = 0x79, [0x9D] = 0xA9, [0x9E] = 0x0C, [0x9F] = 0x67, [0xA0] = 0x29, [0xA1] = 0x6B, [0xA2] = 0x42, [0xA3] = 0x88, [0xA4] = 0x33, [0xA5] = 0xC4, [0xA6] = 0x86, [0xA7] = 0x93, [0xA8] = 0xB6, [0xA9] = 0x6D, [0xAA] = 0xC6, [0xAB] = 0xAF, [0xAC] = 0x22, [0xAD] = 0xA3, [0xAE] = 0x04, [0xAF] = 0x5B, [0xB0] = 0x53, [0xB1] = 0xE1, [0xB2] = 0x14, [0xB3] = 0x27, [0xB4] = 0x3E, [0xB5] = 0x91, [0xB6] = 0xFA, [0xB7] = 0x2F, [0xB8] = 0x5A, [0xB9] = 0xC8, [0xBA] = 0x99, [0xBB] = 0xFC, [0xBC] = 0x2B, [0xBD] = 0x46, [0xBE] = 0x3F, [0xBF] = 0xB2, [0xC0] = 0x55, [0xC1] = 0x00, [0xC2] = 0xCC, [0xC3] = 0x3C, [0xC4] = 0x98, [0xC5] = 0xF7, [0xC6] = 0xCA, [0xC7] = 0xCF, [0xC8] = 0x47, [0xC9] = 0xAE, [0xCA] = 0x57, [0xCB] = 0xA1, [0xCC] = 0x35, [0xCD] = 0x83, [0xCE] = 0xF3, [0xCF] = 0xD2, [0xD0] = 0xAA, [0xD1] = 0x92, [0xD2] = 0xD7, [0xD3] = 0x09, [0xD4] = 0x58, [0xD5] = 0x50, [0xD6] = 0x5D, [0xD7] = 0x74, [0xD8] = 0x9B, [0xD9] = 0x97, [0xDA] = 0x66, [0xDB] = 0x0B, [0xDC] = 0x6E, [0xDD] = 0x2E, [0xDE] = 0xA5, [0xDF] = 0x96, [0xE0] = 0x1E, [0xE1] = 0xC1, [0xE2] = 0xD1, [0xE3] = 0xD6, [0xE4] = 0x0D, [0xE5] = 0x9F, [0xE6] = 0xD8, [0xE7] = 0x10, [0xE8] = 0xB9, [0xE9] = 0xDB, [0xEA] = 0xF1, [0xEB] = 0x41, [0xEC] = 0x54, [0xED] = 0x9A, [0xEE] = 0xE5, [0xEF] = 0xF2, [0xF0] = 0xDF, [0xF1] = 0xA4, [0xF2] = 0xA7, [0xF3] = 0x5E, [0xF4] = 0x5C, [0xF5] = 0x48, [0xF6] = 0x01, [0xF7] = 0x4D, [0xF8] = 0x4A, [0xF9] = 0xE3, [0xFA] = 0x80, [0xFB] = 0xE0, [0xFC] = 0x37, [0xFD] = 0xA0, [0xFE] = 0x95, [0xFF] = 0xF5, },
 			} or GetGameVersion():find('6.22.164.7732') and {
 				['Header'] = 0x000B,
@@ -2057,9 +2153,9 @@ function TRINKET:__init()
 		['TrinketSweeperLvl3'] = 3364,
 	}
 	self.Packet = GetGameVersion():sub(1, 4) == '6.22' and {
-		['Header'] = 0x0175, ['pos'] = 13, ['ssID'] = 0x12121A22,
-	} or GetGameVersion():sub(1,4) == '6.21' and {
-		['Header'] = 0x0171, ['pos'] = 13, ['ssID'] = 0x12121A22,
+		['Header'] = 0x0175, ['pos'] = 14, ['ssID'] = 0x12121A22,
+	} or GetGameVersion():sub(1,4) == '6.23' and {
+		['Header'] = 0x0110, ['pos'] = 14, ['ssID'] = 0x12121A22,
 	}
 	if not self.Packet then 
 		Print('Trinket Utiltity packet is outdated!!', true)
@@ -2082,7 +2178,7 @@ end
 function TRINKET:RecvPacket(p)
 	if p.header == self.Packet.Header then
 		if p:DecodeF() == myHero.networkID then
-			p.pos=self.Packet.pos
+			p.pos=self.Packet.pos      
 			local isSightStone = p:Decode4() == self.Packet.ssID
 			local currentTrinket = myHero:GetSpellData(ITEM_7)
 			if not currentTrinket then return end
@@ -2213,7 +2309,7 @@ function MAGWARDS:__init()
 	}
 	self.Wards = {
 		['sightward'] = true, 
-		['VisionWard'] = true,
+		['JammerDevice'] = true,
 		['ItemGhostWard'] = true, 
 		['TrinketTotemLvl2'] =  true,
 		['TrinketTotemLvl1'] = true, 
