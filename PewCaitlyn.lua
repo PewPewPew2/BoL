@@ -45,6 +45,7 @@ AddLoadCallback(function()
 		return
 	end
 	if FileExist(LIB_PATH..'PewPacketLib.lua') then require('PewPacketLib') end
+	if FileExist(LIB_PATH..'FHPrediction.lua') then require('FHPrediction') end
 	require 'HPrediction'
 	local isLoaded, loadTime = false, clock()
 	AddTickCallback(function() 
@@ -62,7 +63,7 @@ end)
 class 'Caitlyn'
  
 function Caitlyn:__init()
-	local version = 3.3
+	local version = 3.4
 	ScriptUpdate(
 		version,
 		true,
