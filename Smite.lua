@@ -12,25 +12,25 @@ function SmiteCore:__init()
 	self.LastClick = 0
 	self.DamageTable = {390,410,430,450,480,510,540,570,600,640,680,720,760,800,850,900,950,1000,}
 	self.Offsets = {
-		['SRU_Blue'] 			= {['x'] = -72, ['y'] =  2, ['h'] = 9,  ['w'] = 144,},
-		['SRU_Gromp']			= {['x'] = -44, ['y'] =  1, ['h'] = 4,  ['w'] = 90, },
-		['SRU_Murkwolf'] 		= {['x'] = -38, ['y'] =  1, ['h'] = 4,  ['w'] = 78, },
-		['Sru_Crab'] 			= {['x'] = -32, ['y'] = -6, ['h'] = 4,  ['w'] = 66, },
-		['SRU_Razorbeak']		= {['x'] = -38, ['y'] =  1, ['h'] = 4,  ['w'] = 78, },
+		['Sru_Crab'] 			= {['x'] = -30, ['y'] = -6, ['h'] = 4,  ['w'] = 60, },
+		['SRU_Gromp']			= {['x'] = -46, ['y'] =  1, ['h'] = 4,  ['w'] = 92, },
+		['SRU_Murkwolf'] 	= {['x'] = -46, ['y'] =  1, ['h'] = 4,  ['w'] = 92, },
+		['SRU_Razorbeak']	= {['x'] = -46, ['y'] =  1, ['h'] = 4,  ['w'] = 92, },
+		['SRU_Krug'] 			= {['x'] = -46, ['y'] =  1, ['h'] = 4,  ['w'] = 92, },
 		['SRU_Red'] 			= {['x'] = -72, ['y'] =  2, ['h'] = 9,  ['w'] = 144,},
-		['SRU_Krug'] 			= {['x'] = -41, ['y'] =  1, ['h'] = 4,  ['w'] = 84, },
-		['SRU_Dragon_Water'] 	= {['x'] = -72, ['y'] =  2, ['h'] = 9,  ['w'] = 144,},
-		['SRU_Dragon_Air'] 		= {['x'] = -72, ['y'] =  2, ['h'] = 9,  ['w'] = 144,},
-		['SRU_Dragon_Earth'] 	= {['x'] = -72, ['y'] =  2, ['h'] = 9,  ['w'] = 144,},
-		['SRU_Dragon_Elder'] 	= {['x'] = -72, ['y'] =  2, ['h'] = 9,  ['w'] = 144,},
-		['SRU_Dragon_Fire'] 	= {['x'] = -72, ['y'] =  2, ['h'] = 9,  ['w'] = 144,},
-		['SRU_RiftHerald'] 		= {['x'] = -72, ['y'] =  2, ['h'] = 9,  ['w'] = 144,},
-		['SRU_Baron'] 			= {['x'] = -96, ['y'] =  1, ['h'] = 12, ['w'] = 192,},
+		['SRU_Blue'] 			= {['x'] = -72, ['y'] =  2, ['h'] = 9,  ['w'] = 144,},
+		['SRU_Dragon_Water'] 	= 'Percent', --{['x'] = -72, ['y'] =  2, ['h'] = 9,  ['w'] = 144,},
+		['SRU_Dragon_Air'] 		= 'Percent', --{['x'] = -72, ['y'] =  2, ['h'] = 9,  ['w'] = 144,},
+		['SRU_Dragon_Earth'] 	= 'Percent', --{['x'] = -72, ['y'] =  2, ['h'] = 9,  ['w'] = 144,},
+		['SRU_Dragon_Elder'] 	= 'Percent', --{['x'] = -72, ['y'] =  2, ['h'] = 9,  ['w'] = 144,},
+		['SRU_Dragon_Fire'] 	= 'Percent', --{['x'] = -72, ['y'] =  2, ['h'] = 9,  ['w'] = 144,},
+		['SRU_RiftHerald'] 		= 'Percent', --{['x'] = -72, ['y'] =  2, ['h'] = 9,  ['w'] = 144,},
+		['SRU_Baron'] 			  = 'Percent', --{['x'] = -96, ['y'] =  1, ['h'] = 12, ['w'] = 192,},
 		
 		['TT_NWraith'] 			= {['x'] = -38, ['y'] =  1, ['h'] = 4,  ['w'] = 78, },
 		['TT_NGolem'] 			= {['x'] = -38, ['y'] =  1, ['h'] = 4,  ['w'] = 78, },
-		['TT_NWolf'] 			= {['x'] = -38, ['y'] =  1, ['h'] = 4,  ['w'] = 78, },
-		['TT_Spiderboss'] 		= {['x'] = -96, ['y'] =  1, ['h'] = 12, ['w'] = 192,},
+		['TT_NWolf'] 			  = {['x'] = -38, ['y'] =  1, ['h'] = 4,  ['w'] = 78, },
+		['TT_Spiderboss'] 	= {['x'] = -96, ['y'] =  1, ['h'] = 12, ['w'] = 192,},
 	}
 	self.White = ARGB(120,255,255,255)
 	self.Menu = scriptConfig('Smiterino', 'Smite1234')
@@ -57,9 +57,15 @@ function SmiteCore:__init()
 			if self:IsValid(mob) and self.Menu[mob.charName:gsub('_', '')] then
 				local HPBar = GetUnitHPBarPos(mob)
 				if HPBar.x > -100 and HPBar.x < WINDOW_W + 100 and HPBar.y > -100 and HPBar.y < WINDOW_H + 100 then
-					local x, y = math.floor(HPBar.x) + self.Offsets[mob.charName].x, math.floor(HPBar.y) + self.Offsets[mob.charName].y
-					DrawLine(x, y, x+((self:Damage()/mob.maxHealth)*self.Offsets[mob.charName].w), y, self.Offsets[mob.charName].h, self.White)
-				end				
+          local d = self:Damage()
+					if self.Offsets[mob.charName] == 'Percent' then
+            local ScreenPos = WorldToScreen(D3DXVECTOR3(mob.x,mob.y,mob.z))
+            DrawText(d<mob.health and ('%d'):format(d*100/mob.health)..'%' or '100%',36,ScreenPos.x,ScreenPos.y-75,self.White)
+          else
+            local x, y = math.floor(HPBar.x) + self.Offsets[mob.charName].x, math.floor(HPBar.y) + self.Offsets[mob.charName].y
+            DrawLine(x, y, x+(((d<mob.health and d or mob.health)/mob.maxHealth)*self.Offsets[mob.charName].w), y, self.Offsets[mob.charName].h, self.White)
+          end
+				end
 			end
 		end
 	end)
