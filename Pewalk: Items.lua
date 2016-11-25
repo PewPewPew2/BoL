@@ -5,7 +5,7 @@ end
 AddLoadCallback(function()
   if _Pewalk then
     PewItems()
-    ScriptUpdate_Items(1.6,
+    ScriptUpdate_Items(1.7,
       true,
       'raw.githubusercontent.com', 
       '/PewPewPew2/BoL/master/Versions/Pewalk%3A%20Items.version', 
@@ -449,7 +449,7 @@ end
 function PewItems:Youmuus(slot, target, info)
 	if _Pewalk.GetActiveMode().Carry and self.Menu.YG.Enable then
     if target.type == 'AIHeroClient' and self.Menu.YG.MaxHP *.01 > target.health / target.maxHealth and myHero:CanUseSpell(slot) == READY then
-      if _Pewalk.ValidTarget(attack.target, myHero.range+myHero.boundingRadius, true) then
+      if _Pewalk.ValidTarget(target, myHero.range+myHero.boundingRadius, true) then
         CastSpell(slot)
       end
     end
