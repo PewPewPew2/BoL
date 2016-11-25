@@ -1,3 +1,8 @@
+--1.18@
+-Fixed one more evasion bug :D@
+-Fixed Veigar E evasion@
+-Fixed a menu bug creating duplicates of the block spell options@
+-Keys can now individually be set to toggle@
 --1.17@
 -Fixed another evasion bug@
 -Updated changes from 6.23 patch@
