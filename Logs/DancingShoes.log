@@ -1,3 +1,9 @@
+--1.19@
+-Improved minion collision detection@
+-Spells that are cancelled due to the caster dying are now automatically removed@
+-Fixed a bug that would occasionally cause your character to stop moving after an evade@
+-Fixed Fizz R bug@
+-Fixed a bug within shielding code@
 --1.18@
 -Fixed one more evasion bug :D@
 -Fixed Veigar E evasion@
