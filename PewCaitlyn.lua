@@ -63,7 +63,7 @@ end)
 class 'Caitlyn'
  
 function Caitlyn:__init()
-	local version = 3.4
+	local version = 3.5
 	ScriptUpdate(
 		version,
 		true,
@@ -213,6 +213,7 @@ function Caitlyn:__init()
 		['Active'] = {},
 	}
 	self.Enemies = {}
+	self.Dashing = {}
 	self.LastCtrl = 0
 	self.AllowECast = {x=0,z=0}
 	self.PreventSpam = 0
@@ -248,6 +249,7 @@ function Caitlyn:__init()
 	AddApplyBuffCallback(function(...) self:ApplyBuff(...) end)
 	AddProcessSpellCallback(function(...) self:ProcessSpell(...) end)
 	AddCastSpellCallback(function(...) self:CastSpell(...) end)
+  AddNewPathCallback(function(...) self:NewPath(...) end)
 	if self.Packets then AddRecvPacketCallback2(function(p) self:RecvPacket(p) end)	end
 end
 
@@ -256,14 +258,67 @@ function Caitlyn:ApplyBuff(source, unit, buff)
 		if self.OnBuff.CrowdControl[buff.type] and self.Menu.W.CrowdControl then
 			self.W.Active[#self.W.Active + 1] = {
 				['pos']     = { ['x'] = unit.x, ['z'] = unit.z, },
-				['endTime'] = buff.endTime + (clock() - GetGameTimer()),
+				['endTime'] = clock() + (buff.endTime - buff.startTime),
 			}
 		end
 		if self.OnBuff.Channels[buff.name] and self.Menu.W.Channel then
 			self.W.Active[#self.W.Active + 1] = {
 				['pos']     = { ['x'] = unit.x, ['z'] = unit.z, },
-				['endTime'] = buff.endTime + (clock() - GetGameTimer()),
+				['endTime'] = clock() + (buff.endTime - buff.startTime),
 			}		
+		end
+	end
+end
+
+function Caitlyn:AntiGapClose()
+	for i=#self.Dashing, 1, -1 do
+		local d = self.Dashing[i]
+		if d.endTime > clock() then
+			if d.unit.valid then
+				local isValid = d.unit.bTargetable and d.unit.bInvulnerable == 0
+				if self.Menu.E.Dash and self.eReady then
+          local point, onLine = self:GetLinePoint(d.startPos.x, d.startPos.z, d.endPos.x, d.endPos.z, myHero.x, myHero.z)          
+          local onLine = onLine and GetDistanceSqr(point) < 40000
+          if onLine or GetDistanceSqr(d.endPos) < 90000 then
+            if GetDistanceSqr(d.startPos, d.endPos) < GetDistanceSqr(d.startPos, myHero) then
+              local remainingTime = d.endTime - clock()
+              local wTime = .125 + (GetDistance(d.endPos) / 1600) + (GetLatency() * .0005)
+              
+              local moveTime = wTime - remainingTime
+              if moveTime > 0 and (isValid or (d.unit.charName=='Fizz' and d.speed>750 and d.speed<850)) then
+                local moveDistance = moveTime * d.unit.ms
+                if moveDistance < 70 + d.unit.boundingRadius then
+                  self.AllowECast = {x=d.endPos.x, z=d.endPos.z}
+                  CastSpell(_E, d.endPos.x, d.endPos.z)
+                  local wPos = NormalizeX(d.endPos, myHero, 200)
+                  DelayAction(function()
+                    CastSpell(_W, wPos.x, wPos.z)
+                  end, .2)
+                end
+              elseif moveTime > -wTime and isValid then
+                self.AllowECast = {x=d.endPos.x, z=d.endPos.z}
+                CastSpell(_E, d.endPos.x, d.endPos.z)
+                local wPos = NormalizeX(d.endPos, myHero, 200)
+                DelayAction(function()
+                  CastSpell(_W, wPos.x, wPos.z)
+                end, .2)
+              end
+            elseif onLine then
+              local remainingTime = (GetDistance(d.startPos) - myHero.boundingRadius) / d.speed
+              if remainingTime > .125 + (GetLatency() * .0005) then
+                self.AllowECast = {x=d.startPos.x, z=d.startPos.z}
+                CastSpell(_E, d.startPos.x, d.startPos.z)
+                local wPos = NormalizeX(d.startPos, myHero, 200)
+                DelayAction(function()
+                  CastSpell(_W, wPos.x, wPos.z)
+                end, .2)
+              end
+            end            
+          end
+				end
+			end
+		else
+			table.remove(self.Dashing, i)
 		end
 	end
 end
@@ -322,8 +377,7 @@ function Caitlyn:CreateMenu()
 				MenuCheck = self.Menu.Q.Method
 			end
 		end)
-		self.Menu.Q:addParam('HitChance', 'Cast HitChance [3==Highest]', SCRIPT_PARAM_SLICE, 1.25, 0.5, 3, 1)
-		self.Menu.Q:addParam('Collision', 'Check for minion Collision', SCRIPT_PARAM_ONOFF, true)
+		self.Menu.Q:addParam('HitChance2', 'Cast HitChance [3==Highest]', SCRIPT_PARAM_SLICE, 0.4, 0, 3)
 		self.Menu.Q:addParam('space', '', SCRIPT_PARAM_INFO, '')
 		self.Menu.Q:addParam('info', '---Miscellaneous---', SCRIPT_PARAM_INFO, '')
 		self.Menu.Q:addParam('Mana', 'Always Save Mana for E', SCRIPT_PARAM_ONOFF, true)
@@ -361,6 +415,7 @@ function Caitlyn:CreateMenu()
 		self.Menu.E:addParam('LastHit', 'Use for Last Hits', SCRIPT_PARAM_ONOFF, false)
 		self.Menu.E:addParam('space', '', SCRIPT_PARAM_INFO, '')
 		self.Menu.E:addParam('info', '---Miscellaneous---', SCRIPT_PARAM_INFO, '')
+		self.Menu.E:addParam('Dash', 'Anti Gap Close', SCRIPT_PARAM_ONOFF, true)
 		self.Menu.E:addParam('NeverBlock', 'Never block E Casts', SCRIPT_PARAM_ONOFF, false)
 		self.Menu.E:addParam('Block', 'Block Failed Wall Jumps', SCRIPT_PARAM_ONOFF, true)
 		self.Menu.E:addParam('MinimumBlock', 'Do Not Block if Will Jump This Far', SCRIPT_PARAM_SLICE, 350, 20, 490)
@@ -373,8 +428,8 @@ function Caitlyn:CreateMenu()
 		self.Menu.R:addParam('Line', 'Draw Line to Killable Character', SCRIPT_PARAM_ONOFF, true)
 		self.Menu.R:addParam('Indicator', 'Draw Health Remaining Indicator', SCRIPT_PARAM_ONOFF, true)
 		self.Menu.R:addParam('Auto', 'Use Automatically', SCRIPT_PARAM_ONOFF, false)
-	self.Menu:addParam('Combo', 'E - Q Combo', SCRIPT_PARAM_ONKEYDOWN, false, ('T'):byte())
-	self.Menu:addParam('Prediction2', 'Prediction Selection', SCRIPT_PARAM_LIST, 1, {'HPrediction', 'Fun House Prediction',})
+	self.Menu:addParam('Combo', 'W - E - Q Combo', SCRIPT_PARAM_ONKEYDOWN, false, ('T'):byte())
+	self.Menu:addParam('Prediction2', 'Prediction Selection', SCRIPT_PARAM_LIST, 1, {'HPrediction', FHPrediction and 'FHPrediction' or 'FHPrediction not found!',})
 end
 
 function Caitlyn:CreateObj(o)
@@ -465,14 +520,23 @@ function Caitlyn:Draw()
 	end
 end
 
+function Caitlyn:GetLinePoint(ax, ay, bx, by, cx, cy)
+    local rL = ((cx - ax) * (bx - ax) + (cy - ay) * (by - ay)) / ((bx - ax) ^ 2 + (by - ay) ^ 2)	
+	return { x = ax + rL * (bx - ax), z = ay + rL * (by - ay) }, (rL < 0 and 0 or (rL > 1 and 1 or rL)) == rL
+end
+
 function Caitlyn:GetPrediction(unit, hitchance)
-	if self.Menu.Prediction2==2 and FHPrediction then
-		local CastPos, HitChance = FHPrediction.GetPrediction(self.FH_Q, unit, myHero) 
-		return CastPos and HitChance >= hitchance and _Pewalk.GetCollision(unit, CastPos, {length=2000, width=90, delay=0.625}, myHero)==false, CastPos
+	if self.Menu.Prediction2==2 then
+    if FHPrediction then
+      local CastPos, HitChance = FHPrediction.GetPrediction(self.FH_Q, unit, myHero) 
+      return CastPos and HitChance >= hitchance, CastPos
+    else
+      self.Menu.Prediction2 = 1
+    end
 	end
 	
 	local CastPos, HitChance = self.HP:GetPredict(self.HP_Q, unit, myHero)
-	return CastPos and HitChance >= hitchance * 0.5 and _Pewalk.GetCollision(unit, CastPos, {length=2000, width=90, delay=0.625}, myHero)==false, CastPos
+  return CastPos and HitChance >= hitchance, CastPos
 end
 
 function Caitlyn:GetUltRange()
@@ -501,6 +565,42 @@ function Caitlyn:MinionPrediction(unit, delay, width, speed, from)
 	end
 end
 
+function Caitlyn:NewPath(unit,startPos,endPos,isDash,dashSpeed,dashGravity,dashDistance)
+	if unit.valid and unit.type == 'AIHeroClient' and unit.team~=myHero.team and isDash and GetDistanceSqr(startPos, endPos) > 30625 then
+		if not self.DashExceptions then
+      self.DashExceptions = {
+        Aatrox = function(unit, speed) return speed<100 end,
+        Ahri = function(unit, speed) return unit:GetSpellData(_R).currentCd > 10 end,
+        AurelionSol = function(unit, speed) return speed==600 end,
+        Azir = function(unit, speed) return speed==1700 end,
+        Ekko = function(unit, speed) return speed>1100 and speed<1200 end,
+        Fizz = function(unit, speed) return speed>1000 and speed<1150 end,
+        Gnar = function(unit, speed) return speed>850 and speed<950 and unit:GetSpellData(_E).cd-unit:GetSpellData(_E).currentCd<0.5 end,
+        Hecarim = function(unit, speed) return true end,
+        Kalista = function(unit, speed) return speed>700 and speed<900 end,
+        Leblanc = function(unit, speed) return speed==1600 end,
+        Quinn = function(unit, speed) return speed==2500 end,
+        Renekton = function(unit, speed) return speed>1050 and speed<1150 and unit:GetSpellData(_E).cd-unit:GetSpellData(_E).currentCd<0.5 end,
+        Riven = function(unit, speed) return speed<1150 end,
+        Yasuo = function(unit, speed) return true end,
+      }
+    end
+    
+    if self.DashExceptions[unit.charName] and self.DashExceptions[unit.charName](unit, dashSpeed) then return end
+    
+    table.insert(self.Dashing, {
+      startTime = clock(),
+      speed = dashSpeed,
+      startPos = Vector(unit.x, unit.y, unit.z),
+      endPos = Vector(endPos),
+      endTime = clock() + (GetDistance(startPos, endPos) / dashSpeed),
+      range = GetDistanceSqr(startPos, endPos),
+      unit = unit,
+    })
+    self:AntiGapClose()
+	end
+end
+
 function Caitlyn:ProcessSpell(u, s)
 	if u.valid and u.type == 'AIHeroClient' and u.team == TEAM_ENEMY and self.OnSpells[s.name] then
 		self.OnSpells[s.name](s.endPos)
@@ -510,7 +610,7 @@ end
 function Caitlyn:RDamage(unit)
 	local baseDmg = ((225 * myHero:GetSpellData(_R).level) + (myHero.addDamage * 2)) * self:CalcArmor(unit)
 	for _, buff in ipairs(_Pewalk.GetBuffs(unit)) do
-		if self.OnBuff.DamageMods[buff.name] and buff.endT > GetGameTimer() + 1 then
+		if self.OnBuff.DamageMods[buff.name] and buff.endT > clock() + 1 then
 			baseDmg = baseDmg * self.OnBuff.DamageMods[buff.name]
 		end
 	end
@@ -539,47 +639,61 @@ function Caitlyn:Tick()
 	self.eReady = myHero:CanUseSpell(_E) == READY
 	self.rReady = myHero:CanUseSpell(_R) == READY
 	local OM = _Pewalk.GetActiveMode()
-	
-	if self.qCombo and self.qCombo.Time < clock() then		
-		local CastPos, HitChance = self.HP:GetPredict(self.HP_Q, self.qCombo.target, Vector(self.qCombo.x, myHero.y, self.qCombo.z))	
-		if CastPos then
-			if self.qCombo.useW then
-				CastSpell(_W, CastPos.x, CastPos.z)
-				self.qCombo = nil
-			else
-				CastSpell(_Q, CastPos.x, CastPos.z)
-				self.qCombo.useW = true
-			end
-		end
+	self:AntiGapClose()
+  
+	if self.Combo then
+    if self.Combo.Time > clock() then		
+      local CastPos, HitChance = self.HP:GetPredict(self.HP_Q, self.Combo.target, Vector(self.Combo.startPos.x, myHero.y, self.Combo.startPos.z))	
+      if CastPos then
+        if self.Combo.UseQ then
+          -- local wPos = GetDistanceSqr(CastPos, self.Combo.dashPos) < 525625 and CastPos or NormalizeX(CastPos, self.Combo.dashPos, 725)
+          -- CastSpell(_Q, wPos.x, wPos.z)
+          CastSpell(_Q, CastPos.x, CastPos.z)
+          self.Combo = self.qReady and self.Combo or nil
+        else
+					self.AllowECast = {x=CastPos.x, z=CastPos.z}
+          CastSpell(_E, CastPos.x, CastPos.z)
+          self.Combo.UseQ = self.eReady==false
+        end
+      end
+    else
+      self.Combo = nil
+    end
+    return
 	end
 	
 	if Evade then return end
-	if self.qReady and self.eReady and self.Menu.Combo and not self.qCombo then
+	if self.qReady and self.eReady and self.Menu.Combo and not self.Combo then
 		if 115 + (10 * myHero:GetSpellData(_Q).level) < myHero.mana then
-			local target = _Pewalk.GetTarget(800)
+			local target = _Pewalk.GetTarget(725)
 			if target then
 				local bCast, CastPos = self:GetPrediction(target, 0.25)
-				if CastPos then
-					self.qCombo = {['Time'] = clock() + 0.22, ['x'] = myHero.x, ['z'] = myHero.z, ['target'] = target,}
-					self.AllowECast = {x=CastPos.x, z=CastPos.z}
-					CastSpell(_E, CastPos.x, CastPos.z)
+				if CastPos and _Pewalk.GetCollision(t, CastPos, {length=1000, width=80, delay=0.125}, myHero) and GetDistanceSqr(CastPos) < 525625 then
+					self.Combo = {
+            ['Time'] = clock() + .8, 
+            ['startPos'] = {['x']=myHero.x, ['z'] = myHero.z,},
+            ['dashPos'] = NormalizeX(CastPos, myHero, -390),
+            ['target'] = target,
+          }
+					CastSpell(_W, CastPos.x, CastPos.z)
+          return
 				end
 			end
 		end
 	end
-	if self.qReady then
+	if self.qReady and not self.Menu.Combo then
 		if _Pewalk.CanMove() then
 			if not self.Menu.Q.Mana or (myHero.mana - ((myHero:GetSpellData(_Q).level * 10) + 40)) > 75 then	
 				local c1 = OM.Carry and self.Menu.Q.Carry
 				local c2 = OM.Mixed and self.Menu.Q.Mixed and not _Pewalk.WaitForMinion()
-				local c3 = OM.Clear and self.Menu.Q.Clear and not _Pewalk.WaitForMinion()
+				local c3 = OM.LaneClear and self.Menu.Q.Clear and not _Pewalk.WaitForMinion()
 				if c1 or c2 or c3 then
 					local c4 = self.Menu.Q.Method == 1 and self:CheckDamage()
 					local c5 = self.Menu.Q.Method == 2 and self.Menu.Q.Toggle
 					if c4 or c5 then
 						local target = _Pewalk.GetTarget(1300)
 						if target then
-							local bCast, castPos = self:GetPrediction(target, self.Menu.Q.HitChance)
+							local bCast, castPos = self:GetPrediction(target, self.Menu.Q.HitChance2)
 							if bCast then	
 								CastSpell(_Q, castPos.x, castPos.z)
 								return
@@ -662,7 +776,7 @@ function Caitlyn:Tick()
 			local t = _Pewalk.GetSkillFarmTarget(0.125, d, 2000, 1000, true)
 			if t and GetDistanceSqr(t, self.SpawnPos) > GetDistanceSqr(self.SpawnPos)  then
 				local CastPos = self:MinionPrediction(t, 0.125, 80, 2000, myHero)
-				if CastPos and not _Pewalk.GetCollision(t, CastPos, {length=1000, width=80, delay=0.125}, myHero)	 then
+				if CastPos and _Pewalk.GetCollision(t, CastPos, {length=1000, width=80, delay=0.125}, myHero)	 then
 					self.AllowECast = {x=CastPos.x, z=CastPos.z}
 					CastSpell(_E, CastPos.x, CastPos.z)
 				end
@@ -706,7 +820,7 @@ end
 
 function ScriptUpdate:OnDraw()
     if self.DownloadStatus ~= 'Downloading Script (100%)' and self.DownloadStatus ~= 'Downloading VersionInfo (100%)'then
-        DrawText('Download Status: '..(self.DownloadStatus or 'Unknown'),50,10,50,ARGB(0xFF,0xFF,0xFF,0xFF))
+        DrawText('Download Status: '..(self.DownloadStatus or 'Unknown'),20,10,50,ARGB(0xFF,0xFF,0xFF,0xFF))
     end
 end
 
