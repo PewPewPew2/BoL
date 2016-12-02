@@ -63,7 +63,7 @@ end)
 class 'Caitlyn'
  
 function Caitlyn:__init()
-	local version = 3.5
+	local version = 3.6
 	ScriptUpdate(
 		version,
 		true,
@@ -178,7 +178,7 @@ function Caitlyn:__init()
 		end,
 		['LifeAura.troy'] = function(o)
 			if self.Menu.W.Revive then
-				for i, hero in ipairs(Enemies) do
+				for i, hero in ipairs(self.Enemies) do
 					if GetDistanceSqr(hero, o) == 0 then
 						self.W.Active[#self.W.Active + 1] = {
 							['pos']     = { ['x'] = hero.x, ['z'] = hero.z, },
@@ -238,6 +238,7 @@ function Caitlyn:__init()
 	
 	self.HP = HPrediction()
 	self.HP_Q = HPSkillshot({type = 'DelayLine', delay = 0.625, range = 1300, width = 180, speed = 2200})
+	self.HP_E = HPSkillshot({type = 'DelayLine', delay = 0.125, range = 800, width = 140, speed = 1600})
 	if FHPrediction then
 		self.FH_Q = {range = 1300,speed = 2200,delay = 0.625,radius = 90,type = SkillShotType.SkillshotMissileLine,}
 	end	
@@ -377,7 +378,7 @@ function Caitlyn:CreateMenu()
 				MenuCheck = self.Menu.Q.Method
 			end
 		end)
-		self.Menu.Q:addParam('HitChance2', 'Cast HitChance [3==Highest]', SCRIPT_PARAM_SLICE, 0.4, 0, 3)
+		self.Menu.Q:addParam('HitChance2', 'Cast HitChance [3==Highest]', SCRIPT_PARAM_SLICE, 0.4, 0, 3, 1)
 		self.Menu.Q:addParam('space', '', SCRIPT_PARAM_INFO, '')
 		self.Menu.Q:addParam('info', '---Miscellaneous---', SCRIPT_PARAM_INFO, '')
 		self.Menu.Q:addParam('Mana', 'Always Save Mana for E', SCRIPT_PARAM_ONOFF, true)
@@ -570,6 +571,7 @@ function Caitlyn:NewPath(unit,startPos,endPos,isDash,dashSpeed,dashGravity,dashD
 		if not self.DashExceptions then
       self.DashExceptions = {
         Aatrox = function(unit, speed) return speed<100 end,
+        Alistar = function(unit, speed) return true end,
         Ahri = function(unit, speed) return unit:GetSpellData(_R).currentCd > 10 end,
         AurelionSol = function(unit, speed) return speed==600 end,
         Azir = function(unit, speed) return speed==1700 end,
@@ -639,19 +641,28 @@ function Caitlyn:Tick()
 	self.eReady = myHero:CanUseSpell(_E) == READY
 	self.rReady = myHero:CanUseSpell(_R) == READY
 	local OM = _Pewalk.GetActiveMode()
+  if OM.Carry then
+    if not self.CarryTimer then
+      self.CarryTimer = clock()
+    end
+  else
+    self.CarryTimer = nil
+  end
+  
 	self:AntiGapClose()
   
 	if self.Combo then
-    if self.Combo.Time > clock() then		
-      local CastPos, HitChance = self.HP:GetPredict(self.HP_Q, self.Combo.target, Vector(self.Combo.startPos.x, myHero.y, self.Combo.startPos.z))	
-      if CastPos then
-        if self.Combo.UseQ then
-          -- local wPos = GetDistanceSqr(CastPos, self.Combo.dashPos) < 525625 and CastPos or NormalizeX(CastPos, self.Combo.dashPos, 725)
-          -- CastSpell(_Q, wPos.x, wPos.z)
+    if self.Combo.Time > clock() then			
+      if self.Combo.UseQ then
+        local CastPos = self.HP:GetPredict(self.HP_Q, self.Combo.target, Vector(self.Combo.startPos.x, myHero.y, self.Combo.startPos.z))
+        if CastPos then  
           CastSpell(_Q, CastPos.x, CastPos.z)
           self.Combo = self.qReady and self.Combo or nil
-        else
-					self.AllowECast = {x=CastPos.x, z=CastPos.z}
+        end
+      else
+        local CastPos = self.HP:GetPredict(self.HP_E, self.Combo.target, Vector(self.Combo.startPos.x, myHero.y, self.Combo.startPos.z))
+        if CastPos then  
+          self.AllowECast = {x=CastPos.x, z=CastPos.z}
           CastSpell(_E, CastPos.x, CastPos.z)
           self.Combo.UseQ = self.eReady==false
         end
@@ -661,33 +672,43 @@ function Caitlyn:Tick()
     end
     return
 	end
+	if self.eReady and self.Menu.Combo and not self.Combo then --self.qReady and 
+    local target, shortestDist = nil, huge
+    for i, e in ipairs(self.Enemies) do
+      if _Pewalk.ValidTarget(e) then
+        local dist = GetDistanceSqr(e)
+        if dist < 640000 then
+          if not target or shortestDist>dist then
+            target, shortestDist = e, dist
+          end
+        end
+      end
+    end
+    if target then
+      local bCast, CastPos = self:GetPrediction(target, 0.25)
+      if CastPos and GetDistanceSqr(CastPos) < 640000 and _Pewalk.GetCollision(t, CastPos, {length=800, width=80, delay=0.125}, myHero)  then
+        self.Combo = {
+          ['Time'] = clock() + 1, 
+          ['startPos'] = {['x']=myHero.x, ['z'] = myHero.z,},
+          ['dashPos'] = NormalizeX(CastPos, myHero, -390),
+          ['target'] = target,
+        }          
+        if myHero.mana > 95 then
+          CastSpell(_W, CastPos.x, CastPos.z)
+        end
+        return
+      end
+    end
+  end
 	
 	if Evade then return end
-	if self.qReady and self.eReady and self.Menu.Combo and not self.Combo then
-		if 115 + (10 * myHero:GetSpellData(_Q).level) < myHero.mana then
-			local target = _Pewalk.GetTarget(725)
-			if target then
-				local bCast, CastPos = self:GetPrediction(target, 0.25)
-				if CastPos and _Pewalk.GetCollision(t, CastPos, {length=1000, width=80, delay=0.125}, myHero) and GetDistanceSqr(CastPos) < 525625 then
-					self.Combo = {
-            ['Time'] = clock() + .8, 
-            ['startPos'] = {['x']=myHero.x, ['z'] = myHero.z,},
-            ['dashPos'] = NormalizeX(CastPos, myHero, -390),
-            ['target'] = target,
-          }
-					CastSpell(_W, CastPos.x, CastPos.z)
-          return
-				end
-			end
-		end
-	end
 	if self.qReady and not self.Menu.Combo then
 		if _Pewalk.CanMove() then
 			if not self.Menu.Q.Mana or (myHero.mana - ((myHero:GetSpellData(_Q).level * 10) + 40)) > 75 then	
-				local c1 = OM.Carry and self.Menu.Q.Carry
+				local c1 = OM.Carry and self.Menu.Q.Carry and self.CarryTimer and self.CarryTimer + 1 < clock()
 				local c2 = OM.Mixed and self.Menu.Q.Mixed and not _Pewalk.WaitForMinion()
 				local c3 = OM.LaneClear and self.Menu.Q.Clear and not _Pewalk.WaitForMinion()
-				if c1 or c2 or c3 then
+        if c1 or c2 or c3 then
 					local c4 = self.Menu.Q.Method == 1 and self:CheckDamage()
 					local c5 = self.Menu.Q.Method == 2 and self.Menu.Q.Toggle
 					if c4 or c5 then
