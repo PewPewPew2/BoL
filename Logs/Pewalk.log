@@ -1,233 +1,233 @@
 --0.80@
--Updated stat changes for 6.23@
+>Updated stat changes for '6.23"@
 --0.79@
--Fixed Azirs Q reset@
+>Fixed Azirs Q reset@
 --0.78@
--Fixed bugs with Vayne and Rengar Q@
+>Fixed bugs with Vayne and Rengar Q@
 --0.77@
--Added Stick To Target (Melee Only) hotkey, this is experimental and will most likely need some improvement@
--Added support to attack Control Wards and Tiny Krugs@
--Updated turret damage calculations@
--Removed Serrated Dirk bonus damage@
--Updated masteries for 6.22 changes (excluding Battle Trance)@
--Updated the following characters and skills:@
--Irelia - Added Q@
--Talon - Q - W - Attack@
--Katarina - Q, W has been removed@
--Leblanc - Q@
--Rengar - Q - W - AA@
--Fizz - Q - W@
--KhaZix - Q - Attack@
--Akali - Passive - E@
--Shaco - Q@
--Zed - E@
--Ekko - Passve@
+>Added Stick To Target (Melee Only) hotkey, this is experimental and will most likely need some improvement@
+>Added support to attack Control Wards and Tiny Krugs@
+>Updated turret damage calculations@
+>Removed Serrated Dirk bonus damage@
+>Updated masteries for 6.22 changes (excluding Battle Trance)@
+>Updated the following characters and skills:@
+>Irelia - Added Q@
+>Talon - Q - W - Attack@
+>Katarina - Q, W has been removed@
+>Leblanc - Q@
+>Rengar - Q - W - AA@
+>Fizz - Q - W@
+>KhaZix - Q - Attack@
+>Akali - Passive - E@
+>Shaco - Q@
+>Zed - E@
+>Ekko - Passve@
 --0.76@
--Updated for 6.21@
+>Updated for 6.21@
 --0.75@
--Updated for 6.20@
--Added support for Ivern@
+>Updated for 6.20@
+>Added support for Ivern@
 --0.74@
--Fixed a bug with buffs created in the 6.19 patch@
--Fixed Jhin auto attack timings@
+>Fixed a bug with buffs created in the 6.19 patch@
+>Fixed Jhin auto attack timings@
 --0.72@
--Updated damage changes for 6.19@
--Attack Speed Limit (attacks / s) option max reduced to 2.5@
--Fixed bug with Ryze spell damage calculations@
+>Updated damage changes for 6.19@
+>Attack Speed Limit (attacks / s) option max reduced to 2.5@
+>Fixed bug with Ryze spell damage calculations@
 --0.70@
--Fixed error spame when playing with an allied Lulu@
--Updated Yoricks spells for spell farming@
--Updated Yoricks ghouls for last hitting@
+>Fixed error spame when playing with an allied Lulu@
+>Updated Yoricks spells for spell farming@
+>Updated Yoricks ghouls for last hitting@
 --0.69@
--Fixed error spam when playing with an allied Azir@
+>Fixed error spam when playing with an allied Azir@
 --0.67@
--Fixed an issue with buffed auto attacks expirations@
--Made some aesthetic changes to the menu@
+>Fixed an issue with buffed auto attacks expirations@
+>Made some aesthetic changes to the menu@
 --0.66@
--Fixed Spoils of War bonus damage (Targons)@
--Fixed super minion HP bar drawings@
--Fixed a bug with _Pewalk.ForcePoint API@
+>Fixed Spoils of War bonus damage (Targons)@
+>Fixed super minion HP bar drawings@
+>Fixed a bug with _Pewalk.ForcePoint API@
 --0.65@
--Fixed some bugs that could occur when your mouse was directly on your hero@
--Fixed some bugs involving ally wards that was causing erratic behavior@
--Fixed some issues with Oriannas spell farming@
--Fixed a bug in skill farming that was causing the script to ignore some minions@
+>Fixed some bugs that could occur when your mouse was directly on your hero@
+>Fixed some bugs involving ally wards that was causing erratic behavior@
+>Fixed some issues with Oriannas spell farming@
+>Fixed a bug in skill farming that was causing the script to ignore some minions@
 --0.64@
--Greatly improved turret farming@
--Updated stat changes for 6.17@
+>Greatly improved turret farming@
+>Updated stat changes for 6.17@
 --0.63@
--Improved weaving auto attacks between spells@
+>Improved weaving auto attacks between spells@
 --0.60@
--Fixed a bug with lane clear targeting@
--Fixed some bugs with AA resets@
--Fixed super minion HP bar drawings@
--Fixed a bug that could potentially cause bugsplats, though Im not sure if it actually was causing any@
+>Fixed a bug with lane clear targeting@
+>Fixed some bugs with AA resets@
+>Fixed super minion HP bar drawings@
+>Fixed a bug that could potentially cause bugsplats, though Im not sure if it actually was causing any@
 --0.57@
--Fixed a bug with Distance From Hero menu option@
--Fixed a bug that was reducing Azirs attack range@
--Updated minion health bar drawings@
+>Fixed a bug with Distance From Hero menu option@
+>Fixed a bug that was reducing Azirs attack range@
+>Updated minion health bar drawings@
 --0.56@
--Added support for Kled@
+>Added support for Kled@
 --0.55@
--Fixed AllowAttack API that I broke in last update@
+>Fixed AllowAttack API that I broke in last update@
 --0.54@
--Fixed auto mastery bug@
+>Fixed auto mastery bug@
 --0.53@
--Added support for Kassadin Q for spell last hitting@
--Updated packet and damage changes for 6.15@
+>Added support for Kassadin Q for spell last hitting@
+>Updated packet and damage changes for 6.15@
 --0.51@
--Fixed error spam from Vayne W@
--Fixed Miss Fortune bonus damage from passive@
+>Fixed error spam from Vayne W@
+>Fixed Miss Fortune bonus damage from passive@
 --0.49@
--Updated packets and stat changes for 6.14@
--Fixed target buffed bonus damages, ex. Lux Passive, Vayne W@
+>Updated packets and stat changes for 6.14@
+>Fixed target buffed bonus damages, ex. Lux Passive, Vayne W@
 --0.47@
--Now automatically gets masteries@
--Fixed some minor mastery damage calculations@
--Remove Mastery menu, no longer needed@
+>Now automatically gets masteries@
+>Fixed some minor mastery damage calculations@
+>Remove Mastery menu, no longer needed@
 --0.45@
--Fixed bug with Thresh standing still while tethered to a target with Death Sentence@
--Fixed Vayne W bonus damage calculations@
--Fixed AllowAttack API@
+>Fixed bug with Thresh standing still while tethered to a target with Death Sentence@
+>Fixed Vayne W bonus damage calculations@
+>Fixed AllowAttack API@
 --0.44@
--Fixed attacking ally GP barrels@
--Added Stream Mode (in Drawing Options)@
+>Fixed attacking ally GP barrels@
+>Added Stream Mode (in Drawing Options)@
 --0.43@
--Fixed a bug that could occasionally cause Pewalk to target invulnerable units@
--Fixed a bug that would cause turret aggro to negatively affect jungle clear@
--Fixed the script targeting LeBlanc, Shaco and Wukong clones@
--Fixed ProjectileSpeed error spam (hopefully)@
+>Fixed a bug that could occasionally cause Pewalk to target invulnerable units@
+>Fixed a bug that would cause turret aggro to negatively affect jungle clear@
+>Fixed the script targeting LeBlanc, Shaco and Wukong clones@
+>Fixed ProjectileSpeed error spam (hopefully)@
 --0.42@
--Improved AA reset timing when the target attacked dies immediately after an attack is issued@
--Improved AA reset timings when cancelled by spells (should greatly improve orbwalking with scripts that are not properly integrated with Pewalk)@
--Added Teemo Q to skill farm@
--Updated mastery damage for 6.12 changes@
--Improved target selection for tertiary targets such as wards, GP barrels, etc.@
--Now properly calculates last hit damage to minions with baron buff@
--Fixed an error with Illaoi that would cause the script not to load@
--Now targets Zac rebirth blobs, Mordekaiser R spectres, Yorick R spectres, and Illaoi E spectres as heroes in carry mode@
+>Improved AA reset timing when the target attacked dies immediately after an attack is issued@
+>Improved AA reset timings when cancelled by spells (should greatly improve orbwalking with scripts that are not properly integrated with Pewalk)@
+>Added Teemo Q to skill farm@
+>Updated mastery damage for 6.12 changes@
+>Improved target selection for tertiary targets such as wards, GP barrels, etc.@
+>Now properly calculates last hit damage to minions with baron buff@
+>Fixed an error with Illaoi that would cause the script not to load@
+>Now targets Zac rebirth blobs, Mordekaiser R spectres, Yorick R spectres, and Illaoi E spectres as heroes in carry mode@
 --0.41@
--Fixed some errors that would sometimes occur with Pewalk API usage@
--Fixed Kennens W bonus damage@
--Added special targeting conditions for Jhin (4th shot) and Kennen (W Passive) while in Lane Clear, similar to Caitlyn@
--Attack speed limiter max increased to 5 (for KogMaw)@
--Added an option to prioritize harass over attacking minions in lane clear (doesn't prioritize over lasthits though)@
--Added a new hotkey that attempts to freeze the lane (only affects Farm mode)@
--Reworked Skills clear for jungle mobs@
--Added a bunch more spells for spell last hitting, check the forum for a complete list@
+>Fixed some errors that would sometimes occur with Pewalk API usage@
+>Fixed Kennens W bonus damage@
+>Added special targeting conditions for Jhin (4th shot) and Kennen (W Passive) while in Lane Clear, similar to Caitlyn@
+>Attack speed limiter max increased to 5 (for KogMaw)@
+>Added an option to prioritize harass over attacking minions in lane clear (doesn't prioritize over lasthits though)@
+>Added a new hotkey that attempts to freeze the lane (only affects Farm mode)@
+>Reworked Skills clear for jungle mobs@
+>Added a bunch more spells for spell last hitting, check the forum for a complete list@
 --0.40@
--Updated packets for 6.10@
--Added support for Taliyah@
+>Updated packets for 6.10@
+>Added support for Taliyah@
 --0.39@
--Fixed a bug with buff end times@
--Fixed Ashe Q bonus damage@
+>Fixed a bug with buff end times@
+>Fixed Ashe Q bonus damage@
 --0.38@
--Pewalk is now completely compatible with Azir@
+>Pewalk is now completely compatible with Azir@
 --0.37@
--Updated Anivia and Swains attack missile speed@
--Updated bonus damage from Bloodrazor and Guinsoo@
--Fixed some windup issues with RekSai Q and Tarics passive@
--Fixed a bug with Kalista with high attack speed@
--Fixed some damage predictions for minions that do not have targets@
--Fixed some skill farm timings@
--Improved skill farming with reset spells that apply bonus damages (Vayne Q, for example)@
--Added Lulu Pix bonus damage, still needs more testing though@
--Added Attack Speed limiter@
--Restructured the menu so that all the humanizer options are grouped together@
+>Updated Anivia and Swains attack missile speed@
+>Updated bonus damage from Bloodrazor and Guinsoo@
+>Fixed some windup issues with RekSai Q and Tarics passive@
+>Fixed a bug with Kalista with high attack speed@
+>Fixed some damage predictions for minions that do not have targets@
+>Fixed some skill farm timings@
+>Improved skill farming with reset spells that apply bonus damages (Vayne Q, for example)@
+>Added Lulu Pix bonus damage, still needs more testing though@
+>Added Attack Speed limiter@
+>Restructured the menu so that all the humanizer options are grouped together@
 --0.36@
--Updated all bonus damages and spell damages from 6.9 update@
+>Updated all bonus damages and spell damages from 6.9 update@
 --0.35@
--Randomizer added to the humanizer delay, default is 125ms@
--Fixed some bonus damage timings when the target has a buff that produces the bonus, example Lux passive@
--Improved the AfterAttack callback and fixed some bugs associated with it@
+>Randomizer added to the humanizer delay, default is 125ms@
+>Fixed some bonus damage timings when the target has a buff that produces the bonus, example Lux passive@
+>Improved the AfterAttack callback and fixed some bugs associated with it@
 --0.34@
--Humanizer has been reworked, default is now set to 375ms, I recommend setting it to this if you haven't already@
--Fixed Graves reload times@
+>Humanizer has been reworked, default is now set to 375ms, I recommend setting it to this if you haven't already@
+>Fixed Graves reload times@
 --0.32@
--Updated packets for 6.8@
--Updated Ekko W passive bonus damage@
--Updated Graves Passive bonus damage@
--Updated KogMaw W bonus damage@
--Updated Taric Passive bonus damage@
--Made some improvements to AA resets@
--Humanizer interval max is now set to 375ms@
--Ashe W damage fixed (for last hit, lane clear)@
+>Updated packets for 6.8@
+>Updated Ekko W passive bonus damage@
+>Updated Graves Passive bonus damage@
+>Updated KogMaw W bonus damage@
+>Updated Taric Passive bonus damage@
+>Made some improvements to AA resets@
+>Humanizer interval max is now set to 375ms@
+>Ashe W damage fixed (for last hit, lane clear)@
 --0.30@
--Added support for Aurelion Sol@
--Now properly attacks ZzRot Portals and their Void Spawns@
--Now properly attacks Elises Spiderlings@
--Fixed Normal circle drawings@
+>Added support for Aurelion Sol@
+>Now properly attacks ZzRot Portals and their Void Spawns@
+>Now properly attacks Elises Spiderlings@
+>Fixed Normal circle drawings@
 --0.29@
--Fixed an update error@
+>Fixed an update error@
 --0.28@
--Fixed a bug with the BeforeAttackCallback@
--Fixed several bugs with Kalista@
+>Fixed a bug with the BeforeAttackCallback@
+>Fixed several bugs with Kalista@
 --0.27@
--Updated packets for 6.5@
--Updated bonus damage for KogMaw W@
--Fixed some AA reset issues@
+>Updated packets for 6.5@
+>Updated bonus damage for KogMaw W@
+>Fixed some AA reset issues@
 --0.26@
--Fixed some bonus damages, ex. Nasus Q, Bard Passive, Nautilus Passive@
--Made some small performance improvements@
+>Fixed some bonus damages, ex. Nasus Q, Bard Passive, Nautilus Passive@
+>Made some small performance improvements@
 --0.24@
--Improved Turret skill farming for some spells@
--Added the some more spells for spell farming@
--Updated bonus damage for Kircheis, Statikk Shiv and Rapidfire Cannon@
--Some more small improvements for Jhin@
--Fixed a bug with RekSais Q empowered AAs@
+>Improved Turret skill farming for some spells@
+>Added the some more spells for spell farming@
+>Updated bonus damage for Kircheis, Statikk Shiv and Rapidfire Cannon@
+>Some more small improvements for Jhin@
+>Fixed a bug with RekSais Q empowered AAs@
 --0.23@
--Fixed a few bugs with Jhin@
--Added Anivia E and Quinn E to target spells that can be used to farm@
--Added all linear skillshots with collision (a complete list is in thread)@
--Fixed timings with linear skillshot farming (with and without collision)@
+>Fixed a few bugs with Jhin@
+>Added Anivia E and Quinn E to target spells that can be used to farm@
+>Added all linear skillshots with collision (a complete list is in thread)@
+>Fixed timings with linear skillshot farming (with and without collision)@
 --0.22@
--Orbwalking is smoother after dashes@
--Stop Movement - Mouse Over Hero now has a range option@
--Added targeting delay option (in target selection menu), this delays targeting characters that have recently came out of FoW@
--Made some small changes to the menu@
--Fixed Quinn passive bonus damage@
--Fixed potential incorrect bonus damage calculations from having multiple items that have passives that do not stack (ie. two recurve bows)@
+>Orbwalking is smoother after dashes@
+>Stop Movement - Mouse Over Hero now has a range option@
+>Added targeting delay option (in target selection menu), this delays targeting characters that have recently came out of FoW@
+>Made some small changes to the menu@
+>Fixed Quinn passive bonus damage@
+>Fixed potential incorrect bonus damage calculations from having multiple items that have passives that do not stack (ie. two recurve bows)@
 --0.20@
--Added Jhin@
+>Added Jhin@
 --0.19@
--Fixed chat spam@
+>Fixed chat spam@
 --0.18@
--Fixed an AA range bug@
--Added Shen Q enhanced AA bonus damage@
--Removed old Shen Q from spell farming@
--Will no longer target enemies that have Shens W buff active@
+>Fixed an AA range bug@
+>Added Shen Q enhanced AA bonus damage@
+>Removed old Shen Q from spell farming@
+>Will no longer target enemies that have Shens W buff active@
 --0.17@
--Fixed all item bonus damages@
+>Fixed all item bonus damages@
 --0.15@
--Fixed some AA bugs@
--Fixed errors with VelKoz and KhaZix@
--Added channel checks for VelKoz@
+>Fixed some AA bugs@
+>Fixed errors with VelKoz and KhaZix@
+>Added channel checks for VelKoz@
 --0.12@
--Added almost all non-collison linear spells to last hit / laneclear@
--Improved intentional cancelling@
--Fixed channel cancelling@
--Improved AA range calculations (thx gagong)@
--Now saves settings per champion@
--A mastery dialogue will now be displayed each time you play a new character@
+>Added almost all non-collison linear spells to last hit / laneclear@
+>Improved intentional cancelling@
+>Fixed channel cancelling@
+>Improved AA range calculations (thx gagong)@
+>Now saves settings per champion@
+>A mastery dialogue will now be displayed each time you play a new character@
 --0.11@
--Fixed bugs with Rengar and Leona@
--Fixed a bug with AA resets@
--Fixed AA reset last hit timings@
--Fixed bug when playing vs. Illaoi@
--Fixed bug with ForcePoint API@
+>Fixed bugs with Rengar and Leona@
+>Fixed a bug with AA resets@
+>Fixed AA reset last hit timings@
+>Fixed bug when playing vs. Illaoi@
+>Fixed bug with ForcePoint API@
 --0.09@
--Fixed skill farm timings@
--Added more developer API@
+>Fixed skill farm timings@
+>Added more developer API@
 --0.05@
--Added Lucian Q to targeted spells@
--Fixed LowFPS circle drawings@
--Rewrote much of the turret farming@
--Fixed some menu bugs@
+>Added Lucian Q to targeted spells@
+>Fixed LowFPS circle drawings@
+>Rewrote much of the turret farming@
+>Fixed some menu bugs@
 --0.03@
--Small fixes to Kalista and Graves AA's@
--Fixed Spoils of War execute damage@
+>Small fixes to Kalista and Graves AA's@
+>Fixed Spoils of War execute damage@
 --0.02@
--Fixed minion bonus damages@
--Added API for developers (check thread)@
+>Fixed minion bonus damages@
+>Added API for developers (check thread)@
 --0.01@
--Initial version, please report any bugs@
+>Initial version, please report any bugs@
