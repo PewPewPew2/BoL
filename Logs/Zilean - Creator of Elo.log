@@ -1,74 +1,74 @@
 --0.24@
--Updated changes from 6.23 patch@
+>Updated changes from 6.23 patch@
 --0.23@
--Added target draw for Q@
--Reworked auto level menu@
+>Added target draw for Q@
+>Reworked auto level menu@
 --0.22@
--Updated damage calculations for patch 6.22@
+>Updated damage calculations for patch 6.22@
 --0.21@
--Updated damage calculations for patch 6.21@
+>Updated damage calculations for patch 6.21@
 --0.20@
--Updated damage calculations for patch 6.20@
--Added Q health bar drawings@
--Now will target minions with Q that have bombs in Carry Mode to land stuns on enemies@
+>Updated damage calculations for patch 6.20@
+>Added Q health bar drawings@
+>Now will target minions with Q that have bombs in Carry Mode to land stuns on enemies@
 --0.19@
--Updated damage calculations for patch 6.19@
--Fixed error spam when [Humanizer] Block Off Screen Casts option was ON@
+>Updated damage calculations for patch 6.19@
+>Fixed error spam when [Humanizer] Block Off Screen Casts option was ON@
 --0.18@
--Use Reduced Hit Chance key renamed to Force Q, Reduced Hit Chance removed@
--Zoom mode no longer casts while in the fountain@
--Fixed some bugs that were causing error spam@
--Fixed some errors with R damage calculations@
+>Use Reduced Hit Chance key renamed to Force Q, Reduced Hit Chance removed@
+>Zoom mode no longer casts while in the fountain@
+>Fixed some bugs that were causing error spam@
+>Fixed some errors with R damage calculations@
 --0.16@
--Temp fixed cooldown issues, thought BoL would have been updated more quickly@
+>Temp fixed cooldown issues, thought BoL would have been updated more quickly@
 --0.15@
--Added offscreen spell blocking@
--Added Emote on kill@
--Added Calulation Interval option for R, increase this if you are having FPS issues@
+>Added offscreen spell blocking@
+>Added Emote on kill@
+>Added Calulation Interval option for R, increase this if you are having FPS issues@
 --0.14@
--Updated damage calculations for 6.17@
--Reduced tick rate to 0.5s for DoT spells@
+>Updated damage calculations for 6.17@
+>Reduced tick rate to 0.5s for DoT spells@
 --0.13@
--Fixed a bug when playing vs. Veigar@
+>Fixed a bug when playing vs. Veigar@
 --0.12@
--Updated damage calculations for ult, including Kleds spells@
--Fixed some error spam that could occasionally occur@
+>Updated damage calculations for ult, including Kleds spells@
+>Fixed some error spam that could occasionally occur@
 --0.11@
--Added options to harass in Mixed Mode and Lane Clear, both are OFF by default@
--Added the following special targeting features for Q:@
--Twisted Fate R@
--Tahm Kench R@
--Ryze R@
--Pantheon R@
--Zhonya and Bard R@
+>Added options to harass in Mixed Mode and Lane Clear, both are OFF by default@
+>Added the following special targeting features for Q:@
+>Twisted Fate R@
+>Tahm Kench R@
+>Ryze R@
+>Pantheon R@
+>Zhonya and Bard R@
 --0.10@
--Updated damage changes for 6.15@
+>Updated damage changes for 6.15@
 --0.08@
--More improvements to Chronoshift calculations@
--Will now print a message when writing damage calculations to the log, this can be turned off in the Chronoshift menu@
--Now blocks AAs while Reduced Hit Chance mode is active while and Q or WQ could be cast@
+>More improvements to Chronoshift calculations@
+>Will now print a message when writing damage calculations to the log, this can be turned off in the Chronoshift menu@
+>Now blocks AAs while Reduced Hit Chance mode is active while and Q or WQ could be cast@
 --0.07@
--Fixes for Chronoshift:@
--Fixed Master Yis Double Strike not accounting for on hit effects@
--Master Yis Wuju Style active is now calculated as true damage (was physical)@
--Fixed auto attacks not applying on hit effects from items (BoTRK, Bloodrazor, etc.)@
--Fixed some errors with DoT calculations@
--Fixed Thunderlords calculations@
-- @
--Added Escape Mode@
--Added Keys Menu, all hotkeys are now grouped there@
--Added descriptions for each hotkey function@
--Added Use Reduced Hit Chance key to mode indicator (next to HP bar)@
--Fixed occasionally double casting E on targets@
+>Fixes for Chronoshift:@
+>Fixed Master Yis Double Strike not accounting for on hit effects@
+>Master Yis Wuju Style active is now calculated as true damage (was physical)@
+>Fixed auto attacks not applying on hit effects from items (BoTRK, Bloodrazor, etc.)@
+>Fixed some errors with DoT calculations@
+>Fixed Thunderlords calculations@
+> @
+>Added Escape Mode@
+>Added Keys Menu, all hotkeys are now grouped there@
+>Added descriptions for each hotkey function@
+>Added Use Reduced Hit Chance key to mode indicator (next to HP bar)@
+>Fixed occasionally double casting E on targets@
 --0.06@
--Updated damage changes for 6.13@
--Fixed some R bugs vs. Riven@
--Fixed some potential error spam@
+>Updated damage changes for 6.13@
+>Fixed some R bugs vs. Riven@
+>Fixed some potential error spam@
 --0.04@
--Updated damage changes for 6.12@
+>Updated damage changes for 6.12@
 --0.03@
--Updated damage changes for 6.11@
+>Updated damage changes for 6.11@
 --0.02@
--Fixed some potential error spam@
+>Fixed some potential error spam@
 --0.01@
--Initial Release@
+>Initial Release@
