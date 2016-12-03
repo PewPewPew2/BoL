@@ -1,26 +1,26 @@
 --0.14@
--Fixed some on dash bugs@
+>Fixed some on dash bugs@
 --0.13@
--Improved Q collision detection@
--Reworked auto level menu@
+>Improved Q collision detection@
+>Reworked auto level menu@
 --0.12@
--Bug fixes@
+>Bug fixes@
 --0.11@
--Updated Q targeting@
+>Updated Q targeting@
 --0.10@
--Updated Worked Ground timers@
+>Updated Worked Ground timers@
 --0.09@
--Updated Q damage vs. minions for last hit and lane clear@
+>Updated Q damage vs. minions for last hit and lane clear@
 --0.08@
--Now casts E immediately after W in force W mode@
+>Now casts E immediately after W in force W mode@
 --0.07@
--Added key, Cast R - No Auto Ride, this is to bypass the automatic ride feature in case you just want to place the wall@
--Added key, Force W Cast, this will bypass some of the internal conditions to cast W, hitchance still applies@
+>Added key, Cast R - No Auto Ride, this is to bypass the automatic ride feature in case you just want to place the wall@
+>Added key, Force W Cast, this will bypass some of the internal conditions to cast W, hitchance still applies@
 --0.06@
--Added off screen cast blocking@
--Added Emote on kill@
--Added Windwall checks@
--Added Threaded Volley prediction drawing@
--Added Flee Mode@
+>Added off screen cast blocking@
+>Added Emote on kill@
+>Added Windwall checks@
+>Added Threaded Volley prediction drawing@
+>Added Flee Mode@
 --0.05@
--Release@
+>Release@
