@@ -1,103 +1,103 @@
 --0.41@
--Added hotkey, Set Insec Marker, this allows you to customize the direction of insec that supersedes the default directions@
--Reworked autolevel menu@
+>Added hotkey, Set Insec Marker, this allows you to customize the direction of insec that supersedes the default directions@
+>Reworked autolevel menu@
 --0.40@
--Decreased default Q hit chance@
--Fixed some bugs that were created in 6.22 patch@
+>Decreased default Q hit chance@
+>Fixed some bugs that were created in 6.22 patch@
 --0.39@
--Small improvements to Insec accuracy@
--All hotkeys have been moved to the Keys menu@
+>Small improvements to Insec accuracy@
+>All hotkeys have been moved to the Keys menu@
 --0.38@
--Added Auto Level@
--Added Emote on kill@
--Added off screen cast blocking@
+>Added Auto Level@
+>Added Emote on kill@
+>Added off screen cast blocking@
 --0.36@
--Removed support for Divine Pred, sorry to anyone who was still using this@
--Fixed a bug with the AA range in Pewalk though it heavily affects this script as well@
--Made slight changes to Q usage in Carry Mode@
--Hit Probability option in Q menu has been changed from percent to hit chance, 0-3 for HPred and 0-2 for FHPred@
--Partially reworked some of the insec code, this will increase accuracy@
--Added special checks for Zed R, Fizz E and Pantheon R so that they dont inadvertently trigger R casts in Safety mode@
+>Removed support for Divine Pred, sorry to anyone who was still using this@
+>Fixed a bug with the AA range in Pewalk though it heavily affects this script as well@
+>Made slight changes to Q usage in Carry Mode@
+>Hit Probability option in Q menu has been changed from percent to hit chance, 0-3 for HPred and 0-2 for FHPred@
+>Partially reworked some of the insec code, this will increase accuracy@
+>Added special checks for Zed R, Fizz E and Pantheon R so that they dont inadvertently trigger R casts in Safety mode@
 --0.35@
--Updated broken encryption@
+>Updated broken encryption@
 --0.33@
--Insec mode will no longer turn Evadeee evasion back on if you have it disabled@
+>Insec mode will no longer turn Evadeee evasion back on if you have it disabled@
 --0.32@
--Adjusted some of the Auto-Dash points to improve reliability@
--Added Q Last Hit (ON by default, in Q settings)@
--Tweaked R casting for improved reliability, though this may decrease responsiveness (hopefully not very much)@
+>Adjusted some of the Auto-Dash points to improve reliability@
+>Added Q Last Hit (ON by default, in Q settings)@
+>Tweaked R casting for improved reliability, though this may decrease responsiveness (hopefully not very much)@
 --0.31@
--Removed W on turret option@
+>Removed W on turret option@
 --0.30@
--Fixed a potential bugsplat at game start@
+>Fixed a potential bugsplat at game start@
 --0.29@
--Standalone Pewalk is now required!!@
--Fixed an error while downloading menu languages@
--Fixed an Authorization error that would cause a nil error on load occasionally@
--Made small improvements to Q and R casting@
+>Standalone Pewalk is now required!!@
+>Fixed an error while downloading menu languages@
+>Fixed an Authorization error that would cause a nil error on load occasionally@
+>Made small improvements to Q and R casting@
 --0.28@
--Updated to improve load time@
+>Updated to improve load time@
 --0.27@
--Updated FHPrediction implementation to conform with their updated API@
+>Updated FHPrediction implementation to conform with their updated API@
 --0.26@
--Fixed an URF bug@
+>Fixed an URF bug@
 --0.25@
--Major rework to large amounts of script core, vastly improved performance (much less FPS loss)@
--Simplified some of the drawings@
--Fixed a bug that you could never turn off (menu bug) the Sand Soldier range circles@
--Reworked most of the last hit calculations@
--Added Korean translation to menu@
--Fixed a bug in the autoupdater that could potentially cause game freezes@
--Minor tweaks to insec@
+>Major rework to large amounts of script core, vastly improved performance (much less FPS loss)@
+>Simplified some of the drawings@
+>Fixed a bug that you could never turn off (menu bug) the Sand Soldier range circles@
+>Reworked most of the last hit calculations@
+>Added Korean translation to menu@
+>Fixed a bug in the autoupdater that could potentially cause game freezes@
+>Minor tweaks to insec@
 --0.24@
--Fixed a menu bug with lane clear Q@
--Added support for Fun House Prediction@
--Added translation base, no translations right now, when people send me translations, they will be added@
--Fixed a few other minor bugs@
+>Fixed a menu bug with lane clear Q@
+>Added support for Fun House Prediction@
+>Added translation base, no translations right now, when people send me translations, they will be added@
+>Fixed a few other minor bugs@
 --0.20@
--Updated packets for 6.2@
--Fixed some error spam@
--Fixed Auto Dashes@
+>Updated packets for 6.2@
+>Fixed some error spam@
+>Fixed Auto Dashes@
 --0.18@
--Fixed minion bonus damages (from level/turret advantage)@
+>Fixed minion bonus damages (from level/turret advantage)@
 --0.16@
--Fixed a broken wall jump position@
+>Fixed a broken wall jump position@
 --0.14@
--Added an option to draw the insec arrow all of the time (or never at all)@
--Changed default dash to target key (was the same as an orbwalk key, oops)@
+>Added an option to draw the insec arrow all of the time (or never at all)@
+>Changed default dash to target key (was the same as an orbwalk key, oops)@
 --0.13@
--Small changes to Insec push direction@
--Fixes to manual W-Q combo@
--Improved prediction for both HPred and DPred@
+>Small changes to Insec push direction@
+>Fixes to manual W-Q combo@
+>Improved prediction for both HPred and DPred@
 --0.12@
--Fixed a bug that was causing manual E casts to be blocked@
+>Fixed a bug that was causing manual E casts to be blocked@
 --0.11@
--Polished Divine Prediction implementation@
--Some small Q positional changes@
--Various performance enhancements (improved FPS)@
+>Polished Divine Prediction implementation@
+>Some small Q positional changes@
+>Various performance enhancements (improved FPS)@
 --0.10@
--Fixed potential bugsplat@
--Implemented DivinePred, though this is mostly untested so I don't recommend using ATM, I would have tested more before release though I wanted to push this update to fix the bugsplats@
+>Fixed potential bugsplat@
+>Implemented DivinePred, though this is mostly untested so I don't recommend using ATM, I would have tested more before release though I wanted to push this update to fix the bugsplats@
 --0.09@
--Fixed Automated Dashes (oops), improved the timings as well@
--Added Q Prediction drawing@
--More improvements to Q casting@
--More improvements to soldier placement@
+>Fixed Automated Dashes (oops), improved the timings as well@
+>Added Q Prediction drawing@
+>More improvements to Q casting@
+>More improvements to soldier placement@
 --0.08@
--Each drawing can now be toggled on/off via the menu@
--Dash to Mouse has been completely rewritten@
--Dash to Target key has been added, default key is 'X'@
--Insec has been rewritten, greatly improved response time@
--R hit probability option added to R menu@
--Soldier auto attacks improved@
--All hotkeys can now individually be set to toggle@
+>Each drawing can now be toggled on/off via the menu@
+>Dash to Mouse has been completely rewritten@
+>Dash to Target key has been added, default key is 'X'@
+>Insec has been rewritten, greatly improved response time@
+>R hit probability option added to R menu@
+>Soldier auto attacks improved@
+>All hotkeys can now individually be set to toggle@
 --0.07@
--Reworked functions that check for auto-attack availability, thanks to the gagong@
--Fixed some error spam caused by certain minions@
--Removed minion bonus damage calcs for users still on 5.23@
--Improved extended soldier AA targeting (attacking enemies that are out of targeting range through minions)@
--More improvements to soldier placement@
--Dash to mouse has been reworked again@
--Added four new automated dash locations@
+>Reworked functions that check for auto-attack availability, thanks to the gagong@
+>Fixed some error spam caused by certain minions@
+>Removed minion bonus damage calcs for users still on 5.23@
+>Improved extended soldier AA targeting (attacking enemies that are out of targeting range through minions)@
+>More improvements to soldier placement@
+>Dash to mouse has been reworked again@
+>Added four new automated dash locations@
 --0.06@
--Rewrote Update functions@
+>Rewrote Update functions@
