@@ -1,217 +1,217 @@
 --1.19@
--Improved minion collision detection@
--Spells that are cancelled due to the caster dying are now automatically removed@
--Fixed a bug that would occasionally cause your character to stop moving after an evade@
--Fixed Fizz R bug@
--Fixed a bug within shielding code@
+>Improved minion collision detection@
+>Spells that are cancelled due to the caster dying are now automatically removed@
+>Fixed a bug that would occasionally cause your character to stop moving after an evade@
+>Fixed Fizz R bug@
+>Fixed a bug within shielding code@
 --1.18@
--Fixed one more evasion bug :D@
--Fixed Veigar E evasion@
--Fixed a menu bug creating duplicates of the block spell options@
--Keys can now individually be set to toggle@
+>Fixed one more evasion bug :D@
+>Fixed Veigar E evasion@
+>Fixed a menu bug creating duplicates of the block spell options@
+>Keys can now individually be set to toggle@
 --1.17@
--Fixed another evasion bug@
--Updated changes from 6.23 patch@
+>Fixed another evasion bug@
+>Updated changes from 6.23 patch@
 --1.16@
--Fixed some more bugs in the evasion algorithm@
--Updated the following spells:@
--Talons Q, W, E, R, Passive and removed his old dash as a defensive dash@
--Katarinas Q, W, E and R@
--LeBlancs Q, W, E, R and Passive@
--Rengars Q, W, E and added Q as a defensive dash@
--Fizzs Q, W, E and R@
--KhaZix Q@
--Akali E, R and Passive@
--Alistar E and Passive@
--Updated damage calculations for new and updated Masteries@
--Updated damage calculations for new and updated items@
+>Fixed some more bugs in the evasion algorithm@
+>Updated the following spells:@
+>Talons Q, W, E, R, Passive and removed his old dash as a defensive dash@
+>Katarinas Q, W, E and R@
+>LeBlancs Q, W, E, R and Passive@
+>Rengars Q, W, E and added Q as a defensive dash@
+>Fizzs Q, W, E and R@
+>KhaZix Q@
+>Akali E, R and Passive@
+>Alistar E and Passive@
+>Updated damage calculations for new and updated Masteries@
+>Updated damage calculations for new and updated items@
 --1.14@
--More bug fixes@
+>More bug fixes@
 --1.13@
--More bug fixes in evasion algorithm@
+>More bug fixes in evasion algorithm@
 --1.12@
--Bug fixes in evasion algorithm@
+>Bug fixes in evasion algorithm@
 --1.11@
--More improvements to the evasion algorithm@
--Fixed an error that was affecting most dashes@
--Fixed stat errors for Nautilus Q, LeeSin Q, Blitz Q, Amumu Q and Lux Q@
--Updated stat changes for 6.21@
+>More improvements to the evasion algorithm@
+>Fixed an error that was affecting most dashes@
+>Fixed stat errors for Nautilus Q, LeeSin Q, Blitz Q, Amumu Q and Lux Q@
+>Updated stat changes for 6.21@
 --1.10@
--Added evasion support for Ivern Q@
--Added shielding support for Ivern E@
--Modifications to the evasion algorithm@
--Added option, Ignore Circular Spells in Combat Mode, in the General menu@
+>Added evasion support for Ivern Q@
+>Added shielding support for Ivern E@
+>Modifications to the evasion algorithm@
+>Added option, Ignore Circular Spells in Combat Mode, in the General menu@
 --1.09@
--Added support for Hextech Protobelt-01, settings are available in the Items menu@
--Fixed a bug with Xerath ult that could cause it to draw in the incorrect position@
--Updated stat changes for 6.19@
+>Added support for Hextech Protobelt-01, settings are available in the Items menu@
+>Fixed a bug with Xerath ult that could cause it to draw in the incorrect position@
+>Updated stat changes for 6.19@
 --1.08@
--Added support for Yoricks E@
--Added support for Summoner Barrier@
--Fixed a bug with Min Damage % for all shields@
--Added Xerath R to Disable Triggers@
+>Added support for Yoricks E@
+>Added support for Summoner Barrier@
+>Fixed a bug with Min Damage % for all shields@
+>Added Xerath R to Disable Triggers@
 --1.07@
--YOU MAY NEED TO REBIND YOUR HOTKEYS!!!!@
--Reworked the entire menu@
+>YOU MAY NEED TO REBIND YOUR HOTKEYS!!!!@
+>Reworked the entire menu@
 --1.06@
--Zacs Elastic Slingshot is now evaded from FoW@
--Fixed a major bug with movement blocking@
--Fixed DancingShoes_IsSafe and DancingShoes_EvadingPos API@
+>Zacs Elastic Slingshot is now evaded from FoW@
+>Fixed a major bug with movement blocking@
+>Fixed DancingShoes_IsSafe and DancingShoes_EvadingPos API@
 --1.05@
--Added Kled E to dashes@
--Added Ahri R to dashes@
--Fixed a bug with some spell drawings@
--Reworked auto disable with Channels, should be much more reliable now@
--Fixed some issues with the evasion algorithm when blocking movement commands@
--Fixed a bug with the Global Delay option, now works as intended@
--Updated spell stat changes for 6.17@
+>Added Kled E to dashes@
+>Added Ahri R to dashes@
+>Fixed a bug with some spell drawings@
+>Reworked auto disable with Channels, should be much more reliable now@
+>Fixed some issues with the evasion algorithm when blocking movement commands@
+>Fixed a bug with the Global Delay option, now works as intended@
+>Updated spell stat changes for 6.17@
 --1.04@
--Fixed a bug that was causing the hotkeys to get stuck on until the menu was opened@
--Fixed a bug that would cause the script to block Azirs AAs when not needed@
--Fixed Dr Mundo W getting stuck on@
--Added Lee Sin R as an evadible spell (the secondary damage, not the unit Lee Sin targeted)@
--Added evasion support for all of Kleds spells@
+>Fixed a bug that was causing the hotkeys to get stuck on until the menu was opened@
+>Fixed a bug that would cause the script to block Azirs AAs when not needed@
+>Fixed Dr Mundo W getting stuck on@
+>Added Lee Sin R as an evadible spell (the secondary damage, not the unit Lee Sin targeted)@
+>Added evasion support for all of Kleds spells@
 --1.03@
--Fixed a bug that was that was causing some menu options to not be saved correctly@
--Fixed some timing errors that would disable orbwalkers longer than intended@
--No longer prematurely casts shields on spells with long delays such as Caitlyn R@
--Miss Fortunes R no longer kills FPS@
--Jayce Q detects Acceleration Gates much faster now@
--Global spells such as Jinxs R lengths increased@
--Veigar E reworked@
--Item shield flat damage max increased@
--Jhin R added to Disable Triggers@
--Added Shield Delay option to each spell, this is a humanizer just for shielding@
--Can now disable the script from casting shields on certain allies@
--Added Annie E, Garen W, Gragas W, Rammus W and Sona W as shield spells@
--Rewrote the Profiles backend fixing many bugs related to profiles, due to the large amounts of changes old profiles will not be compatible with the new version.  A default profile page will be downloaded that has three premade generic profiles, I recommend you take the time to create your own that suit your playstyle.@
+>Fixed a bug that was that was causing some menu options to not be saved correctly@
+>Fixed some timing errors that would disable orbwalkers longer than intended@
+>No longer prematurely casts shields on spells with long delays such as Caitlyn R@
+>Miss Fortunes R no longer kills FPS@
+>Jayce Q detects Acceleration Gates much faster now@
+>Global spells such as Jinxs R lengths increased@
+>Veigar E reworked@
+>Item shield flat damage max increased@
+>Jhin R added to Disable Triggers@
+>Added Shield Delay option to each spell, this is a humanizer just for shielding@
+>Can now disable the script from casting shields on certain allies@
+>Added Annie E, Garen W, Gragas W, Rammus W and Sona W as shield spells@
+>Rewrote the Profiles backend fixing many bugs related to profiles, due to the large amounts of changes old profiles will not be compatible with the new version.  A default profile page will be downloaded that has three premade generic profiles, I recommend you take the time to create your own that suit your playstyle.@
 --1.01@
--Fixed Taliyah W@
--Fixed Sivir and Nocturnes spell shields not blocking certain attack based spells like Twisted Fates Gold Card@
--Updated damage calculations to for 6.15@
+>Fixed Taliyah W@
+>Fixed Sivir and Nocturnes spell shields not blocking certain attack based spells like Twisted Fates Gold Card@
+>Updated damage calculations to for 6.15@
 --0.98@
--Removed the Order Blocking menu, the options it held are now contained in the General menu@
--Added an AFK disable, this can be disabled and adjusted in the General menu@
--Rewrote much of the shield and lifesaver code, performance should be greatly improved@
--The Mode Indicator now also shows when the script is disabled by other means than the disable key, ex. AFK, channeling@
--Minor improvements to the evasion algorithm@
--The Global Delay option now applies to shielding@
--Fixed evasion issues with both Sivir and Ahri Q returns@
--Removed the Do NOT Shield this Spell option@
--Added options to adjust the color and width of the spell drawings in the General menu@
--Fixed a bug that would cause the script to block attacks that did not need to be blocked@
--Added Kayle R to the disable buffs@
--Added Galio W to shields@
--Now retrieves masteries for each player in the game, greatly improving all damage calculations@
--Updated stat changes for patch 6.14@
--Probably more that I forgot about, this was a big update@
+>Removed the Order Blocking menu, the options it held are now contained in the General menu@
+>Added an AFK disable, this can be disabled and adjusted in the General menu@
+>Rewrote much of the shield and lifesaver code, performance should be greatly improved@
+>The Mode Indicator now also shows when the script is disabled by other means than the disable key, ex. AFK, channeling@
+>Minor improvements to the evasion algorithm@
+>The Global Delay option now applies to shielding@
+>Fixed evasion issues with both Sivir and Ahri Q returns@
+>Removed the Do NOT Shield this Spell option@
+>Added options to adjust the color and width of the spell drawings in the General menu@
+>Fixed a bug that would cause the script to block attacks that did not need to be blocked@
+>Added Kayle R to the disable buffs@
+>Added Galio W to shields@
+>Now retrieves masteries for each player in the game, greatly improving all damage calculations@
+>Updated stat changes for patch 6.14@
+>Probably more that I forgot about, this was a big update@
 --0.97@
--Damage calculations updated for 6.13@
+>Damage calculations updated for 6.13@
 --0.96@
--Improved movment blocking@
--Fixed some bugs with Karmas Mantra Q@
--Ziggs Q from FoW fixed@
--Bard Q extension (the second projectile) added@
--Syndra E improved@
+>Improved movment blocking@
+>Fixed some bugs with Karmas Mantra Q@
+>Ziggs Q from FoW fixed@
+>Bard Q extension (the second projectile) added@
+>Syndra E improved@
 --0.95@
--Updated spell (damage, ranges, etc) changes for 6.11@
+>Updated spell (damage, ranges, etc) changes for 6.11@
 --0.94@
--Added support for Taliyah Q,W,E@
--Updated stat changes for 6.10@
+>Added support for Taliyah Q,W,E@
+>Updated stat changes for 6.10@
 --0.93@
--Updated Tarics W range for 6.9@
--Fixed error spam on Cassiopeia W@
--Improved Double Click to Remove! (aesthetic improvement only)@
--Fixed TF Q, Talon W, KhaZix W and Ashe W occasionally not detecting a projectile@
--Fixed Fiora Parry, Nautilus shield and Diana shield@
--Fixed a bug that would occasionally allow you to auto attack while evading@
--Added option Strictly Obey Angle, this prohibits Dancing Shoes from path finding outside of the Maximum Evasion Angle (this is a humanizer feature, be warned, if you turn this on, evasion rates will drop!!)@
--Disable Evasion option renamed to Disable Movement Evasion, now allows the script to still shield/dash while active (unless of course you have them disabled as well)@
--Added option Maximum Dash Angle to all dashes, this sets the maximum angle the script is allowed to in respect to the active anchor@
+>Updated Tarics W range for 6.9@
+>Fixed error spam on Cassiopeia W@
+>Improved Double Click to Remove! (aesthetic improvement only)@
+>Fixed TF Q, Talon W, KhaZix W and Ashe W occasionally not detecting a projectile@
+>Fixed Fiora Parry, Nautilus shield and Diana shield@
+>Fixed a bug that would occasionally allow you to auto attack while evading@
+>Added option Strictly Obey Angle, this prohibits Dancing Shoes from path finding outside of the Maximum Evasion Angle (this is a humanizer feature, be warned, if you turn this on, evasion rates will drop!!)@
+>Disable Evasion option renamed to Disable Movement Evasion, now allows the script to still shield/dash while active (unless of course you have them disabled as well)@
+>Added option Maximum Dash Angle to all dashes, this sets the maximum angle the script is allowed to in respect to the active anchor@
 --0.92@
--Updated for 6.9 patch, too many changes to list here, check the thread if you'd like a detailed explanation@
+>Updated for 6.9 patch, too many changes to list here, check the thread if you'd like a detailed explanation@
 --0.91@
--Updated to improve load time@
+>Updated to improve load time@
 --0.90@
--Fixed a bug that I created in v0.86 that caused evasion to permanently stop working after a Disable Trigger was triggered@
--Fixed another bug that I created in v0.86 that caused the script to add attack windup times to evasion times (attacks can be cancelled)@
+>Fixed a bug that I created in v0.86 that caused evasion to permanently stop working after a Disable Trigger was triggered@
+>Fixed another bug that I created in v0.86 that caused the script to add attack windup times to evasion times (attacks can be cancelled)@
 --0.87-0.89@
--Updates to prepare for Authorization system@
+>Updates to prepare for Authorization system@
 --0.86@
--Added Sion and KogMaw Passives to the disable triggers@
--Evasion now accounts for remaining wind up time if you are currently casting a spell (improved evasion)@
+>Added Sion and KogMaw Passives to the disable triggers@
+>Evasion now accounts for remaining wind up time if you are currently casting a spell (improved evasion)@
 --0.85@
--Added Sion Ult to disable triggers@
--Minor changes to Evasion timings (movement only)@
--Sends less commands@
+>Added Sion Ult to disable triggers@
+>Minor changes to Evasion timings (movement only)@
+>Sends less commands@
 --0.84@
--Added Taric E to evasion spells@
--Added Taric W to shields@
--Fixed a bug with all shields@
+>Added Taric E to evasion spells@
+>Added Taric W to shields@
+>Fixed a bug with all shields@
 --0.83@
--Fixed a bug that was stopping the Flash menu to be created@
--Fixed Gnar Q extending far past its actual end position@
--Fixed Aurelion Sol Q from fog of war@
+>Fixed a bug that was stopping the Flash menu to be created@
+>Fixed Gnar Q extending far past its actual end position@
+>Fixed Aurelion Sol Q from fog of war@
 --0.82@
--Fixed a bug with Rengar E@
--Added Zac E and R, Sivir E and Nocturne W to Disable Triggers@
--The Shield CC option for all shields has been changed so that you may now select to shield only Hard CC, all CC or none at all@
--Fixed a bug with all shields@
+>Fixed a bug with Rengar E@
+>Added Zac E and R, Sivir E and Nocturne W to Disable Triggers@
+>The Shield CC option for all shields has been changed so that you may now select to shield only Hard CC, all CC or none at all@
+>Fixed a bug with all shields@
 --0.81@
--Fixed an update bug@
--Added Aurelion Sols spells@
+>Fixed an update bug@
+>Added Aurelion Sols spells@
 --0.80@
--Fixed a bug that could potentially cause you to get stuck@
--Reworked almost all internal damage calculations (this was a lot of work!!)@
--Improved internal polygon class, polygon calculations are now much faster@
--Added Shield Only spells, these are spells like Alistars Passive and Amumus W, they aren't practical to evade though are very important for damage calculations, these are drawn by default though the script will never attempt to evade them@
--Lifesavers have been reworked, you no longer set a minimum HP for them to trigger, with the greatly improved damage calculations, it will only cast when the target is going to die@
--Added an option to Enable/Disable Lifesavers (on by default)@
--Added global spells to options, ie. Bilgewater Cutlass (for shielding purposes again)@
--There is a known bug with the snowball summoner spell (ARAMs)@
+>Fixed a bug that could potentially cause you to get stuck@
+>Reworked almost all internal damage calculations (this was a lot of work!!)@
+>Improved internal polygon class, polygon calculations are now much faster@
+>Added Shield Only spells, these are spells like Alistars Passive and Amumus W, they aren't practical to evade though are very important for damage calculations, these are drawn by default though the script will never attempt to evade them@
+>Lifesavers have been reworked, you no longer set a minimum HP for them to trigger, with the greatly improved damage calculations, it will only cast when the target is going to die@
+>Added an option to Enable/Disable Lifesavers (on by default)@
+>Added global spells to options, ie. Bilgewater Cutlass (for shielding purposes again)@
+>There is a known bug with the snowball summoner spell (ARAMs)@
 --0.79@
--Fixed an error when playing vs. Yasuo that was causing severe FPS loss@
--Fixed an (major) error in skillshot shielding@
--Added LifeSavers:@
--Kayle - Intervention@
--Kindred - Lambs Respite@
--Lissandra - Frozen Tomb@
--Tryndamere - Undying Rage@
--Zilean - Chronoshift@
--Zhonyas Hourglass (removed from items menu)@
--Improved auto attack damage predictions (for shields and lifesavers)@
--Added [Humanizer] Global Delay , in General menu@
+>Fixed an error when playing vs. Yasuo that was causing severe FPS loss@
+>Fixed an (major) error in skillshot shielding@
+>Added LifeSavers:@
+>Kayle - Intervention@
+>Kindred - Lambs Respite@
+>Lissandra - Frozen Tomb@
+>Tryndamere - Undying Rage@
+>Zilean - Chronoshift@
+>Zhonyas Hourglass (removed from items menu)@
+>Improved auto attack damage predictions (for shields and lifesavers)@
+>Added [Humanizer] Global Delay , in General menu@
 --0.78@
--Added Jhin spells@
--Fixed some errors@
+>Added Jhin spells@
+>Fixed some errors@
 --0.77@
--Updated stat changes for 6.2@
--Updated Shen rework@
+>Updated stat changes for 6.2@
+>Updated Shen rework@
 --0.76@
--Movement block updated, no longer requires packets (less maintenance)@
+>Movement block updated, no longer requires packets (less maintenance)@
 --0.75@
--Updated Packets for 6.1@
+>Updated Packets for 6.1@
 --0.74@
--Fixed a bunch of Illaoi errors@
--Rewrote much of the evasion algorithm@
--Free user movement/spell block improved@
--Fixed a bunch of FoW spells@
--Revised Profiles Menu@
--Fixed some shielding errors@
+>Fixed a bunch of Illaoi errors@
+>Rewrote much of the evasion algorithm@
+>Free user movement/spell block improved@
+>Fixed a bunch of FoW spells@
+>Revised Profiles Menu@
+>Fixed some shielding errors@
 --0.73@
--Fixed load errors for certain users@
--Improved load timing in general@
--Fixed Brand W timings (cuz fck brand)@
--Improved movement block timings@
--Fixed error spam from Zeds Shadow@
--Should no longer stop moving, occurred occasionally@
+>Fixed load errors for certain users@
+>Improved load timing in general@
+>Fixed Brand W timings (cuz fck brand)@
+>Improved movement block timings@
+>Fixed error spam from Zeds Shadow@
+>Should no longer stop moving, occurred occasionally@
 --0.72@
--Fixed another timing bug that I created in 0.71@
+>Fixed another timing bug that I created in 0.71@
 --0.71@
--Fixed a major bug, shoud improve evasion a lot@
+>Fixed a major bug, shoud improve evasion a lot@
 --0.70@
--Rewrote Update functions@
+>Rewrote Update functions@
 --0.69@
--Added Poppy Q/R@
--Updated packets to 5.24@
--Made a small timing change@
+>Added Poppy Q/R@
+>Updated packets to 5.24@
+>Made a small timing change@
