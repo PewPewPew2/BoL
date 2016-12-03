@@ -1,3 +1,7 @@
+--0.81@
+>Fixed a minor AA cancel bug@
+>Added Titanic Hydra as an attack reset@
+>Added mode 'Carry (To Target)', this orbwalks to the selected target rather than to your mouse@
 --0.80@
 >Updated stat changes for 6.23@
 --0.79@
