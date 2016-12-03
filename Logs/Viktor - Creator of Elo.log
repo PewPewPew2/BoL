@@ -1,103 +1,103 @@
 --1.26@
--Reworked Auto Level menu@
--Fixed some on dash bugs@
+>Reworked Auto Level menu@
+>Fixed some on dash bugs@
 --1.25@
--Bug fixes@
+>Bug fixes@
 --1.24@
--Added Minimum Mana for Harass sliders for Q and E@
--Death Rays Hit Probability slider changed from percent to flat hit chance@
+>Added Minimum Mana for Harass sliders for Q and E@
+>Death Rays Hit Probability slider changed from percent to flat hit chance@
 --1.23@
--Fixed a bug with Advanced Kill Secure using spells even when disabled in the menu@
--All hotkeys have been moved to the Keys menu@
+>Fixed a bug with Advanced Kill Secure using spells even when disabled in the menu@
+>All hotkeys have been moved to the Keys menu@
 --1.22@
--Removed support for Divine Prediction@
--Added Auto Level@
+>Removed support for Divine Prediction@
+>Added Auto Level@
 --1.20@
--Reverted Chaos Storm changes that were made in 1.19 (thanks rito)@
+>Reverted Chaos Storm changes that were made in 1.19 (thanks rito)@
 --1.19@
--Will now target Viktor with the Chaos Storm if the target is less than the storms radius (325 units) from Viktor, this allows the storm to travel at max speed@
+>Will now target Viktor with the Chaos Storm if the target is less than the storms radius (325 units) from Viktor, this allows the storm to travel at max speed@
 --1.17@
--Fixed some error spam when using the mastery Oppressor@
--No longer will AA between spells in AKS or Force for faster combo@
+>Fixed some error spam when using the mastery Oppressor@
+>No longer will AA between spells in AKS or Force for faster combo@
 --1.16@
--Now gets masteries automatically@
--Remove Mastery menu@
--Improved Advance Kill Secure damage calculations@
--Added an option to block off screen spell casts@
+>Now gets masteries automatically@
+>Remove Mastery menu@
+>Improved Advance Kill Secure damage calculations@
+>Added an option to block off screen spell casts@
 --1.15@
--Fixed a bug with Self Cast W@
--Fixed Windwall collision check@
--Removed Q Last Hit option as Pewalk already handles it (if its not working after this update, make sure you have it enabled in your Pewalk options!!)@
+>Fixed a bug with Self Cast W@
+>Fixed Windwall collision check@
+>Removed Q Last Hit option as Pewalk already handles it (if its not working after this update, make sure you have it enabled in your Pewalk options!!)@
 --1.13@
--Added the first tick of Chaos Storm damage to the Advanced Kill Secure calculations, this will make it a bit more trigger happy, let me know if its a bit too much@
--Advanced Kill Secure now correctly calculates the modified damage to Malzahar while his passive is available@
--Added Malzahars Passive to the shield check for Harass, this disallows harass mode to target Malzahar while his passive is available (DOES NOT AFFECT CARRY MODE)@
--Added support for proper HP bar drawings while using Pewtility@
+>Added the first tick of Chaos Storm damage to the Advanced Kill Secure calculations, this will make it a bit more trigger happy, let me know if its a bit too much@
+>Advanced Kill Secure now correctly calculates the modified damage to Malzahar while his passive is available@
+>Added Malzahars Passive to the shield check for Harass, this disallows harass mode to target Malzahar while his passive is available (DOES NOT AFFECT CARRY MODE)@
+>Added support for proper HP bar drawings while using Pewtility@
 --1.12@
--Updated for 6.9 changes@
+>Updated for 6.9 changes@
 --1.11@
--Updated to improve load time@
+>Updated to improve load time@
 --1.10@
--Updated FHPrediction implementation to conform with their updated API@
+>Updated FHPrediction implementation to conform with their updated API@
 --1.07@
--Fixed an update bug.
+>Fixed an update bug.
 --1.06@
--Fixed a bug with Q-AA@
+>Fixed a bug with Q-AA@
 --1.05@
--Fixed error messages when using Korean Prediction@
+>Fixed error messages when using Korean Prediction@
 --1.04@
--Added support for Korean Prediction@
--Added Emote on Kill option (off by default)@
--Fixed a bug with Ignite@
+>Added support for Korean Prediction@
+>Added Emote on Kill option (off by default)@
+>Fixed a bug with Ignite@
 --1.02@
--Added option Casting Method to Q menu, Method 1 casts only if it can AA immediately after, method 2 spams Q@
--Small changes to E casting, should be more reliable at close range@
--Added Italian translation to the menu@
--Small readability changes made to the English menu@
+>Added option Casting Method to Q menu, Method 1 casts only if it can AA immediately after, method 2 spams Q@
+>Small changes to E casting, should be more reliable at close range@
+>Added Italian translation to the menu@
+>Small readability changes made to the English menu@
 --1.01@
--Small improvements to Gravity Field in carry mode@
--Added support for Fun House Prediction@
+>Small improvements to Gravity Field in carry mode@
+>Added support for Fun House Prediction@
 --1.00@
--Improvements to DPred implementation@
--Q / E last hitting can now be set to only be cast when under turret, always or never at all@
--No longer need to reload between changing predictions@
+>Improvements to DPred implementation@
+>Q / E last hitting can now be set to only be cast when under turret, always or never at all@
+>No longer need to reload between changing predictions@
 --0.98@
--Fixed a Q bug@
--Removed some old menu options that are now deprecated@
+>Fixed a Q bug@
+>Removed some old menu options that are now deprecated@
 --0.94@
--IMPORTANT: Now requires the standalone version Pewalk, the script will download it automatically after you reload, though you will need to tick it on in the BoL client.@
--Made various performance improvements.@
+>IMPORTANT: Now requires the standalone version Pewalk, the script will download it automatically after you reload, though you will need to tick it on in the BoL client.@
+>Made various performance improvements.@
 --0.89@
--Fixed minion bonus damages (from level/turret advantage)@
+>Fixed minion bonus damages (from level/turret advantage)@
 --0.88@
--Fixed AA cancel issues@
+>Fixed AA cancel issues@
 --0.85@
--[Humanizer] Visible For Delay (ms) will now be applied after an enemy flashes@
--Commands will no longer be issued to the Chaos Storm off screen@
--Chaos Storm will no longer follow minions/jungle mobs@
+>[Humanizer] Visible For Delay (ms) will now be applied after an enemy flashes@
+>Commands will no longer be issued to the Chaos Storm off screen@
+>Chaos Storm will no longer follow minions/jungle mobs@
 --0.83@
--Improved prediction for both HPred and DPred@
+>Improved prediction for both HPred and DPred@
 --0.82@
--Small improvement to last hitting@
--Fixed some weird interactions between Crabs/Dragon/Baron while jungle clear is active@
+>Small improvement to last hitting@
+>Fixed some weird interactions between Crabs/Dragon/Baron while jungle clear is active@
 --0.80@
--Enabled Portuguese menu@
+>Enabled Portuguese menu@
 --0.79@
--Fixed incorrect minion bonus damage on first four waves@
+>Fixed incorrect minion bonus damage on first four waves@
 --0.78@
--Fixed potential bugsplat@
+>Fixed potential bugsplat@
 --0.77@
--Fixed Korean Menu@
--Small improvement to AA's@
+>Fixed Korean Menu@
+>Small improvement to AA's@
 --0.75@
--Enabled Korean Menu language@
--Fixed an that could occur when changing modes@
+>Enabled Korean Menu language@
+>Fixed an that could occur when changing modes@
 --0.72@
--Fixed self casting W.@
--Disabled all menu languages except for English and Chinese, the others need to be updated.  If you are able to translate the menu to a different language send me a PM on the forum and I will send you the template.@
+>Fixed self casting W.@
+>Disabled all menu languages except for English and Chinese, the others need to be updated.  If you are able to translate the menu to a different language send me a PM on the forum and I will send you the template.@
 --0.71@
--Made some improvements to auto attacks@
--Added/Reworked the following AutoW on dashes:@
+>Made some improvements to auto attacks@
+>Added/Reworked the following AutoW on dashes:@
     -Ahri R - Will only cast on the third dash.@
     -Akali R - Will only cast when the target is a hero.@
     -Ezreal E - Added.@
@@ -114,6 +114,6 @@
     -Talon E - Added.@
     -Yasuo E - Will only cast when the target is a hero.@
 --0.70@
--Rewrote the update function@
--Fixed occasional error spam caused by unique minions@
--Removed minion bonus calculations for users still using 5.23@
+>Rewrote the update function@
+>Fixed occasional error spam caused by unique minions@
+>Removed minion bonus calculations for users still using 5.23@
