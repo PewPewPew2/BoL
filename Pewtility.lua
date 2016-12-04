@@ -1,13 +1,12 @@
-local lshift, rshift, band, bxor = bit32.lshift, bit32.rshift, bit32.band, bit32.bxor
-local floor, ceil, huge, cos, sin, pi, pi2, abs, sqrt = math.floor, math.ceil, math.huge, math.cos, math.sin, math.pi, math.pi*2, math.abs, math.sqrt
+local lshift, band, bxor = bit32.lshift, bit32.band, bit32.bxor
+local floor, ceil, huge, cos, sin, pi, pi2, abs, sqrt, max = math.floor, math.ceil, math.huge, math.cos, math.sin, math.pi, math.pi*2, math.abs, math.sqrt, math.max
 local clock, pairs, ipairs, tostring = os.clock, pairs, ipairs, tostring
 local TEAM_ENEMY, TEAM_ALLY
-local COLOR_WHITE, COLOR_GREEN, COLOR_RED, COLOR_YELLOW, COLOR_TRANS_WHITE, COLOR_GREY = ARGB(0xFF,0xFF,0xFF,0xFF), ARGB(0xFF,0x00,170,0x00), ARGB(0xFF,0xFF,0x00,0x00), ARGB(0xFF,0xFF,0xFF,0x00), ARGB(0xAA,0xFF,0xFF,0xFF), ARGB(255,128,128,128) 
-local COLOR_TRANS_GREEN, COLOR_TRANS_RED, COLOR_TRANS_YELLOW, COLOR_ORANGE, COLOR_BLACK = ARGB(0x96,0x00,0xFF,0x00), ARGB(0x96,0xFF,0x00,0x00), ARGB(0x96,0xFF,0xFF,0x00), ARGB(255,255,125,000), ARGB(255,0,0,000)
 local MainMenu, GlobalAnchors = nil, {}
 local menuKey = (GetSave('scriptConfig') and GetSave('scriptConfig')['Menu']) and GetSave('scriptConfig')['Menu']['menuKey'] or 16
-local Missing = {}
-
+local Missing, o_valid = {}, {}
+local isMenuOpen = false
+  
 _G.PewtilityHPBars = {Active = false, Addon = {},}
 
 local _Game, _Map, _HUD
@@ -126,12 +125,185 @@ end
 	-- DrawLine(v.x,v.y-10,v.x,v.y+10,1,ARGB(255,255,255,255))
 -- end)
 
-AddLoadCallback(function()
-	local Version = 7.13
+local Downloads = {
+  [1] = {
+    ['FILE_PATH'] = SPRITE_PATH..'/Pewtility/barTemplate_r2.png',
+    ['HOST'] = 'i.imgur.com',
+    ['URL'] = '/7ktM3ej.png',
+  },
+  [2] = {
+    ['FILE_PATH'] = SPRITE_PATH..'/Pewtility/summonerbarrier.png',
+    ['HOST'] = 'i.imgur.com',
+    ['URL'] = '/68VUJSl.png',
+  },
+  [3] = {
+    ['FILE_PATH'] = SPRITE_PATH..'/Pewtility/summonerboost.png',
+    ['HOST'] = 'i.imgur.com',
+    ['URL'] = '/CAVVQ9B.png',
+  },
+  [4] = {
+    ['FILE_PATH'] = SPRITE_PATH..'/Pewtility/summonerclairvoyance.png',
+    ['HOST'] = 'i.imgur.com',
+    ['URL'] = '/gvYFTpu.png',
+  },
+  [5] = {
+    ['FILE_PATH'] = SPRITE_PATH..'/Pewtility/summonerdot.png',
+    ['HOST'] = 'i.imgur.com',
+    ['URL'] = '/kCD3WjZ.png',
+  },
+  [6] = {
+    ['FILE_PATH'] = SPRITE_PATH..'/Pewtility/summonerexhaust.png',
+    ['HOST'] = 'i.imgur.com',
+    ['URL'] = '/8EsF90W.png',
+  },
+  [7] = {
+    ['FILE_PATH'] = SPRITE_PATH..'/Pewtility/summonerflash.png',
+    ['HOST'] = 'i.imgur.com',
+    ['URL'] = '/LhnU93g.png',
+  },
+  [8] = {
+    ['FILE_PATH'] = SPRITE_PATH..'/Pewtility/summonerhaste.png',
+    ['HOST'] = 'i.imgur.com',
+    ['URL'] = '/K4fmF83.png',
+  },
+  [9] = {
+    ['FILE_PATH'] = SPRITE_PATH..'/Pewtility/summonerheal.png',
+    ['HOST'] = 'i.imgur.com',
+    ['URL'] = '/yTwLorm.png',
+  },
+  [10] = {
+    ['FILE_PATH'] = SPRITE_PATH..'/Pewtility/summonermana.png',
+    ['HOST'] = 'i.imgur.com',
+    ['URL'] = '/Rt0i7HR.png',
+  },
+  [11] = {
+    ['FILE_PATH'] = SPRITE_PATH..'/Pewtility/summonerodingarrison.png',
+    ['HOST'] = 'i.imgur.com',
+    ['URL'] = '/nCHmZra.png',
+  },
+  [12] = {
+    ['FILE_PATH'] = SPRITE_PATH..'/Pewtility/summonersmite.png',
+    ['HOST'] = 'i.imgur.com',
+    ['URL'] = '/j6XAgXK.png',
+  },
+  [13] = {
+    ['FILE_PATH'] = SPRITE_PATH..'/Pewtility/summonersnowball.png',
+    ['HOST'] = 'i.imgur.com',
+    ['URL'] = '/D5TIXXe.png',
+  },
+  [14] = {
+    ['FILE_PATH'] = SPRITE_PATH..'/Pewtility/aatroxpassiveactivate.png',
+    ['HOST'] = 'puu.sh',
+    ['URL'] = '/sDAm0/b7f81022b4.png',
+  },
+  [15] = {
+    ['FILE_PATH'] = SPRITE_PATH..'/Pewtility/rebirthcooldown.png',
+    ['HOST'] = 'puu.sh',
+    ['URL'] = '/sDAFS/ae20a6213b.png',
+  },
+  [16] = {
+    ['FILE_PATH'] = SPRITE_PATH..'/Pewtility/manabarriercooldown.png',
+    ['HOST'] = 'puu.sh',
+    ['URL'] = '/sDAvU/4d0816aca1.png',
+  },
+  [17] = {
+    ['FILE_PATH'] = SPRITE_PATH..'/Pewtility/zacrebirthcooldown.png',
+    ['HOST'] = 'puu.sh',
+    ['URL'] = '/sDAB2/1bc9b041a7.png',
+  },
+  [18] = {
+    ['FILE_PATH'] = SPRITE_PATH..'/Pewtility/volibearpassivecd.png',
+    ['HOST'] = 'puu.sh',
+    ['URL'] = '/sDAE1/a98a9dc51b.png',
+  },
+  [19] = {
+    ['FILE_PATH'] = SPRITE_PATH..'/Pewtility/summonerteleport.png',
+    ['HOST'] = 'i.imgur.com',
+    ['URL'] = '/uY8WKfV.png',
+  },
+  [20] = {
+    ['FILE_PATH'] = SPRITE_PATH..'/Pewtility/s5_summonersmiteduel.png',
+    ['HOST'] = 'puu.sh',
+    ['URL'] = '/sE9ge/58706c3b1d.png',
+  },
+  [21] = {
+    ['FILE_PATH'] = SPRITE_PATH..'/Pewtility/s5_summonersmiteplayerganker.png',
+    ['HOST'] = 'puu.sh',
+    ['URL'] = '/sE9rb/e457f5e689.png',
+  },
+}
+
+AddLoadCallback(function()  
+	CreateDirectory(SPRITE_PATH..'Pewtility/')
+	CreateDirectory(SPRITE_PATH..'Pewtility/SideHud/')
+	CreateDirectory(LIB_PATH..'Saves/')
+  
+  for i=1, heroManager.iCount do
+    local h = heroManager:getHero(i)
+    if h and not Downloads[h.charName..'.png'] then
+      Downloads[#Downloads+1] = {
+        ['FILE_PATH'] = SPRITE_PATH..'Pewtility/SideHud/'..h.charName..'.png',
+        ['HOST'] = 'ddragon.leagueoflegends.com',
+        ['URL'] = '/cdn/6.23.1/img/champion/'..h.charName..'.png',
+      }
+    end
+  end
+  
+  local DL, CDL, DLC, LoadComplete = 1, nil, #Downloads, false
+  AddDrawCallback(function()
+    isMenuOpen = IsKeyDown(menuKey)
+    if DL==DLC+1 then      
+      if not LoadComplete then
+        LoadScript()
+        LoadComplete = true
+      end
+      return 
+    end
+    
+    if FileExist(Downloads[DL].FILE_PATH) and not CDL then
+      DL=DL+1
+      return
+    end
+    
+    if not CDL then
+      CDL = AwareUpdate(
+        'isDownload', 
+        Downloads[DL].FILE_PATH, 
+        Downloads[DL].HOST, 
+        nil, 
+        Downloads[DL].URL, 
+        function() end, 
+        function() end, 
+        function() end, 
+        function(state) Print('Error ['..state..'] downloading file.', true) end
+      )
+    elseif CDL.GotScriptUpdate then
+      DL=DL+1
+      CDL=nil
+    end    
+  end)
+end)
+
+function Print(text, isError)
+	if isError then
+		print('<font color=\'#0099FF\'>[Pewtility] </font> <font color=\'#FF0000\'>'..text..'</font>')
+		return
+	end
+	print('<font color=\'#0099FF\'>[Pewtility] </font> <font color=\'#FF6600\'>'..text..'</font>')
+end
+
+function LoadScript()
+	local Version = 7.14
 	TEAM_ALLY, TEAM_ENEMY = myHero.team, 300-myHero.team
-  -- TEAM_ENEMY = myHero.team
+  -- TEAM_ENEMY=myHero.team
+  
 	MainMenu = scriptConfig('Pewtility', 'Pewtility')
-	MainMenu:addParam('update', 'Enable AutoUpdate', SCRIPT_PARAM_ONOFF, true)
+	MainMenu:addParam('space', '', SCRIPT_PARAM_INFO, '')
+	MainMenu:addParam('info', '---Turret Ranges---', SCRIPT_PARAM_INFO, '')
+  o_valid['---Turret Ranges---']=true
+	MainMenu:addParam('turret', 'Draw Turret Ranges', SCRIPT_PARAM_ONOFF, true)
+	MainMenu:addParam('AllyTurret', 'Draw Ally Turret Ranges', SCRIPT_PARAM_ONOFF, false)
+  
 	if FileExist(LIB_PATH..'\\Saves\\Pewtility.save') then
 		local file = io.open(LIB_PATH ..'Saves\\Pewtility.save', 'r')
 		if file then
@@ -154,269 +326,31 @@ AddLoadCallback(function()
 	AddUnloadCallback(SaveAnchors)
 	AddExitCallback(SaveAnchors)
 	
-	WARD()
-	MISS()
-	TIMERS()
-	TRINKET()
+	HPBars()
+	JungleTimers()
+	MagneticWarding()
+	Awareness()
+	TrinketAssistant()
+	WardTracker()
+  
 	OTHER()
-	MAGWARDS()
-	SKILLS()
+  
 	AwareUpdate(
 		Version,
+		SCRIPT_PATH.._ENV.FILE_NAME, 
 		'raw.githubusercontent.com', 
 		'/PewPewPew2/BoL/master/Versions/Pewtility.version', 
 		'/PewPewPew2/BoL/master/Pewtility.lua', 
-		SCRIPT_PATH.._ENV.FILE_NAME, 
-		function() Print('Update Complete. Reload(F9 F9)') end, 
-		function() Print('Load Complete') end, 
-		function() Print(MainMenu.update and 'New Version Found, please wait...' or 'New Version found please download manually or enable AutoUpdate') end, 
-		function() Print('An Error Occured in Update.') end
+		function() Print('Loaded.') end, 
+		function() Print('New Version Found, please wait...') end, 
+		function() Print('Update Complete. Please reload (F9 F9).') end, 
+		function(state) Print('Error ['..state..'] during update.') end
 	)
-end)
-
-class 'AwareUpdate'
-  
-function AwareUpdate:__init(LocalVersion, Host, VersionPath, ScriptPath, SavePath, CallbackUpdate, CallbackNoUpdate, CallbackNewVersion, CallbackError)	
-	self.LocalVersion = LocalVersion
-	self.Host = Host
-	self.VersionPath = '/BoL/TCPUpdater/GetScript5.php?script='..self:Base64Encode(self.Host..VersionPath)..'&rand='..math.random(99999999)
-	self.ScriptPath = '/BoL/TCPUpdater/GetScript5.php?script='..self:Base64Encode(self.Host..ScriptPath)..'&rand='..math.random(99999999)
-	self.SavePath = SavePath
-	self.CallbackUpdate = CallbackUpdate
-	self.CallbackNoUpdate = CallbackNoUpdate
-	self.CallbackNewVersion = CallbackNewVersion
-	self.CallbackError = CallbackError
-	self:CreateSocket(self.VersionPath)
-	self.DownloadStatus = 'Connect to Server for VersionInfo'
-	AddTickCallback(function() self:GetOnlineVersion() end)
 end
 
-function AwareUpdate:OnDraw()
-	local bP = {['x1'] = WINDOW_W - (WINDOW_W - 390),['x2'] = WINDOW_W - (WINDOW_W - 20),['y1'] = WINDOW_H / 2,['y2'] = (WINDOW_H / 2) + 20,}
-	local text = 'Download Status: '..(self.DownloadStatus or 'Unknown')
-	DrawLine(bP.x1, bP.y1 + 10, bP.x2,  bP.y1 + 10, 18, ARGB(0x7D,0xE1,0xE1,0xE1))
-	local xOff
-	if self.File and self.Size then
-		local c = math.round(100/self.Size*self.File:len(),2)/100
-		xOff = c < 1 and math.ceil(370 * c) or 370
-	else
-		xOff = 0
-	end
-	DrawLine(bP.x2 + xOff, bP.y1 + 10, bP.x2, bP.y1 + 10, 18, ARGB(0xC8,0xE1,0xE1,0xE1))
-	DrawLines2({D3DXVECTOR2(bP.x1, bP.y1),D3DXVECTOR2(bP.x2, bP.y1),D3DXVECTOR2(bP.x2, bP.y2),D3DXVECTOR2(bP.x1, bP.y2),D3DXVECTOR2(bP.x1, bP.y1),}, 3, ARGB(0xB9, 0x0A, 0x0A, 0x0A))
-	DrawText(text, 16, WINDOW_W - (WINDOW_W - 205) - (GetTextArea(text, 16).x / 2), bP.y1 + 2, ARGB(0xB9,0x0A,0x0A,0x0A))
-end
+class 'WardTracker'
 
-function AwareUpdate:CreateSocket(url)
-    if not self.LuaSocket then
-        self.LuaSocket = require("socket")
-    else
-        self.Socket:close()
-        self.Socket = nil
-        self.Size = nil
-        self.RecvStarted = false
-    end
-    self.LuaSocket = require("socket")
-    self.Socket = self.LuaSocket.tcp()
-    self.Socket:settimeout(0, 'b')
-    self.Socket:settimeout(99999999, 't')
-    self.Socket:connect('sx-bol.eu', 80)
-    self.Url = url
-    self.Started = false
-    self.LastPrint = ""
-    self.File = ""
-end
-
-function AwareUpdate:Base64Encode(data)
-    local b='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
-    return ((data:gsub('.', function(x)
-        local r,b='',x:byte()
-        for i=8,1,-1 do r=r..(b%2^i-b%2^(i-1)>0 and '1' or '0') end
-        return r;
-    end)..'0000'):gsub('%d%d%d?%d?%d?%d?', function(x)
-        if (#x < 6) then return '' end
-        local c=0
-        for i=1,6 do c=c+(x:sub(i,i)=='1' and 2^(6-i) or 0) end
-        return b:sub(c+1,c+1)
-    end)..({ '', '==', '=' })[#data%3+1])
-end
-
-function AwareUpdate:GetOnlineVersion()
-    if self.GotScriptVersion then return end
-
-    self.Receive, self.Status, self.Snipped = self.Socket:receive(1024)
-    if self.Status == 'timeout' and not self.Started then
-        self.Started = true
-        self.Socket:send("GET "..self.Url.." HTTP/1.1\r\nHost: sx-bol.eu\r\n\r\n")
-    end
-    if (self.Receive or (#self.Snipped > 0)) and not self.RecvStarted then
-        self.RecvStarted = true
-        self.DownloadStatus = 'Downloading VersionInfo (0%)'
-    end
-
-    self.File = self.File .. (self.Receive or self.Snipped)
-    if self.File:find('</s'..'ize>') then
-        if not self.Size then
-            self.Size = tonumber(self.File:sub(self.File:find('<si'..'ze>')+6,self.File:find('</si'..'ze>')-1))
-        end
-        if self.File:find('<scr'..'ipt>') then
-            local _,ScriptFind = self.File:find('<scr'..'ipt>')
-            local ScriptEnd = self.File:find('</scr'..'ipt>')
-            if ScriptEnd then ScriptEnd = ScriptEnd - 1 end
-            local DownloadedSize = self.File:sub(ScriptFind+1,ScriptEnd or -1):len()
-            self.DownloadStatus = 'Downloading VersionInfo ('..math.round(100/self.Size*DownloadedSize,2)..'%)'
-        end
-    end
-    if self.File:find('</scr'..'ipt>') then
-        self.DownloadStatus = 'Downloading VersionInfo (100%)'
-        local a,b = self.File:find('\r\n\r\n')
-        self.File = self.File:sub(a,-1)
-        self.NewFile = ''
-        for line,content in ipairs(self.File:split('\n')) do
-            if content:len() > 5 then
-                self.NewFile = self.NewFile .. content
-            end
-        end
-        local HeaderEnd, ContentStart = self.File:find('<scr'..'ipt>')
-        local ContentEnd, _ = self.File:find('</scr'..'ipt>')
-        if not ContentStart or not ContentEnd then
-            if self.CallbackError and type(self.CallbackError) == 'function' then
-                self.CallbackError()
-            end
-        else
-            self.OnlineVersion = (Base64Decode(self.File:sub(ContentStart + 1,ContentEnd-1)))
-            self.OnlineVersion = tonumber(self.OnlineVersion)
-            if self.OnlineVersion and self.OnlineVersion > self.LocalVersion then
-                if self.CallbackNewVersion and type(self.CallbackNewVersion) == 'function' then
-                    self.CallbackNewVersion(self.OnlineVersion,self.LocalVersion)
-                end
-				if not MainMenu.update then return end
-				AddDrawCallback(function() self:OnDraw() end)
-                self:CreateSocket(self.ScriptPath)
-                self.DownloadStatus = 'Connect to Server for ScriptDownload'
-                AddTickCallback(function() self:DownloadUpdate() end)
-            else
-                if self.CallbackNoUpdate and type(self.CallbackNoUpdate) == 'function' then
-                    self.CallbackNoUpdate(self.LocalVersion)
-                end
-            end
-        end
-        self.GotScriptVersion = true
-    end
-end
-
-function AwareUpdate:DownloadUpdate()
-    if self.GotScriptUpdate then return end
-    self.Receive, self.Status, self.Snipped = self.Socket:receive(1024)
-    if self.Status == 'timeout' and not self.Started then
-        self.Started = true
-        self.Socket:send("GET "..self.Url.." HTTP/1.1\r\nHost: sx-bol.eu\r\n\r\n")
-    end
-    if (self.Receive or (#self.Snipped > 0)) and not self.RecvStarted then
-        self.RecvStarted = true
-        self.DownloadStatus = 'Downloading Script (0%)'
-    end
-
-    self.File = self.File .. (self.Receive or self.Snipped)
-    if self.File:find('</si'..'ze>') then
-        if not self.Size then
-            self.Size = tonumber(self.File:sub(self.File:find('<si'..'ze>')+6,self.File:find('</si'..'ze>')-1))
-        end
-        if self.File:find('<scr'..'ipt>') then
-            local _,ScriptFind = self.File:find('<scr'..'ipt>')
-            local ScriptEnd = self.File:find('</scr'..'ipt>')
-            if ScriptEnd then ScriptEnd = ScriptEnd - 1 end
-            local DownloadedSize = self.File:sub(ScriptFind+1,ScriptEnd or -1):len()
-            self.DownloadStatus = 'Downloading Script ('..math.round(100/self.Size*DownloadedSize,2)..'%)'
-        end
-    end
-    if self.File:find('</scr'..'ipt>') then
-        self.DownloadStatus = 'Downloading Script (100%)'
-        local a,b = self.File:find('\r\n\r\n')
-        self.File = self.File:sub(a,-1)
-        self.NewFile = ''
-        for line,content in ipairs(self.File:split('\n')) do
-            if content:len() > 5 then
-                self.NewFile = self.NewFile .. content
-            end
-        end
-        local HeaderEnd, ContentStart = self.NewFile:find('<scr'..'ipt>')
-        local ContentEnd, _ = self.NewFile:find('</scr'..'ipt>')
-        if not ContentStart or not ContentEnd then
-            if self.CallbackError and type(self.CallbackError) == 'function' then
-				print('Error1')
-				self.CallbackError()
-            end
-        else
-            local newf = self.NewFile:sub(ContentStart+1,ContentEnd-1)
-            local newf = newf:gsub('\r','')
-            if newf:len() ~= self.Size then
-                if self.CallbackError and type(self.CallbackError) == 'function' then
-					print('Error2')
-                    self.CallbackError()
-                end
-                return
-            end
-            local newf = Base64Decode(newf)
-            if not self.isSprite and type(load(newf)) ~= 'function' then
-                if self.CallbackError and type(self.CallbackError) == 'function' then
-					print('Error2')
-                    self.CallbackError()
-                end
-            else
-                local f = io.open(self.SavePath,"w+b")
-				if f then
-					f:write(newf)
-					f:close()
-					if self.CallbackUpdate and type(self.CallbackUpdate) == 'function' then
-						self.CallbackUpdate(self.OnlineVersion,self.LocalVersion)
-					end
-				end
-            end
-        end
-        self.GotScriptUpdate = true
-    end
-end
-
-function Print(text, isError)
-	if isError then
-		print('<font color=\'#0099FF\'>[Pewtility] </font> <font color=\'#FF0000\'>'..text..'</font>')
-		return
-	end
-	print('<font color=\'#0099FF\'>[Pewtility] </font> <font color=\'#FF6600\'>'..text..'.</font>')
-end
-
-class 'WARD'
-
-function WARD:__init()
-	self.Types = {
-		['YellowTrinket'] 	= { ['color'] = COLOR_YELLOW,			 	    ['duration'] = 60,   ['isWard'] = true,  },
-		['BlueTrinket'] 		= { ['color'] = 0xFF0000BB,			 		    ['duration'] = huge, ['isWard'] = false, },
-		['SightWard'] 			= { ['color'] = ARGB(255,0,255,0),			['duration'] = 150,  ['isWard'] = true,  },
-		['JammerDevice']  	= { ['color'] = ARGB(255, 255, 50, 255),['duration'] = huge, ['isWard'] = true,  },
-		['TeemoMushroom'] 	= { ['color'] = COLOR_RED,					    ['duration'] = 600,  ['isWard'] = false, },
-		['ShacoBox'] 			  = { ['color'] = COLOR_RED,					    ['duration'] = 60, 	 ['isWard'] = false, },
-	}
-	self.OnSpell = {
-		['trinkettotemlvl1'] 	= { ['color'] = COLOR_YELLOW,			 	    ['duration'] = 60,   ['isWard'] = true,  },
-		['trinketorblvl3'] 		= { ['color'] = 0xFF0000BB,			 		    ['duration'] = huge, ['isWard'] = false, },
-		['itemghostward'] 		= { ['color'] = ARGB(255,0,255,0),			['duration'] = 150,  ['isWard'] = true,  },
-		['jammerdevice']  		= { ['color'] = ARGB(255, 255, 50, 255),['duration'] = huge, ['isWard'] = true,  },
-		['bantamtrap'] 		 	  = { ['color'] = COLOR_RED,					    ['duration'] = 600,  ['isWard'] = false, },
-		['jackinthebox'] 		  = { ['color'] = COLOR_RED,					    ['duration'] = 60, 	 ['isWard'] = false, },
-	}
-	
-	self.BGColor = ARGB(100, 0, 0, 0)
-	self.Anchor = {
-		['x'] = GlobalAnchors.WardTracker and GlobalAnchors.WardTracker.x or 40,
-		['y'] = GlobalAnchors.WardTracker and GlobalAnchors.WardTracker.y or WINDOW_H - 72,
-	}
-	self.Hex = {D3DXVECTOR2(0,0),D3DXVECTOR2(0,0),D3DXVECTOR2(0,0),D3DXVECTOR2(0,0),D3DXVECTOR2(0,0),D3DXVECTOR2(0,0),D3DXVECTOR2(0,0)}
-	self.MyWards = {}
-	self.Active = {}
-	self.Known = {}
-	self.Last_LBUTTONDOWN = 0
-	self:CreateMenu()	
+function WardTracker:__init()
 	self.Packet = GetGameVersion():sub(1,4)=='6.23' and {
 		['Header'] = 0x0011,
 		['sourcePos'] = 6,
@@ -428,32 +362,76 @@ function WARD:__init()
 		['stringPos'] = 11,
 		['bytes'] = {[0x00] = 0xA7, [0x01] = 0xF2, [0x02] = 0x03, [0x03] = 0xB1, [0x04] = 0x30, [0x05] = 0x5C, [0x06] = 0x8F, [0x07] = 0xFE, [0x08] = 0x16, [0x09] = 0x0D, [0x0A] = 0xEC, [0x0B] = 0x04, [0x0C] = 0x62, [0x0D] = 0x98, [0x0E] = 0xAE, [0x0F] = 0x7D, [0x10] = 0x2B, [0x11] = 0xC9, [0x12] = 0xF9, [0x13] = 0xE7, [0x14] = 0xEA, [0x15] = 0xD0, [0x16] = 0x82, [0x17] = 0xBC, [0x18] = 0x73, [0x19] = 0xBF, [0x1A] = 0xD6, [0x1B] = 0xA3, [0x1C] = 0xE2, [0x1D] = 0x44, [0x1E] = 0xA0, [0x1F] = 0x3E, [0x20] = 0xA5, [0x21] = 0x40, [0x22] = 0x7E, [0x23] = 0xAB, [0x24] = 0x14, [0x25] = 0xB4, [0x26] = 0x67, [0x27] = 0xF1, [0x28] = 0x12, [0x29] = 0x6C, [0x2A] = 0xBE, [0x2B] = 0x74, [0x2C] = 0x06, [0x2D] = 0xD8, [0x2E] = 0xAF, [0x2F] = 0xC3, [0x30] = 0x32, [0x31] = 0x15, [0x32] = 0xB9, [0x33] = 0xC1, [0x34] = 0x5A, [0x35] = 0x1E, [0x36] = 0x4C, [0x37] = 0x59, [0x38] = 0xF3, [0x39] = 0x1C, [0x3A] = 0x8D, [0x3B] = 0x8B, [0x3C] = 0x33, [0x3D] = 0x3B, [0x3E] = 0xD9, [0x3F] = 0x65, [0x40] = 0xC0, [0x41] = 0xE6, [0x42] = 0x00, [0x43] = 0x38, [0x44] = 0xFB, [0x45] = 0xA6, [0x46] = 0xB2, [0x47] = 0x63, [0x48] = 0x79, [0x49] = 0x34, [0x4A] = 0xAC, [0x4B] = 0x97, [0x4C] = 0x83, [0x4D] = 0xB5, [0x4E] = 0x6F, [0x4F] = 0xE4, [0x50] = 0x0A, [0x51] = 0x41, [0x52] = 0xDC, [0x53] = 0x35, [0x54] = 0x3F, [0x55] = 0xE5, [0x56] = 0x31, [0x57] = 0x20, [0x58] = 0x01, [0x59] = 0xAD, [0x5A] = 0xF4, [0x5B] = 0x52, [0x5C] = 0x11, [0x5D] = 0x81, [0x5E] = 0x45, [0x5F] = 0x94, [0x60] = 0x18, [0x61] = 0x85, [0x62] = 0x91, [0x63] = 0x55, [0x64] = 0x08, [0x65] = 0x7F, [0x66] = 0x88, [0x67] = 0x46, [0x68] = 0xF7, [0x69] = 0x95, [0x6A] = 0x07, [0x6B] = 0x61, [0x6C] = 0xD5, [0x6D] = 0x9D, [0x6E] = 0x5D, [0x6F] = 0x87, [0x70] = 0xF8, [0x71] = 0x49, [0x72] = 0x21, [0x73] = 0xA8, [0x74] = 0x75, [0x75] = 0x6B, [0x76] = 0xD2, [0x77] = 0x76, [0x78] = 0x6D, [0x79] = 0x17, [0x7A] = 0x3D, [0x7B] = 0x90, [0x7C] = 0x50, [0x7D] = 0xC4, [0x7E] = 0x84, [0x7F] = 0xD7, [0x80] = 0x1A, [0x81] = 0x0F, [0x82] = 0xC6, [0x83] = 0xE1, [0x84] = 0xEB, [0x85] = 0x2E, [0x86] = 0x60, [0x87] = 0x29, [0x88] = 0x71, [0x89] = 0x92, [0x8A] = 0x4F, [0x8B] = 0x36, [0x8C] = 0xFA, [0x8D] = 0x42, [0x8E] = 0x54, [0x8F] = 0x9C, [0x90] = 0x37, [0x91] = 0xBA, [0x92] = 0x22, [0x93] = 0xF5, [0x94] = 0xDF, [0x95] = 0x48, [0x96] = 0x9E, [0x97] = 0x9A, [0x98] = 0xBB, [0x99] = 0x2A, [0x9A] = 0xA9, [0x9B] = 0xDA, [0x9C] = 0xA2, [0x9D] = 0x6E, [0x9E] = 0x3C, [0x9F] = 0x70, [0xA0] = 0xC8, [0xA1] = 0xF6, [0xA2] = 0xE3, [0xA3] = 0xCD, [0xA4] = 0xE8, [0xA5] = 0xED, [0xA6] = 0x8C, [0xA7] = 0x7B, [0xA8] = 0x39, [0xA9] = 0xE0, [0xAA] = 0x6A, [0xAB] = 0x68, [0xAC] = 0x0B, [0xAD] = 0x25, [0xAE] = 0xB6, [0xAF] = 0x7A, [0xB0] = 0xFF, [0xB1] = 0xD3, [0xB2] = 0x1B, [0xB3] = 0x80, [0xB4] = 0x9B, [0xB5] = 0x13, [0xB6] = 0xB8, [0xB7] = 0x77, [0xB8] = 0x27, [0xB9] = 0x2F, [0xBA] = 0xB0, [0xBB] = 0x89, [0xBC] = 0x51, [0xBD] = 0xCC, [0xBE] = 0x43, [0xBF] = 0x3A, [0xC0] = 0xD4, [0xC1] = 0x56, [0xC2] = 0x4D, [0xC3] = 0x5B, [0xC4] = 0x78, [0xC5] = 0x02, [0xC6] = 0xB7, [0xC7] = 0x66, [0xC8] = 0x1D, [0xC9] = 0x53, [0xCA] = 0xCA, [0xCB] = 0x05, [0xCC] = 0xE9, [0xCD] = 0x19, [0xCE] = 0xDB, [0xCF] = 0x8A, [0xD0] = 0x5E, [0xD1] = 0x93, [0xD2] = 0xFC, [0xD3] = 0x86, [0xD4] = 0xDE, [0xD5] = 0x9F, [0xD6] = 0x4A, [0xD7] = 0xCF, [0xD8] = 0x72, [0xD9] = 0x8E, [0xDA] = 0x5F, [0xDB] = 0x7C, [0xDC] = 0xEF, [0xDD] = 0xB3, [0xDE] = 0x2C, [0xDF] = 0xA1, [0xE0] = 0x10, [0xE1] = 0xF0, [0xE2] = 0x2D, [0xE3] = 0xFD, [0xE4] = 0xC5, [0xE5] = 0xAA, [0xE6] = 0x4E, [0xE7] = 0xCB, [0xE8] = 0xCE, [0xE9] = 0x28, [0xEA] = 0x99, [0xEB] = 0xDD, [0xEC] = 0xEE, [0xED] = 0x57, [0xEE] = 0xC7, [0xEF] = 0x1F, [0xF0] = 0xA4, [0xF1] = 0x24, [0xF2] = 0x4B, [0xF3] = 0xC2, [0xF4] = 0x23, [0xF5] = 0x09, [0xF6] = 0x69, [0xF7] = 0xD1, [0xF8] = 0x26, [0xF9] = 0x0E, [0xFA] = 0x96, [0xFB] = 0x47, [0xFC] = 0xBD, [0xFD] = 0x58, [0xFE] = 0x0C, [0xFF] = 0x64, }
 	}
+	self.Types = {
+		['YellowTrinket'] 	= { ['color'] = 0xFFFFFF00, ['duration'] = 60,   ['isWard'] = true,  },
+		['BlueTrinket'] 		= { ['color'] = 0xFF0000BB, ['duration'] = huge, ['isWard'] = false, },
+		['SightWard'] 			= { ['color'] = 0xFF00FF00, ['duration'] = 150,  ['isWard'] = true,  },
+		['JammerDevice']  	= { ['color'] = 0xFFFF32FF, ['duration'] = huge, ['isWard'] = true,  },
+		['TeemoMushroom'] 	= { ['color'] = 0xFFFF0000, ['duration'] = 600,  ['isWard'] = false, },
+		['ShacoBox'] 			  = { ['color'] = 0xFFFF0000, ['duration'] = 60, 	 ['isWard'] = false, },
+	}
+	self.OnSpell = {
+		['trinkettotemlvl1'] 	= { ['color'] = 0xFFFFFF00, ['duration'] = 60,   ['isWard'] = true,  },
+		['trinketorblvl3'] 		= { ['color'] = 0xFF0000BB, ['duration'] = huge, ['isWard'] = false, },
+		['itemghostward'] 		= { ['color'] = 0xFF00FF00, ['duration'] = 150,  ['isWard'] = true,  },
+		['jammerdevice']  		= { ['color'] = 0xFFFF32FF, ['duration'] = huge, ['isWard'] = true,  },
+		['bantamtrap'] 		 	  = { ['color'] = 0xFFFF0000, ['duration'] = 600,  ['isWard'] = false, },
+		['jackinthebox'] 		  = { ['color'] = 0xFFFF0000, ['duration'] = 60, 	 ['isWard'] = false, },
+	}	
+	self.Anchor = {
+		['x'] = GlobalAnchors.WardTracker and GlobalAnchors.WardTracker.x or 40,
+		['y'] = GlobalAnchors.WardTracker and GlobalAnchors.WardTracker.y or WINDOW_H - 72,
+	}
+	self.Hex = {D3DXVECTOR2(0,0),D3DXVECTOR2(0,0),D3DXVECTOR2(0,0),D3DXVECTOR2(0,0),D3DXVECTOR2(0,0),D3DXVECTOR2(0,0),D3DXVECTOR2(0,0)}
+	self.Active = {}
+	self.Known = {}
+  self.DoubleClickTolerance = 0
+  
+	self:CreateMenu()
+  
 	AddDrawCallback(function() self:Draw() end)
 	AddProcessSpellCallback(function(u, s) self:ProcessSpell(u, s) end)
 	AddDeleteObjCallback(function(o) self:DeleteObj(o) end)
+  AddAnimationCallback(function(...) self:Animation(...) end)
 	AddMsgCallback(function(m,k) self:WndMsg(m,k) end)
 	if self.Packet then
 		AddRecvPacketCallback2(function(p) self:RecvPacket(p) end)
 	end
 end
 
-function WARD:CreateMenu()
-	MainMenu:addSubMenu('Ward Tracker', 'WardTracker')
-	self.Menu = MainMenu.WardTracker
-	self.Menu:addParam('EnableEnemy', 'Enable Ward Timers', SCRIPT_PARAM_ONOFF, true)
-	self.Menu:addParam('EnableSelf', 'Enable Self Ward Tracker', SCRIPT_PARAM_ONOFF, true)
-	self.Menu:addParam('Scale', 'Self Ward Tracker Scale', SCRIPT_PARAM_SLICE, 100, 50 , 100)
-	self.Menu:addParam('Type', 'Timer Type', SCRIPT_PARAM_LIST, 1, { 'Seconds', 'Minutes' })
-	self.Menu:addParam('DrawHex', 'Draw Hexagon on Timers', SCRIPT_PARAM_ONOFF, true)
-	self.Menu:addParam('Size', 'Text Size', SCRIPT_PARAM_SLICE, 12, 2, 24)
-	self.Menu:addParam('MapSize', 'Minimap Marker Size', SCRIPT_PARAM_SLICE, 12, 2, 24)
-	self.Menu:addParam('MapType', 'Minimap Marker Type', SCRIPT_PARAM_LIST, 1, { 'Marker', 'Timer' })
-	self.Menu:addParam('DrawRange', 'Draw Ward Vision Radius', SCRIPT_PARAM_ONKEYDOWN, false, ('G'):byte())
-	self.Menu:addParam('Info1', '', SCRIPT_PARAM_INFO, '')
-	self.Menu:addParam('Info2', 'Double Click a ward to manually remove it.', SCRIPT_PARAM_INFO, '')
+function WardTracker:Animation(unit, animation)
+  if unit.valid and animation=='DEATH' then
+		for i, ward in ipairs(self.Known) do
+			if ward.wardID == unit.networkID then
+        table.remove(self.Known, i)
+				return
+			end
+		end	
+  end
 end
 
-function WARD:DeleteObj(o)
+function WardTracker:CreateMenu()
+	MainMenu:addSubMenu('Ward Tracking', 'WardTracker')
+	self.Menu = MainMenu.WardTracker
+	self.Menu:addParam('info', '---Ward Tracking---', SCRIPT_PARAM_INFO, '')
+  o_valid['---Ward Tracking---']=true,
+	self.Menu:addParam('EnableEnemy', 'Enable', SCRIPT_PARAM_ONOFF, true)
+	self.Menu:addParam('Type', 'Timer Type', SCRIPT_PARAM_LIST, 1, { 'Seconds', 'Minutes' })
+	self.Menu:addParam('MapType', 'Minimap Marker Type', SCRIPT_PARAM_LIST, 2, { 'Marker', 'Timer' })
+	self.Menu:addParam('MapSize', 'Minimap Marker Size', SCRIPT_PARAM_SLICE, 12, 2, 24)
+	self.Menu:addParam('Size', 'Text Size', SCRIPT_PARAM_SLICE, 12, 2, 24)
+	self.Menu:addParam('DrawHex', 'Draw Hexagon on Timers', SCRIPT_PARAM_ONOFF, true)
+	self.Menu:addParam('DrawRange', 'Draw Ward Vision Radius', SCRIPT_PARAM_ONKEYDOWN, false, ('G'):byte())
+	self.Menu:addParam('info', 'Double Click a ward to manually remove it.', SCRIPT_PARAM_INFO, '') 
+	self.Menu:addParam('space', '', SCRIPT_PARAM_INFO, '')
+	self.Menu:addParam('info', '---Self Tracking---', SCRIPT_PARAM_INFO, '')
+  o_valid['---Self Tracking---']=true,
+	self.Menu:addParam('EnableSelf', 'Enable', SCRIPT_PARAM_ONOFF, true)
+	self.Menu:addParam('SelfType', 'Timer Type', SCRIPT_PARAM_LIST, 1, { 'Seconds', 'Minutes' })
+	self.Menu:addParam('Scale', 'HUD Scale', SCRIPT_PARAM_SLICE, 100, 50 , 100)
+end
+
+function WardTracker:DeleteObj(o)
 	if o.valid and o.type == 'obj_AI_Minion' and self.Types[o.charName] then
 		for i, ward in ipairs(self.Known) do
 			if ward.wardID == o.networkID then
@@ -464,7 +442,7 @@ function WARD:DeleteObj(o)
 	end
 end
 
-function WARD:Draw()
+function WardTracker:Draw()
 	if self.Menu.EnableEnemy then 
 		for i, ward in ipairs(self.Known) do
 			if ward.pos then
@@ -489,7 +467,7 @@ function WARD:Draw()
 					end
 				end
 				local text, mapText
-				if ward.endTime == huge then
+				if ward.endTime == huge or self.Menu.MapType==1 then
 					mapText = 'o'
 					text = ward.charName
 				else
@@ -531,7 +509,6 @@ function WARD:Draw()
 		end
 	end
 	if self.Menu.EnableSelf then
-		local isMenuOpen = IsKeyDown(menuKey) 
 		DrawLine( --Background
 			self.Anchor.x - GetScale(8, self.Menu.Scale) - 2, 
 			self.Anchor.y, 
@@ -546,7 +523,7 @@ function WARD:Draw()
 			self.Anchor.x + GetScale(181, self.Menu.Scale), 
 			self.Anchor.y, 
 			GetScale(95, self.Menu.Scale), 
-			isMenuOpen and ARGB(255, 85,85,85) or ARGB(100, 0, 0, 0)
+			isMenuOpen and 0xFF555555 or 0x64000000
 		)
 		for k=1, 3 do
 			local v = self.Active[k]
@@ -557,12 +534,13 @@ function WARD:Draw()
 						table.remove(self.Active, k)
 						return
 					else
+            local str = self.Menu.SelfType == 1 and ('%d'):format(t) or ('%d:%.2d'):format(t/60, t%60)
 						DrawText(
-							isMenuOpen and 'Ward Position' or k..(' - %d:%.2d'):format(t / 60, t % 60), 
+							isMenuOpen and 'Ward Position' or k..' - '..str, 
 							GetScale(26, self.Menu.Scale), 
 							self.Anchor.x, 
 							self.Anchor.y + GetScale(42 - (k * 22), self.Menu.Scale), 
-							COLOR_TRANS_GREEN
+							0x9600FF00
 						)
 					end
 				elseif v.wardID then
@@ -574,7 +552,7 @@ function WARD:Draw()
 					GetScale(26, self.Menu.Scale), 
 					self.Anchor.x, 
 					self.Anchor.y + GetScale(42 - (k * 22), self.Menu.Scale), 
-					COLOR_ORANGE
+					0xFFFF7D00
 				)		
 			end
 		end
@@ -588,7 +566,7 @@ function WARD:Draw()
 					GetScale(26, self.Menu.Scale), 
 					self.Anchor.x, 
 					self.Anchor.y - GetScale(46, self.Menu.Scale),  
-					ARGB(200, 255, 50, 255)
+					0xC8FF32FF
 				)
 			else
 				self.Active['Pink'] = nil
@@ -599,7 +577,7 @@ function WARD:Draw()
 				GetScale(26, self.Menu.Scale),
 				self.Anchor.x, 
 				self.Anchor.y - GetScale(46, self.Menu.Scale),  
-				COLOR_TRANS_RED
+				0x96FF0000
 			)
 		end	
 		if self.IsMoving then
@@ -614,16 +592,19 @@ function WARD:Draw()
 	end
 end
 
-function WARD:WndMsg(m,k)
-	if m==WM_LBUTTONDBLCLK then
-		for i, ward in ipairs(self.Known) do
-			if GetDistanceSqr(mousePos, ward.pos) < 15625 then
-				table.remove(self.Known, i)
-				return
-			end			
-		end	
+function WardTracker:WndMsg(m,k)
+	if (m==WM_LBUTTONDOWN and self.DoubleClickTolerance > clock()) or m==WM_LBUTTONDBLCLK then
+    for i, ward in ipairs(self.Known) do
+      if GetDistanceSqr(mousePos, ward.pos) < 90000 then
+        table.remove(self.Known, i)
+        return
+      end			
+    end
+  end
+	if m==WM_LBUTTONDOWN then
+    self.DoubleClickTolerance = clock() + .4
 	end
-	if m==WM_LBUTTONDOWN and IsKeyDown(menuKey) then
+	if m==WM_LBUTTONDOWN and isMenuOpen then
 		local CursorPos = GetCursorPos()
 		if CursorPos.x > self.Anchor.x - GetScale(8, self.Menu.Scale) and CursorPos.x < self.Anchor.x + GetScale(181, self.Menu.Scale) then
 			if CursorPos.y > self.Anchor.y - GetScale(47.5, self.Menu.Scale) and CursorPos.y < self.Anchor.y + GetScale(47.5, self.Menu.Scale) then
@@ -637,7 +618,7 @@ function WARD:WndMsg(m,k)
 	end
 end
 
-function WARD:ProcessSpell(u, s)
+function WardTracker:ProcessSpell(u, s)
 	if u.valid and self.OnSpell[s.name:lower()] then
 		local name = s.name:lower()
 		if u.team == TEAM_ENEMY then
@@ -654,7 +635,7 @@ function WARD:ProcessSpell(u, s)
 	end
 end
 
-function WARD:RecvPacket(p)
+function WardTracker:RecvPacket(p)
 	if p.header == self.Packet.Header then
 		p.pos=2
 		local wardID = p:DecodeF()
@@ -704,7 +685,7 @@ function WARD:RecvPacket(p)
 	end
 end
 
-function WARD:DrawHex(x, y, z, c)
+function WardTracker:DrawHex(x, y, z, c)
 	local p1 = WorldToScreen(D3DXVECTOR3(x+75, y, z))
 	if p1.x > -100 and p1.x < WINDOW_W+100 and p1.y < WINDOW_H+100 and p1.y > -100 then
 		local count = 1
@@ -718,76 +699,9 @@ function WARD:DrawHex(x, y, z, c)
 	end
 end
 
-class 'MISS'
+class 'Awareness'
 
-function MISS:__init()
-	if not FileExist(SPRITE_PATH..'Pewtility\\CharacterIcons\\'..myHero.charName..'.png') then
-		Print('Minimap Sprites Not Found!!! Please Download from forum')
-		if not FileExist(SPRITE_PATH..'Generic.png') then
-			SxWebResulter(
-				'i.imgur.com', 
-				'/6dSBvc1.png', 
-				function(file)
-					local f = io.open(SPRITE_PATH..'Generic.png', 'w+b')
-					f:write(file)
-					f:close()
-					Print('Sprite Download complete', true)
-				end, 
-				function() Print('An error occured downloading sprite') end
-			)
-		end
-	end
-	Missing = {}
-	self.VisibleSince = {}
-	self.ActiveRecalls = {}
-	self.Sprites = {}	
-	for i=0, objManager.maxObjects do
-		local o = objManager:getObject(i)
-		if o and o.name and o.name:find('__Spawn_T') and o.team == TEAM_ENEMY then
-			self.recallEndPos = GetMinimap(Vector(o.pos))
-		end
-	end
-	self.recallTimes = {
-		['recall'] = 7.9,
-		['odinrecall'] = 4.4,
-		['odinrecallimproved'] = 3.9,
-		['recallimproved'] = 6.9,
-		['superrecall'] = 3.9,
-		['teleport'] = 4.45,
-	}
-	self.Allies = {}
-	self.Enemies = {}
-	local DefaultAnchor = GetMinimap(Vector(0, 0, 25000))
-	self.Anchor = {
-		['x'] = GlobalAnchors.RecallBar and GlobalAnchors.RecallBar.x or DefaultAnchor.x,
-		['x2'] = WINDOW_W - 10 - DefaultAnchor.x,
-		['y'] = GlobalAnchors.RecallBar and GlobalAnchors.RecallBar.y or DefaultAnchor.y,
-	}
-	self.Anchor2 = {
-		['x'] = GlobalAnchors.JungleTracker and GlobalAnchors.JungleTracker.x or ceil(WINDOW_W/2),
-		['y'] = GlobalAnchors.JungleTracker and GlobalAnchors.JungleTracker.y or ceil(WINDOW_H/8),
-	}
-	for i=1, heroManager.iCount do
-		local hero = heroManager:getHero(i)
-		if hero.team == TEAM_ENEMY then
-			self.Enemies[#self.Enemies + 1] = hero
-			self.VisibleSince[hero.networkID] = clock()
-			Missing[hero.networkID] = nil
-			if FileExist(SPRITE_PATH..'Pewtility\\CharacterIcons\\'..hero.charName..'.png') then
-				self.Sprites[hero.networkID] = createSprite(SPRITE_PATH..'Pewtility\\CharacterIcons\\'..hero.charName..'.png')			
-			else
-				self.Sprites[hero.networkID] = createSprite('Generic.png')
-			end
-      self.Sprites[hero.networkID]:SetScale(0.45, 0.45)
-			self.Sprites[hero.networkID].scale = 0.45
-		else
-			self.Allies[#self.Allies + 1] = hero
-		end
-	end
-	for k, v in pairs(self.Sprites) do
-		v:SetScale(0.45, 0.45)
-		v.scale = 0.45
-	end
+function Awareness:__init()
 	self.Packets = GetGameVersion():sub(1, 4) == '6.23' and {
 		['LoseVision'] = { ['Header'] = 0x010D, ['pos'] = 2, },
 		['GainVision'] = { ['Header'] = 0x0157, ['pos'] = 2, },
@@ -923,11 +837,49 @@ function MISS:__init()
       [0xC67D6827] = { ['pos'] = GetMinimap(Vector(8400, 60, 2700)),  ['name'] = 'SRU_Krug5.1.1',            ['text'] = 'Bot Krugs'    },
 		},	
 	}
-  
+	self.recallTimes = {
+		['recall'] = 7.9,
+		['odinrecall'] = 4.4,
+		['odinrecallimproved'] = 3.9,
+		['recallimproved'] = 6.9,
+		['superrecall'] = 3.9,
+		['teleport'] = 4.45,
+	}
+	self.Anchor = {
+		['x'] = GlobalAnchors.RecallBar and GlobalAnchors.RecallBar.x or GetMinimap(Vector(0, 0, 25000)).x,
+		['x2'] = WINDOW_W - 10 - GetMinimap(Vector(0, 0, 25000)).x,
+		['y'] = GlobalAnchors.RecallBar and GlobalAnchors.RecallBar.y or GetMinimap(Vector(0, 0, 25000)).y,
+	}
+	self.Anchor2 = {
+		['x'] = GlobalAnchors.JungleTracker and GlobalAnchors.JungleTracker.x or ceil(WINDOW_W/2),
+		['y'] = GlobalAnchors.JungleTracker and GlobalAnchors.JungleTracker.y or ceil(WINDOW_H/8),
+	}
+	self.ActiveRecalls = {}
+	self.Sprites = {}	
+	self.Allies = {}
+	self.Enemies = {}
 	self.JungleTracker = {}
+  
+	for i=0, objManager.maxObjects do
+		local o = objManager:getObject(i)
+		if o and o.name and o.name:find('__Spawn_T') and o.team == TEAM_ENEMY then
+			self.recallEndPos = GetMinimap(Vector(o.pos))
+		end
+	end
+	for i=1, heroManager.iCount do
+		local hero = heroManager:getHero(i)
+		if hero.team == TEAM_ENEMY then
+			self.Enemies[#self.Enemies + 1] = hero
+			self.Sprites[hero.networkID] = createSprite(SPRITE_PATH..'Pewtility\\SideHud\\'..hero.charName..'.png')
+		else
+			self.Allies[#self.Allies + 1] = hero
+		end
+	end
+    
 	self:CreateMenu()
+  
 	if not self.Packets then
-		Print('Missing Enemies packets are outdated!!', true)
+		Print('Opponent Tracking packets are outdated!!', true)
 		return
 	end
 	if GetGame().map.shortName == 'summonerRift' then
@@ -938,48 +890,52 @@ function MISS:__init()
 	AddMsgCallback(function(m,k) self:WndMsg(m,k) end)
 end
 
-function MISS:CreateMenu()
-	MainMenu:addSubMenu('Missing Enemies', 'MissTracker')
+function Awareness:CreateMenu()
+	MainMenu:addSubMenu('Opponent Tracking', 'MissTracker')
 	self.Menu = MainMenu.MissTracker
-	self.Menu:addParam('Enable', 'Enable Missing Timers', SCRIPT_PARAM_ONOFF, true)
-	self.Menu:addParam('TextSize', 'Text Size', SCRIPT_PARAM_SLICE, 12, 2, 24)
-	self.Menu:addParam('SpriteSize', 'Sprite Size', SCRIPT_PARAM_SLICE, 45, 1, 100)
-	self.Menu:addParam('EnableRecall', 'Display Recall Status', SCRIPT_PARAM_ONOFF, true)
-	self.Menu:addParam('RecallScale', 'Recall Bar Scale', SCRIPT_PARAM_SLICE, 100, 50, 100)
-	self.Menu:addParam('EnableJungle', 'Display Jungle Tracker', SCRIPT_PARAM_ONOFF, true)
-	self.Menu:addParam('JungleScale', 'Jungle Tracker Bar Scale', SCRIPT_PARAM_SLICE, 75, 50, 100)
-	self.LastCheck = self.Menu.SpriteSize
-	AddTickCallback(function()
-		if self.Menu.SpriteSize ~= self.LastCheck then
-			for k, v in pairs(self.Sprites) do
-				v:SetScale(self.Menu.SpriteSize / 100, self.Menu.SpriteSize / 100)
-				v.scale = self.Menu.SpriteSize / 100
-			end			
-		end
-	end)
+	self.Menu:addParam('info', '---MIA Tracking---', SCRIPT_PARAM_INFO, '')
+  o_valid['---MIA Tracking---']=true
+	self.Menu:addParam('Enable', 'Enable', SCRIPT_PARAM_ONOFF, true)
+	self.Menu:addParam('TextSize', 'Text Size', SCRIPT_PARAM_SLICE, 14, 14, 24)
+	self.Menu:addParam('SpriteSize', 'Sprite Scale', SCRIPT_PARAM_SLICE, 45, 1, 100)
+	self.Menu:addParam('space', '', SCRIPT_PARAM_INFO, '')
+	self.Menu:addParam('info', '---Recall Tracking---', SCRIPT_PARAM_INFO, '')
+  o_valid['---Recall Tracking---']=true
+	self.Menu:addParam('EnableRecall', 'Enable', SCRIPT_PARAM_ONOFF, true)
+	self.Menu:addParam('RecallScale', 'Scale', SCRIPT_PARAM_SLICE, 100, 50, 100)
+	self.Menu:addParam('space', '', SCRIPT_PARAM_INFO, '')
+	self.Menu:addParam('info', '---Jungle Tracking---', SCRIPT_PARAM_INFO, '')
+  o_valid['---Jungle Tracking---']=true
+	self.Menu:addParam('EnableJungle', 'Enable', SCRIPT_PARAM_ONOFF, true)
+	self.Menu:addParam('JungleScale', 'Scale', SCRIPT_PARAM_SLICE, 75, 50, 100)
+	self.Menu:addParam('space', '', SCRIPT_PARAM_INFO, '')
+	self.Menu:addParam('info', '---Path Drawing---', SCRIPT_PARAM_INFO, '')
+  o_valid['---Path Drawing---']=true
+	self.Menu:addParam('path', 'Enable', SCRIPT_PARAM_ONOFF, true)
+	self.Menu:addParam('type', 'Draw Type', SCRIPT_PARAM_LIST, 1, { 'Lines', 'End Position', })
 end
 
-function MISS:RecvPacket(p)
+function Awareness:RecvPacket(p)
 	if p.header == self.Packets.LoseVision.Header then
 		p.pos=self.Packets.LoseVision.pos
 		local o = objManager:GetObjectByNetworkId(p:DecodeF())
 		if o and o.valid and o.type == 'AIHeroClient' and o.team == TEAM_ENEMY then
 			if o.dead then
 				Missing[o.networkID] = {
-					['pos'] = self.recallEndPos,
-					['name'] = o.charName, 
-					['mTime'] = clock(),
+					['MapPos'] = self.recallEndPos,
+					['CharName'] = o.charName, 
+					['LastSeen'] = clock(),
 				}			
 			else
 				Missing[o.networkID] = {
-					['pos'] = GetMinimap(Vector(o.pos)),
-					['pos2'] = Vector(o.pos),
-					['name'] = o.charName, 
-					['mTime'] = clock(),
-					['unit'] = o,
+					['MapPos'] = GetMinimap(Vector(o.pos)),
+					['Pos'] = Vector(o.pos),
+					['CharName'] = o.charName, 
+					['LastSeen'] = clock(),
+					['Unit'] = o,
 				}
 				if GetDistance(o, o.endPath) > 100 then
-					Missing[o.networkID].direction = GetMinimap(Vector(o) + (Vector(o.endPath) - Vector(o)):normalized() * 1200)
+					Missing[o.networkID].Direction = GetMinimap(Vector(o) + (Vector(o.endPath) - Vector(o)):normalized() * 1200)
 				end
 				return
 			end
@@ -990,7 +946,6 @@ function MISS:RecvPacket(p)
 		local o = objManager:GetObjectByNetworkId(p:DecodeF())
 		if o and o.valid and o.type == 'AIHeroClient' and o.team == TEAM_ENEMY then
 			Missing[o.networkID] = nil
-			self.VisibleSince[o.networkID] = clock()
 			return
 		end
 	end
@@ -1031,7 +986,11 @@ function MISS:RecvPacket(p)
 					return
 				else
 					if not self.ActiveRecalls[o.networkID].isTP then
-						Missing[o.networkID] = {pos = self.recallEndPos, name = o.charName, mTime = clock(),}
+						Missing[o.networkID] = {
+              ['MapPos'] = self.recallEndPos,
+              ['CharName'] = o.charName, 
+              ['LastSeen'] = clock(),
+            }
 					end
 					self.ActiveRecalls[o.networkID].complete = clock() + 3
 					return
@@ -1041,8 +1000,8 @@ function MISS:RecvPacket(p)
 	end
 end
 
-function MISS:WndMsg(m,k)
-	if m==WM_LBUTTONDOWN and IsKeyDown(menuKey) then
+function Awareness:WndMsg(m,k)
+	if m==WM_LBUTTONDOWN and isMenuOpen then
 		local CursorPos = GetCursorPos()
 		if CursorPos.x > self.Anchor.x and CursorPos.x < self.Anchor.x + GetScale(self.Anchor.x2, self.Menu.RecallScale) then
 			if CursorPos.y < self.Anchor.y and CursorPos.y > self.Anchor.y - GetScale(128, self.Menu.RecallScale) then
@@ -1063,7 +1022,7 @@ function MISS:WndMsg(m,k)
 	end
 end
 
-function MISS:JunglePackets(p)
+function Awareness:JunglePackets(p)
 	if p.header == self.Packets.Reset.Header then
 		p.pos=self.Packets.Reset.pos
 		local o = objManager:GetObjectByNetworkId(p:DecodeF())
@@ -1071,40 +1030,14 @@ function MISS:JunglePackets(p)
 			p.pos=self.Packets.Reset.pos2
 			local d4 = p:Decode4()
 			if self.Packets.JunglePos[d4] then
-				for i, camp in ipairs(self.JungleTracker) do
-					if camp.pos.x == self.Packets.JunglePos[d4].pos.x then 
-						return 
-					end
-				end
-				if o then
-					for i, ally in ipairs(self.Allies) do
-						if ally.valid and GetDistanceSqr(ally.pos, o.pos) < 2250000 then
-							return
-						end
-					end
-				end
-				self.JungleTracker[#self.JungleTracker + 1] = { ['pos'] = self.Packets.JunglePos[d4].pos, ['endTime'] = os.clock() + 10, ['text'] = self.Packets.JunglePos[d4].text, }
+        self:AddToTracker(o, self.Packets.JunglePos[d4].pos, self.Packets.JunglePos[d4].text)
 			end
 		end
 	elseif p.header == self.Packets.Aggro.Header then
 		p.pos=self.Packets.Aggro.pos
 		local o = objManager:GetObjectByNetworkId(p:DecodeF())
 		if o and o.valid and not o.visible and o.name:find('Dragon') then
-			for i, camp in ipairs(self.JungleTracker) do
-				if camp.isDragon then
-					return 
-				end
-			end
-			for i, ally in ipairs(self.Allies) do
-				if ally.valid and GetDistanceSqr(ally.pos, o.pos) < 2250000 then
-					return
-				end
-			end
-			self.JungleTracker[#self.JungleTracker + 1] = { 
-				['pos'] = GetMinimap(Vector(9866, 60, 4414)), 
-				['endTime'] = os.clock() + 10, 
-				['text'] = 'Dragon', 
-			}
+      self:AddToTracker(o, GetMinimap(Vector(9866, 60, 4414)), 'Dragon')
 		end
 	elseif p.header == self.Packets.Missile.Header or p.header == self.Packets.AggroUpdate.Header then
 		p.pos=self.Packets.Missile.pos
@@ -1118,51 +1051,67 @@ function MISS:JunglePackets(p)
 				end
 			end
 			if index then
-				for i, camp in ipairs(self.JungleTracker) do
-					if camp.pos.x == self.Packets.JunglePos[index].pos.x then 
-						return 
-					end
-				end
-				for i, ally in ipairs(self.Allies) do
-					if ally.valid and GetDistanceSqr(ally.pos, o.pos) < 2250000 then
-						return
-					end
-				end
-				self.JungleTracker[#self.JungleTracker + 1] = { ['pos'] = self.Packets.JunglePos[index].pos, ['endTime'] = os.clock() + 10, ['text'] = self.Packets.JunglePos[index].text, }
+        self:AddToTracker(o, self.Packets.JunglePos[index].pos, self.Packets.JunglePos[index].text)
 			end
 		end		
 	end
 end
 
-function MISS:Draw()
-	if not self.Menu.Enable then return end
-	local isMenuOpen = IsKeyDown(menuKey)
-	local mCount = 1
-	for _, info in pairs(Missing) do
-		if info then
-			local scale = (self.Sprites[_].scale * self.Sprites[_].width) * 0.5
-			if info.direction then
-				DrawLine(info.direction.x,info.direction.y,info.pos.x,info.pos.y,3,COLOR_RED)
+function Awareness:AddToTracker(obj, pos, text)
+  if obj then
+    for i, ally in ipairs(self.Allies) do
+      if ally.valid and not ally.dead and GetDistanceSqr(ally.pos, obj.pos) < 2250000 then
+        return
+      end
+    end
+  end
+  for i, info in ipairs(self.JungleTracker) do
+    if info.pos.x==pos.x and info.pos.z==pos.z then
+      info.endTime = clock() + 10
+      return
+    end
+  end  
+  self.JungleTracker[#self.JungleTracker + 1] = { 
+    ['pos'] = pos,
+    ['endTime'] = clock() + 10, 
+    ['text'] = text, 
+  }
+end
+
+function Awareness:Draw()
+	if not self.Menu.Enable then return end  
+  
+	for i, m in pairs(Missing) do
+		if m then
+      local SpriteScale = .2 + (.1 * (self.Menu.SpriteSize * 0.01))			
+      local SpriteOffset = (SpriteScale * self.Sprites[i].width) * 0.5
+      
+			if m.Direction then
+				DrawLine(m.Direction.x,m.Direction.y,m.MapPos.x,m.MapPos.y,3,0xFFFF0000)
 			end
-			self.Sprites[_]:SetScale(self.Menu.SpriteSize * 0.01, self.Menu.SpriteSize * 0.01)
-			self.Sprites[_]:Draw(info.pos.x-scale, info.pos.y-scale, 255)
-			local t = ('%d'):format(clock()-info.mTime)
-			local ta = GetTextArea(t, self.Menu.TextSize)
-			DrawText(t, self.Menu.TextSize, info.pos.x-(ta.x*0.5), info.pos.y-(ta.y*0.5)+scale, COLOR_RED)
-			if info.pos2 then
-				local wts = WorldToScreen(D3DXVECTOR3(info.pos2.x,info.pos2.y,info.pos2.z))
-				if wts.x>-100 and wts.x<WINDOW_W+100 and wts.y>-100 and wts.y<WINDOW_H+100 then
-					self.Sprites[_]:SetScale(1, 1)
-					self.Sprites[_]:Draw(wts.x, wts.y, 255)
-					local curHP = info.unit.charName == 'Kled' and info.unit.health + info.unit.mountHealth or info.unit.health
-					local maxHP = info.unit.charName == 'Kled' and info.unit.maxHealth + info.unit.mountMaxHealth or info.unit.maxHealth
-					local text = ('%u / %u'):format(curHP, maxHP)
-					local textArea = GetTextArea(text, 16).x * 0.5
-					DrawLine(wts.x+23-textArea,wts.y+62,wts.x+31+textArea,wts.y+62,18,0x99888888)
-					local width = (wts.x+31+textArea) - (wts.x+23-textArea)
-					DrawLine(wts.x+24-textArea,wts.y+62,wts.x+23-textArea + (width * (curHP / maxHP))-1,wts.y+62,16,0x99008800)
-					DrawText(text,16,wts.x+27-textArea,wts.y+54,0xFFFFFFFF)
-					DrawText(t, 30, wts.x+27-(GetTextArea(t, 30).x * 0.5), wts.y-12, 0xFFFF0000)					
+			self.Sprites[i]:SetScale(SpriteScale, SpriteScale)
+			self.Sprites[i]:Draw(m.MapPos.x-SpriteOffset, m.MapPos.y-SpriteOffset, 200)
+			local Text = ('%d'):format(clock()-m.LastSeen)
+			local TextArea = GetTextArea(Text, self.Menu.TextSize)
+			DrawText(Text, self.Menu.TextSize, m.MapPos.x-floor(TextArea.x*0.5), m.MapPos.y-floor(TextArea.y*0.5)+SpriteOffset, 0xFFFF0000)
+			
+      if m.Pos then
+				local v = WorldToScreen(D3DXVECTOR3(m.Pos.x,m.Pos.y,m.Pos.z))
+				if v.x>-100 and v.x<WINDOW_W+100 and v.y>-100 and v.y<WINDOW_H+100 then
+					self.Sprites[i]:SetScale(.5, .5)
+					self.Sprites[i]:Draw(v.x-30, v.y-30, 200)
+					
+          DrawText(Text, 30, v.x-floor(GetTextArea(Text, 30).x * 0.5), v.y-47, 0xFFFF0000)	
+          
+          local curHP = m.Unit.charName == 'Kled' and m.Unit.health + m.Unit.mountHealth or m.Unit.health
+					local maxHP = m.Unit.charName == 'Kled' and m.Unit.maxHealth + m.Unit.mountMaxHealth or m.Unit.maxHealth
+					
+          local Text = ('%u / %u'):format(curHP, maxHP)
+					local TextArea = floor(GetTextArea(Text, 16).x * 0.5)
+          local Width = max(30, TextArea) 
+					DrawLine(v.x-Width, v.y+39, v.x+Width,  v.y+39,18, 0x99888888)
+					DrawLine(v.x-Width+1, v.y+39, v.x-Width+(Width*2*(curHP/maxHP))-1, v.y+39, 16, 0x99008800)
+					DrawText(Text, 16, v.x-TextArea, v.y+30, 0xFFFFFFFF)
 				end
 			end
 		end
@@ -1188,7 +1137,7 @@ function MISS:Draw()
 					Scale0, 
 					self.Anchor.x + (Scale3 / 2) - (GetTextArea('Recall Bar Position', Scale0).x / 2), 
 					self.Anchor.y - GetScale(6, self.Menu.RecallScale) - Scale4, 
-					COLOR_WHITE
+					0xFFFFFFFF
 				)	
 			end
 			if self.IsMoving then
@@ -1232,7 +1181,7 @@ function MISS:Draw()
 					Scale0, 
 					self.Anchor.x + (Scale3 / 2) - (GetTextArea(text, Scale0).x / 2), 
 					self.Anchor.y - GetScale(6, self.Menu.RecallScale) - Scale4, 
-					COLOR_WHITE
+					0xFFFFFFFF
 				)	
 				RecallCount = RecallCount + 1
 			end
@@ -1243,20 +1192,20 @@ function MISS:Draw()
 		local Scale1 = Scale0 * 0.25
 		if isMenuOpen then			
 			DrawLine(self.Anchor2.x - Scale0-2, self.Anchor2.y, self.Anchor2.x + Scale0+2, self.Anchor2.y, (Scale0 * 0.5) + 4, 0x77FFFFFF)
-			DrawLine(self.Anchor2.x - Scale0, self.Anchor2.y, self.Anchor2.x + Scale0, self.Anchor2.y, Scale0 * 0.5, COLOR_TRANS_RED)
+			DrawLine(self.Anchor2.x - Scale0, self.Anchor2.y, self.Anchor2.x + Scale0, self.Anchor2.y, Scale0 * 0.5, 0x96FF0000)
 			DrawText(
 				'Position', 
 				(Scale0 * 0.32), 
 				self.Anchor2.x - (GetTextArea('Position', (Scale0 * 0.32)).x / 2), 
 				self.Anchor2.y - (Scale0 * 0.1), 
-				COLOR_TRANS_WHITE
+				0xAAFFFFFF
 			)
 			DrawText(
 				'Jungle Tracker',
 				Scale0 * 0.16,
 				self.Anchor2.x - (Scale0 * 0.45),
 				self.Anchor2.y - Scale1,
-				COLOR_TRANS_WHITE
+				0xAAFFFFFF
 			)
 			if self.IsMoving2 then
 				local CursorPos = GetCursorPos()
@@ -1269,7 +1218,7 @@ function MISS:Draw()
 			end
 		else
 			for i, camp in ipairs(self.JungleTracker) do
-				if camp.endTime < os.clock() then
+				if camp.endTime < clock() then
 					table.remove(self.JungleTracker, i)
 					return
 				end
@@ -1285,112 +1234,80 @@ function MISS:Draw()
             p2[#p2+1] = D3DXVECTOR2(camp.pos.x+(sz*c),camp.pos.y+(sz*s))
           end
         end
-        DrawLines2(p, 1, COLOR_RED)
-        DrawLines2(p2, 1, COLOR_RED)
+        DrawLines2(p, 1, 0xFFFF0000)
+        DrawLines2(p2, 1, 0xFFFF0000)
         self.Size=self.Size-.25
         if self.Size < 3 then self.Size=15 end
 			end
 			if #self.JungleTracker == 1 then
 				DrawLine(self.Anchor2.x - Scale0-2, self.Anchor2.y, self.Anchor2.x + Scale0+2, self.Anchor2.y, (Scale0 * 0.5) + 4, 0x77FFFFFF)
-				DrawLine(self.Anchor2.x - Scale0, self.Anchor2.y, self.Anchor2.x + Scale0, self.Anchor2.y, Scale0 * 0.5, COLOR_TRANS_RED)
+				DrawLine(self.Anchor2.x - Scale0, self.Anchor2.y, self.Anchor2.x + Scale0, self.Anchor2.y, Scale0 * 0.5, 0x96FF0000)
 				DrawText(
 					self.JungleTracker[1].text, 
 					(Scale0 * 0.32), 
 					self.Anchor2.x - (GetTextArea(self.JungleTracker[1].text, (Scale0 * 0.32)).x / 2), 
 					self.Anchor2.y - (Scale0 * 0.1), 
-					COLOR_TRANS_WHITE
+					0xAAFFFFFF
 				)
 				DrawText(
 					'Jungle Tracker',
 					Scale0 * 0.16,
 					self.Anchor2.x - (Scale0 * 0.45),
 					self.Anchor2.y - Scale1,
-					COLOR_TRANS_WHITE
+					0xAAFFFFFF
 				)
 			end
 		end
 	end 
+	if self.Menu.path then
+		for _, e in ipairs(self.Enemies) do
+			if e and e.valid and not e.dead and e.visible and e.hasMovePath then
+				local points = {}
+				local eC = WorldToScreen(D3DXVECTOR3(e.x, 50, e.z))
+				points[1] = D3DXVECTOR2(eC.x, eC.y)
+				local pathLength = 0
+				for i=e.pathIndex, e.pathCount do
+					local p1 = e:GetPath(i)
+					local p2 = e:GetPath(i-1)
+					if p1 then
+						local c = WorldToScreen(D3DXVECTOR3(p1.x, 50, p1.z))
+						points[#points + 1] = D3DXVECTOR2(c.x, c.y)
+						if p2 then
+							if (i==e.pathIndex) then
+								pathLength = pathLength + GetDistanceSqr(p1, e.pos)
+							else
+								pathLength = pathLength + GetDistanceSqr(p1, p2)
+							end
+						end
+					end
+				end			
+				if self.Menu.type == 1 then
+					local draw = false
+					for i, point in ipairs(points) do
+						if point.x > 0 and point.x < WINDOW_W and point.y > 0 and point.y < WINDOW_H then
+							draw = true
+							break
+						end
+					end
+					if draw then
+						DrawLines2(points, 1, 0xFFFF0000)
+						local x, y = points[#points].x, points[#points].y
+						DrawText(('%.2f'):format(sqrt(pathLength)/(e.ms))..'\n'..e.charName,12,x,y,0xFFFFFFFF)
+					end
+				else
+					local x, y = points[#points].x, points[#points].y
+					if x > 0 and x < WINDOW_W and y > 0 and y < WINDOW_H then
+						DrawText(('%.2f'):format(sqrt(pathLength)/(e.ms))..'\n'..e.charName,12,x,y,0xFFFFFFFF)
+					end
+				end
+			end
+		end
+	end
 end
 
-class 'SKILLS'
+class 'HPBars'
 
-function SKILLS:__init()
-	CreateDirectory(SPRITE_PATH..'Pewtility/')
-	CreateDirectory(SPRITE_PATH..'Pewtility/SideHud/')
-	local pngChecks = {
-		['barTemplate_r2.png'] = {
-			['localPath'] = SPRITE_PATH..'/Pewtility/barTemplate_r2.png',
-			['url'] = '/7ktM3ej.png',
-		},
-		['summonerbarrier.png'] = {
-			['localPath'] = SPRITE_PATH..'/Pewtility/summonerbarrier.png',
-			['url'] = '/68VUJSl.png',
-		},
-		['summonerboost.png'] = {
-			['localPath'] = SPRITE_PATH..'/Pewtility/summonerboost.png',
-			['url'] = '/CAVVQ9B.png',
-		},
-		['summonerclairvoyance.png'] = {
-			['localPath'] = SPRITE_PATH..'/Pewtility/summonerclairvoyance.png',
-			['url'] = '/gvYFTpu.png',
-		},
-		['summonerdot.png'] = {
-			['localPath'] = SPRITE_PATH..'/Pewtility/summonerdot.png',
-			['url'] = '/kCD3WjZ.png',
-		},
-		['summonerexhaust.png'] = {
-			['localPath'] = SPRITE_PATH..'/Pewtility/summonerexhaust.png',
-			['url'] = '/8EsF90W.png',
-		},
-		['summonerflash.png'] = {
-			['localPath'] = SPRITE_PATH..'/Pewtility/summonerflash.png',
-			['url'] = '/LhnU93g.png',
-		},
-		['summonerhaste.png'] = {
-			['localPath'] = SPRITE_PATH..'/Pewtility/summonerhaste.png',
-			['url'] = '/K4fmF83.png',
-		},
-		['summonerheal.png'] = {
-			['localPath'] = SPRITE_PATH..'/Pewtility/summonerheal.png',
-			['url'] = '/yTwLorm.png',
-		},
-		['summonermana.png'] = {
-			['localPath'] = SPRITE_PATH..'/Pewtility/summonermana.png',
-			['url'] = '/Rt0i7HR.png',
-		},
-		['summonerodingarrison.png'] = {
-			['localPath'] = SPRITE_PATH..'/Pewtility/summonerodingarrison.png',
-			['url'] = '/nCHmZra.png',
-		},
-		['summonersmite.png'] = {
-			['localPath'] = SPRITE_PATH..'/Pewtility/summonersmite.png',
-			['url'] = '/j6XAgXK.png',
-		},
-		['summonersnowball.png'] = {
-			['localPath'] = SPRITE_PATH..'/Pewtility/summonersnowball.png',
-			['url'] = '/D5TIXXe.png',
-		},
-		['summonerteleport.png'] = {
-			['localPath'] = SPRITE_PATH..'/Pewtility/summonerteleport.png',
-			['url'] = '/uY8WKfV.png',
-		},
-	}
-	for k, v in pairs(pngChecks) do
-		if not FileExist(v.localPath) then
-			SxWebResulter(
-				'i.imgur.com', 
-				v.url, 
-				function(file)
-					local f = io.open(SPRITE_PATH..'Pewtility/'..k, 'w+b')
-					f:write(file)
-					f:close()
-					Print('Sprite Download complete', true)
-				end, 
-				function() Print('An error occured downloading sprite') end
-			)			
-		end
-	end  
-  
+function HPBars:__init()
 	self.Anchor = {
 		['x'] = GlobalAnchors.SideHUD and GlobalAnchors.SideHUD.x or WINDOW_W,
 		['y'] = GlobalAnchors.SideHUD and GlobalAnchors.SideHUD.y or WINDOW_H * .15,
@@ -1409,9 +1326,41 @@ function SKILLS:__init()
 		['summonerhaste']     		= 'Ghost',
 		['summonerboost']     		= 'Cleanse',
 	}
-	self.Heroes = {}
+	self.xOffsets = {
+		['AniviaEgg'] = -0.1,
+		['Annie'] = 0.05,
+		['Darius'] = -0.05,
+		['Jhin'] = 0.05,
+		['Renekton'] = -0.05,
+		['Sion'] = -0.05,
+		['Thresh'] = -0.03,
+	}
+	self.yOffsets = {
+    ['Annie'] = 19, ['Jhin'] = 22,
+  }
+	self.ParTypes = {
+    ['Ashe'] = 0xFF00AAFF, ['Caitlyn'] = 0xFF00AAFF, ['Corki'] = 0xFF00AAFF, ['Draven'] = 0xFF00AAFF, ['Ezreal'] = 0xFF00AAFF, ['Graves'] = 0xFF00AAFF, ['Jayce'] = 0xFF00AAFF, ['Jinx'] = 0xFF00AAFF, ['Kalista'] = 0xFF00AAFF, ['Kindred'] = 0xFF00AAFF, ['KogMaw'] = 0xFF00AAFF, ['Kled'] = 0xFF555555, ['Lucian'] = 0xFF00AAFF, ['MasterYi'] = 0xFF00AAFF, ['MissFortune'] = 0xFF00AAFF, ['Pantheon'] = 0xFF00AAFF, ['Quinn'] = 0xFF00AAFF,['Shaco'] = 0xFF00AAFF, ['Sivir'] = 0xFF00AAFF, ['Talon'] = 0xFF00AAFF, ['Tristana'] = 0xFF00AAFF, ['Twitch'] = 0xFF00AAFF, ['Urgot'] = 0xFF00AAFF, ['Varus'] = 0xFF00AAFF, ['Vayne'] = 0xFF00AAFF, ['Fiora'] = 0xFF00AAFF, ['Annie'] = 0xFF00AAFF, ['Ahri'] = 0xFF00AAFF, ['Azir'] = 0xFF00AAFF, ['Bard'] = 0xFF00AAFF, ['Anivia'] = 0xFF00AAFF, ['Brand'] = 0xFF00AAFF, ['Cassiopeia'] = 0xFF00AAFF, ['Diana'] = 0xFF00AAFF, ['Ekko'] = 0xFF00AAFF, ['Evelynn'] = 0xFF00AAFF, ['FiddleSticks'] = 0xFF00AAFF, ['Fizz'] = 0xFF00AAFF, ['Heimerdinger'] = 0xFF00AAFF, ['Illaoi'] = 0xFF00AAFF, ['Karthus'] = 0xFF00AAFF, ['Kassadin'] = 0xFF00AAFF, ['Kayle'] = 0xFF00AAFF, ['Leblanc'] = 0xFF00AAFF, ['Lissandra'] = 0xFF00AAFF, ['Lux'] = 0xFF00AAFF, ['Malzahar'] = 0xFF00AAFF, ['Morgana'] = 0xFF00AAFF, ['Nidalee'] = 0xFF00AAFF,	['Orianna'] = 0xFF00AAFF, ['Ryze'] = 0xFF00AAFF, ['Swain'] = 0xFF00AAFF, ['Syndra'] = 0xFF00AAFF, ['Teemo'] = 0xFF00AAFF, ['TwistedFate'] = 0xFF00AAFF, ['Veigar'] = 0xFF00AAFF, ['Viktor'] = 0xFF00AAFF,['Xerath'] = 0xFF00AAFF, ['Ziggs'] = 0xFF00AAFF, ['Zyra'] = 0xFF00AAFF, ['Velkoz'] = 0xFF00AAFF, ['Zilean'] = 0xFF00AAFF, ['Alistar'] = 0xFF00AAFF, ['Blitzcrank'] = 0xFF00AAFF, ['Braum'] = 0xFF00AAFF, ['Galio'] = 0xFF00AAFF, ['Janna'] = 0xFF00AAFF, ['Karma'] = 0xFF00AAFF, ['Leona'] = 0xFF00AAFF, ['Lulu'] = 0xFF00AAFF, ['Nami'] = 0xFF00AAFF, ['Nunu'] = 0xFF00AAFF, ['Sona'] = 0xFF00AAFF, ['Soraka'] = 0xFF00AAFF, ['TahmKench'] = 0xFF00AAFF, ['Taric'] = 0xFF00AAFF, ['Thresh'] = 0xFF00AAFF, ['Darius'] = 0xFF00AAFF, ['Elise'] = 0xFF00AAFF, ['Gangplank'] = 0xFF00AAFF, ['Gragas'] = 0xFF00AAFF, ['Irelia'] = 0xFF00AAFF, ['JarvanIV'] = 0xFF00AAFF, ['Jax'] = 0xFF00AAFF, ['Khazix'] = 0xFF00AAFF, ['Nocturne'] = 0xFF00AAFF, ['Olaf'] = 0xFF00AAFF, ['Poppy'] = 0xFF00AAFF, ['RekSai'] = 0xFF00AAFF, ['Trundle'] = 0xFF00AAFF, ['Udyr'] = 0xFF00AAFF, ['Vi'] = 0xFF00AAFF, ['MonkeyKing'] = 0xFF00AAFF, ['XinZhao'] = 0xFF00AAFF, ['Amumu'] = 0xFF00AAFF, ['Chogath'] = 0xFF00AAFF,['Hecarim'] = 0xFF00AAFF, ['Malphite'] = 0xFF00AAFF, ['Maokai'] = 0xFF00AAFF, ['Nasus'] = 0xFF00AAFF, ['Rammus'] = 0xFF00AAFF, ['Sejuani'] = 0xFF00AAFF, ['Nautilus'] = 0xFF00AAFF, ['Sion'] = 0xFF00AAFF, ['Singed'] = 0xFF00AAFF, ['Skarner'] = 0xFF00AAFF, ['Volibear'] = 0xFF00AAFF, ['Warwick'] = 0xFF00AAFF, ['Yorick'] = 0xFF00AAFF, ['Vladimir'] = 0xFF000000, ['Katarina'] = 0xFF000000, ['Garen'] = 0xFF000000, ['Riven'] = 0xFF000000, ['DrMundo'] = 0xFF000000, ['Zac'] = 0xFF000000, ['Zed'] = 0xFFFFBB00, ['Akali'] = 0xFFFFBB00, ['Kennen'] = 0xFFFFBB00, ['LeeSin'] = 0xFFFFBB00, ['Shen'] = 0xFFFFBB00, ['Mordekaiser'] = 0xFF555555, ['Tryndamere'] = 0xFFFF3300,
+  }
+	self.SpecialParTypes = {
+		['Aatrox'] = function(unit) return unit.mana == 100 and 0xFFFF3300 or 0xFF555555 end, 
+		['Gnar'] = function(unit) return myHero.range == 410.5 and 0xFF555555 or 0xFFFF3300 end, 
+		['Renekton'] = function(unit) return unit.mana > 50 and 0xFFFF3300 or 0xFF555555 end, 
+		['Rengar'] = function(unit) return unit.mana < 5 and 0xFF555555 or 0xFFFF3300 end,
+		['Rumble'] = function(unit) return unit.mana < 50 and 0xFF555555 or unit.mana < 100 and 0xFFFF9900 end,
+		['Shyvana'] = function(unit) return unit.mana == 100 and 0xFFFF3300 or 0xFFFF9900 end,
+		['Yasuo'] = function(unit) return unit.mana==unit.maxMana and 0xFFFF3300 or 0xFF555555 end, 
+	}
+	self.PassiveCooldowns = {
+    ['Aatrox'] = 'aatroxpassiveactivate',
+    ['Anivia'] = 'rebirthcooldown',
+    ['Blitzcrank'] = 'manabarriercooldown',
+    ['Volibear'] = 'volibearpassivecd',
+    ['Zac'] = 'zacrebirthcooldown',
+  }
+  self.Heroes = {}
   self.IsDead = {}
   self.DeathTimers = {}
+  
 	for i=1, heroManager.iCount do
 		local hero = heroManager:getHero(i)
 		if not hero.isMe then
@@ -1423,28 +1372,12 @@ function SKILLS:__init()
 				['t1'] = self.SkillText[hero:GetSpellData(SUMMONER_1).name:lower()],
 				['t2'] = self.SkillText[hero:GetSpellData(SUMMONER_2).name:lower()],
 			}
+      if self.PassiveCooldowns[hero.charName] then
+        self.Heroes[#self.Heroes]['passive'] = createSprite('Pewtility/'..self.PassiveCooldowns[hero.charName]..'.png')        
+      end
 		end
 	end
-	self.xOffsets = {
-		['AniviaEgg'] = -0.1,
-		['Annie'] = 0.05,
-		['Darius'] = -0.05,
-		['Jhin'] = 0.05,
-		['Renekton'] = -0.05,
-		['Sion'] = -0.05,
-		['Thresh'] = -0.03,
-	}
-	self.yOffsets = {['Annie'] = 19, ['Jhin'] = 22,}
-	self.ParTypes = {['Ashe'] = 0xFF00AAFF, ['Caitlyn'] = 0xFF00AAFF, ['Corki'] = 0xFF00AAFF, ['Draven'] = 0xFF00AAFF, ['Ezreal'] = 0xFF00AAFF, ['Graves'] = 0xFF00AAFF, ['Jayce'] = 0xFF00AAFF, ['Jinx'] = 0xFF00AAFF, ['Kalista'] = 0xFF00AAFF, ['Kindred'] = 0xFF00AAFF, ['KogMaw'] = 0xFF00AAFF, ['Kled'] = 0xFF555555, ['Lucian'] = 0xFF00AAFF, ['MasterYi'] = 0xFF00AAFF, ['MissFortune'] = 0xFF00AAFF, ['Pantheon'] = 0xFF00AAFF, ['Quinn'] = 0xFF00AAFF,['Shaco'] = 0xFF00AAFF, ['Sivir'] = 0xFF00AAFF, ['Talon'] = 0xFF00AAFF, ['Tristana'] = 0xFF00AAFF, ['Twitch'] = 0xFF00AAFF, ['Urgot'] = 0xFF00AAFF, ['Varus'] = 0xFF00AAFF, ['Vayne'] = 0xFF00AAFF, ['Fiora'] = 0xFF00AAFF, ['Annie'] = 0xFF00AAFF, ['Ahri'] = 0xFF00AAFF, ['Azir'] = 0xFF00AAFF, ['Bard'] = 0xFF00AAFF, ['Anivia'] = 0xFF00AAFF, ['Brand'] = 0xFF00AAFF, ['Cassiopeia'] = 0xFF00AAFF, ['Diana'] = 0xFF00AAFF, ['Ekko'] = 0xFF00AAFF, ['Evelynn'] = 0xFF00AAFF, ['FiddleSticks'] = 0xFF00AAFF, ['Fizz'] = 0xFF00AAFF, ['Heimerdinger'] = 0xFF00AAFF, ['Illaoi'] = 0xFF00AAFF, ['Karthus'] = 0xFF00AAFF, ['Kassadin'] = 0xFF00AAFF, ['Kayle'] = 0xFF00AAFF, ['Leblanc'] = 0xFF00AAFF, ['Lissandra'] = 0xFF00AAFF, ['Lux'] = 0xFF00AAFF, ['Malzahar'] = 0xFF00AAFF, ['Morgana'] = 0xFF00AAFF, ['Nidalee'] = 0xFF00AAFF,	['Orianna'] = 0xFF00AAFF, ['Ryze'] = 0xFF00AAFF, ['Swain'] = 0xFF00AAFF, ['Syndra'] = 0xFF00AAFF, ['Teemo'] = 0xFF00AAFF, ['TwistedFate'] = 0xFF00AAFF, ['Veigar'] = 0xFF00AAFF, ['Viktor'] = 0xFF00AAFF,['Xerath'] = 0xFF00AAFF, ['Ziggs'] = 0xFF00AAFF, ['Zyra'] = 0xFF00AAFF, ['Velkoz'] = 0xFF00AAFF, ['Zilean'] = 0xFF00AAFF, ['Alistar'] = 0xFF00AAFF, ['Blitzcrank'] = 0xFF00AAFF, ['Braum'] = 0xFF00AAFF, ['Galio'] = 0xFF00AAFF, ['Janna'] = 0xFF00AAFF, ['Karma'] = 0xFF00AAFF, ['Leona'] = 0xFF00AAFF, ['Lulu'] = 0xFF00AAFF, ['Nami'] = 0xFF00AAFF, ['Nunu'] = 0xFF00AAFF, ['Sona'] = 0xFF00AAFF, ['Soraka'] = 0xFF00AAFF, ['TahmKench'] = 0xFF00AAFF, ['Taric'] = 0xFF00AAFF, ['Thresh'] = 0xFF00AAFF, ['Darius'] = 0xFF00AAFF, ['Elise'] = 0xFF00AAFF, ['Gangplank'] = 0xFF00AAFF, ['Gragas'] = 0xFF00AAFF, ['Irelia'] = 0xFF00AAFF, ['JarvanIV'] = 0xFF00AAFF, ['Jax'] = 0xFF00AAFF, ['Khazix'] = 0xFF00AAFF, ['Nocturne'] = 0xFF00AAFF, ['Olaf'] = 0xFF00AAFF, ['Poppy'] = 0xFF00AAFF, ['RekSai'] = 0xFF00AAFF, ['Trundle'] = 0xFF00AAFF, ['Udyr'] = 0xFF00AAFF, ['Vi'] = 0xFF00AAFF, ['MonkeyKing'] = 0xFF00AAFF, ['XinZhao'] = 0xFF00AAFF, ['Amumu'] = 0xFF00AAFF, ['Chogath'] = 0xFF00AAFF,['Hecarim'] = 0xFF00AAFF, ['Malphite'] = 0xFF00AAFF, ['Maokai'] = 0xFF00AAFF, ['Nasus'] = 0xFF00AAFF, ['Rammus'] = 0xFF00AAFF, ['Sejuani'] = 0xFF00AAFF, ['Nautilus'] = 0xFF00AAFF, ['Sion'] = 0xFF00AAFF, ['Singed'] = 0xFF00AAFF, ['Skarner'] = 0xFF00AAFF, ['Volibear'] = 0xFF00AAFF, ['Warwick'] = 0xFF00AAFF, ['Yorick'] = 0xFF00AAFF, ['Vladimir'] = 0xFF000000, ['Katarina'] = 0xFF000000, ['Garen'] = 0xFF000000, ['Riven'] = 0xFF000000, ['DrMundo'] = 0xFF000000, ['Zac'] = 0xFF000000, ['Zed'] = 0xFFFFBB00, ['Akali'] = 0xFFFFBB00, ['Kennen'] = 0xFFFFBB00, ['LeeSin'] = 0xFFFFBB00, ['Shen'] = 0xFFFFBB00, ['Mordekaiser'] = 0xFF555555, ['Tryndamere'] = 0xFFFF3300,}
-	self.SpecialParTypes = {
-		['Aatrox'] = function(unit) return unit.mana == 100 and 0xFFFF3300 or 0xFF555555 end, 
-		['Gnar'] = function(unit) return myHero.range == 410.5 and 0xFF555555 or 0xFFFF3300 end, 
-		['Renekton'] = function(unit) return unit.mana > 50 and 0xFFFF3300 or 0xFF555555 end, 
-		['Rengar'] = function(unit) return unit.mana < 5 and 0xFF555555 or 0xFFFF3300 end,
-		['Rumble'] = function(unit) return unit.mana < 50 and 0xFF555555 or unit.mana < 100 and 0xFFFF9900 end,
-		['Shyvana'] = function(unit) return unit.mana == 100 and 0xFFFF3300 or 0xFFFF9900 end,
-		['Yasuo'] = function(unit) return unit.mana==unit.maxMana and 0xFFFF3300 or 0xFF555555 end, 
-	}
+  
 	self:CreateMenu()
 	self.Sprite = createSprite('Pewtility/barTemplate_r2.png')
 	
@@ -1454,28 +1387,33 @@ function SKILLS:__init()
   AddMsgCallback(function(...) self:WndMsg(...) end)
 end
 
-function SKILLS:CreateMenu()
-	MainMenu:addSubMenu('Cooldown Tracker', 'CooldownTracker2')
+function HPBars:CreateMenu()
+	MainMenu:addSubMenu('Cooldown Tracking', 'CooldownTracker2')
 	self.Menu = MainMenu.CooldownTracker2
-	self.Menu:addParam('Enemy', 'Enable Enemy Cooldown Tracker', SCRIPT_PARAM_ONOFF, true)
-	self.Menu:addParam('Ally', 'Enable Ally Cooldown Tracker', SCRIPT_PARAM_ONOFF, true)
-	self.Menu:addParam('Scale', 'HP Bar Scale', SCRIPT_PARAM_SLICE, 75, 75, 100)
-	self.Menu:addParam('Text', 'Draw Text (Timers)', SCRIPT_PARAM_ONOFF, true)
-	self.Menu:addParam('SideHud', 'Draw Offscreen Characters On Side', SCRIPT_PARAM_ONOFF, true)
+	self.Menu:addParam('info', '---Cooldown Tracking---', SCRIPT_PARAM_INFO, '')
+  o_valid['---Cooldown Tracking---']=true
+	self.Menu:addParam('Enemy', 'Enable Enemies', SCRIPT_PARAM_ONOFF, true)
+	self.Menu:addParam('Ally', 'Enable Allies', SCRIPT_PARAM_ONOFF, true)
+	self.Menu:addParam('Text', 'Draw Text Timers', SCRIPT_PARAM_ONOFF, true)
+	self.Menu:addParam('SideHud', 'Enable Side HUD', SCRIPT_PARAM_ONOFF, true)
+	self.Menu:addParam('Scale', 'Scale', SCRIPT_PARAM_SLICE, 75, 75, 100)
 	self.Menu:addParam('SPACE', '', SCRIPT_PARAM_INFO, '')
-	self.Menu:addParam('UseOld', 'Use Old', SCRIPT_PARAM_ONOFF, false)
+	self.Menu:addParam('info', '---Use Legacy Tracker---', SCRIPT_PARAM_INFO, '')
+  o_valid['---Use Legacy Tracker---']=true
+	self.Menu:addParam('UseOld', 'Enable', SCRIPT_PARAM_ONOFF, false)
 end
 
-function SKILLS:Draw()
+function HPBars:Draw()
 	for _, info in ipairs(self.Heroes) do
-    if info.hero.team==TEAM_ENEMY then
-      if info.hero.dead then
-        if not self.IsDead[info.hero.networkID] then
+    local unit = info.hero
+    if unit.team==TEAM_ENEMY then
+      if unit.dead then
+        if not self.IsDead[unit.networkID] then
           local duration
           if _Game.Map.Name == 'HowlingAbyss' then
-            duration = info.hero.level * 2 + 4
+            duration = unit.level * 2 + 4
           else
-            local base = (info.hero.level * 2.5) + 7.5
+            local base = (unit.level * 2.5) + 7.5
             local GT = GetInGameTimer()
             local minutes = math.floor(GT/60)
             if GT > 3210 then
@@ -1490,18 +1428,17 @@ function SKILLS:Draw()
               duration = base
             end
           end          
-          self.IsDead[info.hero.networkID] = {
+          self.IsDead[unit.networkID] = {
             start = clock(),
             duration = duration,
           }
         end
       else
-        self.IsDead[info.hero.networkID] = nil
+        self.IsDead[unit.networkID] = nil
       end
     end
   end
   
-  local isMenuOpen = IsKeyDown(menuKey)
 	if isMenuOpen then
     local x = self.Anchor.x - GetScale(343, self.Menu.Scale)
     local w = GetScale(50,self.Menu.Scale) * 5
@@ -1509,7 +1446,7 @@ function SKILLS:Draw()
     DrawLine(self.Anchor.x,self.Anchor.y+w*.5,x,self.Anchor.y+w*.5,w, 0x77FFFFFF)
     
     local textSize = GetScale(18, self.Menu.Scale)
-    DrawText('Side HUD Position', textSize, self.Anchor.x - GetScale(343, self.Menu.Scale) * .5 - GetTextArea('Side HUD Position', textSize).x * .5,self.Anchor.y+w*.5,COLOR_WHITE)
+    DrawText('Side HUD Position', textSize, self.Anchor.x - GetScale(343, self.Menu.Scale) * .5 - GetTextArea('Side HUD Position', textSize).x * .5,self.Anchor.y+w*.5,0xFFFFFFFF)
     
     if self.IsMoving then
       local CursorPos = GetCursorPos()
@@ -1521,6 +1458,7 @@ function SKILLS:Draw()
       }
     end
   end
+  
 	PewtilityHPBars.Active = true
 	local s = self.Menu.Scale
 	self.Sprite:SetScale(GetScale2(0.3, s), GetScale2(0.3, s))
@@ -1528,63 +1466,64 @@ function SKILLS:Draw()
   local sideCount = 0
   
 	for _, info in ipairs(self.Heroes) do
-		if info.hero.valid and ((info.hero.team == myHero.team and self.Menu.Ally) or (info.hero.team ~= myHero.team and self.Menu.Enemy)) then
-			local barX, barY = self:BarData(info.hero)
+    local unit = info.hero
+		if unit.valid and ((unit.team == TEAM_ALLY and self.Menu.Ally) or (unit.team == TEAM_ENEMY and self.Menu.Enemy)) then
+			local barX, barY = self:BarData(unit)
 			local barX, barY = barX - GetScale(100, s), barY+GetScale(15, s)
       
       local onScreen = barX > -100 and barX < WINDOW_W + 100 and barY > -100 and barY < WINDOW_H + 100
-      if info.hero.team == TEAM_ENEMY then
-        if not onScreen or not info.hero.visible or info.hero.dead then
-          if self.Menu.SideHud and not isMenuOpen then
-            info.icon:SetScale(GetScale2(0.27, s), GetScale2(0.27, s))
-            onScreen = true
-            barX = self.Anchor.x - GetScale(310, s)
-            barY = self.Anchor.y + (sideCount * GetScale(50,s))
-            
-            local iconWidth = GetScale(33, s)
-            local iconX, iconY = barX-iconWidth, barY+1
-            info.icon:Draw(iconX, iconY, 255)
-            if info.hero.dead and self.IsDead[info.hero.networkID] then -- 
-              DrawLine(iconX,iconY+iconWidth*.5,barX,iconY+iconWidth*.5,iconWidth,0xAABB0000)
-              local t = ('%d'):format(self.IsDead[info.hero.networkID].duration - (clock() - self.IsDead[info.hero.networkID].start))
+      if self.Menu.SideHud and unit.team == TEAM_ENEMY and not isMenuOpen then
+        if not onScreen or not unit.visible or unit.dead then
+          info.icon:SetScale(GetScale2(0.27, s), GetScale2(0.27, s))
+          onScreen = true
+          barX = self.Anchor.x - GetScale(310, s)
+          barY = self.Anchor.y + (sideCount * GetScale(50,s))
+          
+          local iconWidth = GetScale(33, s)
+          local iconX, iconY = barX-(iconWidth * (self.PassiveCooldowns[unit.charName] and 2 or 1)), barY+1
+          info.icon:Draw(iconX, iconY, 255)
+          if unit.dead and self.IsDead[unit.networkID] then
+            DrawLine(iconX,iconY+iconWidth*.5,barX,iconY+iconWidth*.5,iconWidth,0xAABB0000)
+            local t = ('%d'):format(self.IsDead[unit.networkID].duration - (clock() - self.IsDead[unit.networkID].start))
+            local textSize = GetScale(26, s)
+            local ta = GetTextArea(t,textSize)
+            DrawText(t, textSize, iconX+iconWidth*.5-(ta.x*0.5), iconY+iconWidth*.5-(ta.y*0.5), 0xFFFFFFFF)
+          elseif not unit.visible then
+            DrawLine(iconX,iconY+iconWidth*.5,barX,iconY+iconWidth*.5,iconWidth,0xAA888888)
+            if Missing[unit.networkID] then
+              local t = ('%d'):format(clock()-Missing[unit.networkID].LastSeen)
               local textSize = GetScale(26, s)
               local ta = GetTextArea(t,textSize)
               DrawText(t, textSize, iconX+iconWidth*.5-(ta.x*0.5), iconY+iconWidth*.5-(ta.y*0.5), 0xFFFFFFFF)
-            elseif not info.hero.visible and Missing[info.hero.networkID] then
-              DrawLine(iconX,iconY+iconWidth*.5,barX,iconY+iconWidth*.5,iconWidth,0xAA888888)
-              local t = ('%d'):format(clock()-Missing[info.hero.networkID].mTime)
-              local textSize = GetScale(26, s)
-              local ta = GetTextArea(t,textSize)
-              DrawText(t, textSize, iconX+iconWidth*.5-(ta.x*0.5), iconY+iconWidth*.5-(ta.y*0.5), 0xFFFFFFFF)
-            end            
-            sideCount=sideCount+1
-          end
+            end
+          end            
+          sideCount=sideCount+1
         end
       else
-        onScreen = onScreen and info.hero.visible and not info.hero.dead
+        onScreen = onScreen and unit.visible and not unit.dead
       end
       
       
 			if onScreen then
 				--HP
-				local curHP = info.hero.charName == 'Kled' and info.hero.health + info.hero.mountHealth or info.hero.health
-				local maxHP = info.hero.charName == 'Kled' and info.hero.maxHealth + info.hero.mountMaxHealth or info.hero.maxHealth
+				local curHP = unit.charName == 'Kled' and unit.health + unit.mountHealth or unit.health
+				local maxHP = unit.charName == 'Kled' and unit.maxHealth + unit.mountMaxHealth or unit.maxHealth
 				
-				local hpMidX = barX + GetScale(102 + (187 * curHP / (maxHP+info.hero.shield)), s)
+				local hpMidX = barX + GetScale(102 + (187 * curHP / (maxHP+unit.shield)), s)
 				local hpY = GetScale(17, s)
 				local hpFS = GetScale(30,s)
 				local baseHP = barX + GetScale(102,s)
-				DrawLine(baseHP, barY + hpY, hpMidX, barY + hpY,hpFS,info.hero.team==TEAM_ALLY and 0xFF0088FF or 0xFFFF4400)
+				DrawLine(baseHP, barY + hpY, hpMidX, barY + hpY,hpFS,unit.team==TEAM_ALLY and 0xFF0088FF or 0xFFFF4400)
 				
-				if PewtilityHPBars.Addon[info.hero.networkID] then
+				if PewtilityHPBars.Addon[unit.networkID] then
 					local xOffset = hpMidX
-					for i, barInfo in ipairs(PewtilityHPBars.Addon[info.hero.networkID]) do
-						local damageOffset = GetScale(187 - (187 * (info.hero.maxHealth-barInfo.damage) / (info.hero.maxHealth+info.hero.shield)), s)
+					for i, barInfo in ipairs(PewtilityHPBars.Addon[unit.networkID]) do
+						local damageOffset = GetScale(187 - (187 * (unit.maxHealth-barInfo.damage) / (unit.maxHealth+unit.shield)), s)
 						local newOffset = xOffset - damageOffset
 						if newOffset < baseHP then
 							newOffset = baseHP - 1
 							table.insert(AddonText, {
-								text = PewtilityHPBars.Addon[info.hero.networkID].bMana and 'Can Kill!' or 'Not enough Mana!',
+								text = PewtilityHPBars.Addon[unit.networkID].bMana and 'Can Kill!' or 'Not enough Mana!',
 								size = GetScale(16, s),
 								x = baseHP,
 								y = barY - GetScale(10, s)
@@ -1602,17 +1541,17 @@ function SKILLS:Draw()
 						if newOffset < baseHP then break end
 						xOffset = newOffset
 					end	
-					PewtilityHPBars.Addon[info.hero.networkID] = nil
+					PewtilityHPBars.Addon[unit.networkID] = nil
 				end
 				
-				if info.hero.shield > 0 then
-					local shieldMidX = hpMidX + GetScale(187 * info.hero.shield / maxHP, s)
+				if unit.shield > 0 then
+					local shieldMidX = hpMidX + GetScale(187 * unit.shield / maxHP, s)
 					DrawLine(hpMidX, barY + hpY, shieldMidX,barY + hpY,hpFS,0xFFCCCCCC)
 					hpMidX = shieldMidX
 				end
 				local slopeI=0
-				for i=1, (curHP+info.hero.shield)*0.01 do
-					local x = barX + GetScale(102 + (187 * (100*i) / (maxHP+info.hero.shield)), s)
+				for i=1, (curHP+unit.shield)*0.01 do
+					local x = barX + GetScale(102 + (187 * (100*i) / (maxHP+unit.shield)), s)
 					local l, w = 12, 1
 					if x<barX+GetScale(158,s) then
 						l=22
@@ -1630,15 +1569,15 @@ function SKILLS:Draw()
 				DrawLine(hpMidX, barY + hpY, barX + GetScale(288,s),barY + hpY,hpFS,0xFF000000)
 				
 				--MP
-				local mpMid = barX + GetScale(172 + (info.hero.maxMana~=0 and 90 * info.hero.mana / info.hero.maxMana or 0), s)
-				local mpColor = self.ParTypes[info.hero.charName] or self.SpecialParTypes[info.hero.charName] and self.SpecialParTypes[info.hero.charName](info.hero) or 0xFF00AAFF
+				local mpMid = barX + GetScale(172 + (unit.maxMana~=0 and 90 * unit.mana / unit.maxMana or 0), s)
+				local mpColor = self.ParTypes[unit.charName] or self.SpecialParTypes[unit.charName] and self.SpecialParTypes[unit.charName](unit) or 0xFF00AAFF
 				local mpY = GetScale(33, s)
 				DrawLine(barX + GetScale(172, s),barY + mpY, mpMid,barY + mpY,hpY,mpColor)
 				DrawLine(mpMid,barY + mpY, barX + GetScale(264, s),barY + mpY,hpY,0xFF000000)
 		
 				--Spells
 				for i=_Q, _R do
-					local d = info.hero:GetSpellData(i)
+					local d = unit:GetSpellData(i)
 					local color = d.level == 0 and 0xFF000000 or 0==d.currentCd and 0xFF00AA00 or 0xFFAA0000
 					local h = (d.level == 0 or 0==d.currentCd) and 24 or 24*(d.cd>0 and d.currentCd/d.cd or 0)
 					local cdMid = barY+GetScale(29-h, s)
@@ -1646,16 +1585,12 @@ function SKILLS:Draw()
 					local cdFS = GetScale(7,s)
 					DrawLine(barX+cdX,barY+GetScale(29, s),barX+cdX,cdMid,cdFS,color)
 					DrawLine(barX+cdX,cdMid,barX+cdX,barY+GetScale(5,s),cdFS,0xFF000000)
-					-- for k=1, d.level do
-						-- local y = barY+GetScale(29-((i==_R and 8 or 5)*k), s)
-						-- DrawLine(barX+cdX-3, y, barX+cdX+3, y, 1, 0xFF000000)
-					-- end
 				end
 		
 				--Summoners
 				info.sum1:SetScale(GetScale2(0.411,s), GetScale2(0.43,s))
 				info.sum1:Draw(barX+GetScale(7,s), barY+GetScale(4,s), 255)
-				local sum1Cd = info.hero:GetSpellData(SUMMONER_1).currentCd
+				local sum1Cd = unit:GetSpellData(SUMMONER_1).currentCd
 				local sumFS = GetScale(14,s)
 				local CP = GetCursorPos()
 				if sum1Cd~=0 then
@@ -1666,13 +1601,33 @@ function SKILLS:Draw()
 				end
 				info.sum2:SetScale(GetScale2(0.411,s), GetScale2(0.43,s))
 				info.sum2:Draw(barX+GetScale(33,s), barY+GetScale(4,s), 255)
-				local sum2Cd = info.hero:GetSpellData(SUMMONER_2).currentCd
+				local sum2Cd = unit:GetSpellData(SUMMONER_2).currentCd
 				if sum2Cd~=0 then
 					local mText = ('%u'):format(sum2Cd)
 					local mTextArea = GetTextArea(mText, sumFS)
 					DrawLine(barX+GetScale(46.5,s)-(mTextArea.x*0.5)-3,barY+GetScale(24,s),barX+GetScale(46.5,s)+(mTextArea.x*0.5)+3,barY+GetScale(24,s),mTextArea.y,0xFF000000)
 					DrawText(mText,sumFS,barX+GetScale(46.5,s)-(mTextArea.x*0.5),barY+GetScale(24,s)-(mTextArea.y*0.5),0xFFFFFFFF)
 				end
+        
+        if info.passive then
+          info.passive:SetScale(GetScale2(0.5,s), GetScale2(0.5,s))
+          info.passive:Draw(barX-GetScale(34,s), barY+GetScale(2,s), 255)
+          
+          local passiveCd = 0
+          for i=1, 64 do
+            local b = unit:getBuff(i)
+            if b and b.name and self.PassiveCooldowns[unit.charName]==b.name and b.endT>GetInGameTimer() then
+              passiveCd = b.endT-GetInGameTimer()
+              break
+            end
+          end
+          if passiveCd~=0 then
+            local mText = ('%u'):format(passiveCd)
+            local mTextArea = GetTextArea(mText, sumFS)
+            DrawLine(barX-GetScale(17,s)-(mTextArea.x*0.5)-3,barY+GetScale(24,s),barX-GetScale(17,s)+(mTextArea.x*0.5)+3,barY+GetScale(24,s),mTextArea.y,0xFF000000)
+            DrawText(mText,sumFS,barX-GetScale(17,s)-(mTextArea.x*0.5),barY+GetScale(24,s)-(mTextArea.y*0.5),0xFFFFFFFF)
+          end          
+        end
 				
 				self.Sprite:Draw(barX, barY, 255)				
 				-- self.Sprite:DrawEx(Rect(0,0,1025,151), D3DXVECTOR3(0, 0, 0), D3DXVECTOR3(barX+1025, barY+151, 0), 0xFF)
@@ -1682,29 +1637,29 @@ function SKILLS:Draw()
 				end
 				
 				if self.Menu.Text then
-					local hText = ('%u / %u'):format(info.hero.health + info.hero.shield, info.hero.maxHealth)
+					local hText = ('%u / %u'):format(unit.health + unit.shield, unit.maxHealth)
 					local hTextArea = GetTextArea(hText, hpY)
 					DrawText(hText,hpY,barX+GetScale(146,s)-(hTextArea.x*0.5),barY+GetScale(18,s)-(hTextArea.y*0.5),0xFFFFFFFF)
 					
-					local mText = ('%u / %u'):format(info.hero.mana, info.hero.maxMana)
+					local mText = ('%u / %u'):format(unit.mana, unit.maxMana)
 					local mpFS = GetScale(14, s)
 					local mTextArea = GetTextArea(mText, mpFS)
 					DrawText(mText,mpFS,barX+GetScale(218,s)-(mTextArea.x*0.5),barY+GetScale(34-(mTextArea.y*0.5),s),0xFFFFFFFF)
 				end				
-				DrawText(info.hero.level..'',GetScale(16,s),barX+GetScale(283,s),barY+GetScale(26,s),0xFFFFFFFF)
+				DrawText(unit.level..'',GetScale(16,s),barX+GetScale(283,s),barY+GetScale(26,s),0xFFFFFFFF)
 			end
 		end
 	end
 end
 
-function SKILLS:DrawOLD()
+function HPBars:DrawOLD()
 	PewtilityHPBars.Active = false
 	for _, info in ipairs(self.Heroes) do
 		if info.hero.valid and info.hero.visible and not info.hero.dead and ((info.hero.team == myHero.team and self.Menu.Ally) or (info.hero.team ~= myHero.team and self.Menu.Enemy)) then
 			local barX, barY = self:BarData(info.hero)
 			if barX > -100 and barX < WINDOW_W + 100 and barY > -100 and barY < WINDOW_H + 100 then
 				barX, barY = ceil(barX), ceil(barY)
-				DrawLine(barX-29,barY+51,barX+62,barY+51,29,info.hero.team == myHero.team and ARGB(220, 114, 213, 242) or ARGB(220, 204, 126, 114))
+				DrawLine(barX-29,barY+51,barX+62,barY+51,29,info.hero.team == myHero.team and 0xDC72D5F2 or 0xDCCC7E72)
 				for i=_Q, _R do
 					local data = info.hero:GetSpellData(i)
 					local x = barX-27+(i*22)
@@ -1713,18 +1668,18 @@ function SKILLS:DrawOLD()
 						if data.currentCd ~= 0 then
 							local cda=data.cd>0 and data.cd or 0
 							local cd = cda-(cda-data.currentCd)
-							DrawLine(x, y, x+((cd / cda) * 21), y, 12, COLOR_ORANGE)
-							DrawLine(x+((cd / cda) * 21), y, x+21, y, 12, COLOR_GREY)
+							DrawLine(x, y, x+((cd / cda) * 21), y, 12, 0xFFFF7D00)
+							DrawLine(x+((cd / cda) * 21), y, x+21, y, 12, 0xFF808080)
 							if self.Menu.Text then
 								local text = ('%i'):format(cd)
 								local tA = GetTextArea(text, 14)
-								DrawText(text, 14, x + 11 - (tA.x / 2), y - (tA.y / 2), COLOR_WHITE)
+								DrawText(text, 14, x + 11 - (tA.x / 2), y - (tA.y / 2), 0xFFFFFFFF)
 							end
 						else
-							DrawLine(x,y,x+21,y,12,COLOR_GREEN)							
+							DrawLine(x,y,x+21,y,12,0xFF00AA00)							
 						end
 					else
-						DrawLine(x,y,x+21,y,12,COLOR_GREY)							
+						DrawLine(x,y,x+21,y,12,0xFF808080)							
 					end
 				end
 				for i=SUMMONER_1, SUMMONER_2 do
@@ -1735,15 +1690,15 @@ function SKILLS:DrawOLD()
 					if data.currentCd ~= 0 then
 						local cda = data.cd>0 and data.cd or 0
 						local cd = cda-(cda-data.currentCd)
-						DrawLine(x, y+11, x+((cd / cda) * 42), y+11, 12, COLOR_ORANGE)
-						DrawLine(x+((cd / cda) * 42), y+11, x+42, y+11, 12, COLOR_GREY)
+						DrawLine(x, y+11, x+((cd / cda) * 42), y+11, 12, 0xFFFF7D00)
+						DrawLine(x+((cd / cda) * 42), y+11, x+42, y+11, 12, 0xFF808080)
 						--self.CallTimers[enemy.charName] = {x=x, y=y+5,t=floor(data.currentCd+GetInGameTimer()), text=text}
 					else
-						DrawLine(x, y+11, x+42, y+11, 12, COLOR_GREEN)								
+						DrawLine(x, y+11, x+42, y+11, 12, 0xFF00AA00)								
 					end
 					if self.Menu.Text then
 						local tA = GetTextArea(text, 11)
-						DrawText(text, 11, x + 22 - (tA.x / 2), y + 11 - (tA.y / 2), COLOR_WHITE)
+						DrawText(text, 11, x + 22 - (tA.x / 2), y + 11 - (tA.y / 2), 0xFFFFFFFF)
 					end
 				end
 			end
@@ -1751,15 +1706,15 @@ function SKILLS:DrawOLD()
 	end
 end
 
-function SKILLS:BarData(enemy)
+function HPBars:BarData(enemy)
 	local barPos = GetUnitHPBarPos(enemy)
 	local barOff = GetUnitHPBarOffset(enemy)
 	
 	return barPos.x + ((self.xOffsets[enemy.charName] or 0) * 140) - 38, barPos.y + (barOff.y * 53) - 22 - (self.yOffsets[enemy.charName] or 0)
 end
 
-function SKILLS:WndMsg(m, k)
-	if m==WM_LBUTTONDOWN and IsKeyDown(menuKey) then
+function HPBars:WndMsg(m, k)
+	if m==WM_LBUTTONDOWN and isMenuOpen then
 		local CursorPos = GetCursorPos()
 		if CursorPos.x < self.Anchor.x and CursorPos.x > self.Anchor.x - GetScale(343, self.Menu.Scale) then
 			if CursorPos.y > self.Anchor.y and CursorPos.y < self.Anchor.y + GetScale(50,self.Menu.Scale) * 5 then
@@ -1773,10 +1728,9 @@ function SKILLS:WndMsg(m, k)
 	end
 end
 
-class 'TIMERS'
+class 'JungleTimers'
 
-function TIMERS:__init()
-	self.map = GetGame2().Map.Name
+function JungleTimers:__init()
 	self.Packets = GetGameVersion():sub(1,4) == '6.23' and {
 		['Jungle'] = { ['Header'] = 0x012B, ['campPos'] = 6, ['idPos'] = 10, ['idZero'] = 0x02020202, }, --size 24 
 		['Inhibitor'] = { ['Header'] = 0x0086, ['pos'] = 2, },  --pick the one that is size 19
@@ -1877,9 +1831,10 @@ function TIMERS:__init()
 		},
 	}
 	self.activeTimers = {}
+	self.map = GetGame2().Map.Name
 	self.checkLastDragon = false
 	self.checkLastBaron = false
-	self.tM = self:Menu()
+	self:CreateMenu()
 	if not self.Packets then
 		Print('Object Timers packets are outdated!!', true)
 		return
@@ -1901,38 +1856,46 @@ function TIMERS:__init()
 	AddMsgCallback(function(m,k) self:WndMsg(m,k) end)
 end
 
-function TIMERS:Menu()
-	MainMenu:addSubMenu('Object Timers', 'ObjectTimers')
-	local tM = MainMenu.ObjectTimers
-	tM:addParam('draw', 'Enable Object Timers', SCRIPT_PARAM_ONOFF, true)
-	tM:addParam('type', 'Timer Type', SCRIPT_PARAM_LIST, 1, { 'Seconds', 'Minutes' })
-	tM:addParam('size', 'Text Size', SCRIPT_PARAM_SLICE, 12, 2, 24)
-	tM:addParam('RGB', 'Text Color', SCRIPT_PARAM_COLOR, {255,255,255,255})	
-	tM:addParam('mapsize', 'Minimap Text Size', SCRIPT_PARAM_SLICE, 12, 2, 24)
-	tM:addParam('mapRGB', 'Minimap Text Color', SCRIPT_PARAM_COLOR, {255,255,255,255})
-	tM:addParam('modKey', 'Modifier Key(Default: Alt)', SCRIPT_PARAM_ONKEYDOWN, false, 18)
-	tM:addParam('', 'ModKey+LeftClick a camp to start a timer.', SCRIPT_PARAM_INFO, '')
-	return tM
+function JungleTimers:CreateMenu()
+	MainMenu:addSubMenu('Jungle & Inhibitor Timers', 'ObjectTimers')
+	self.Menu = MainMenu.ObjectTimers
+	self.Menu:addParam('info', '---Game World---', SCRIPT_PARAM_INFO, '')
+  o_valid['---Game World---']=true
+	self.Menu:addParam('draw', 'Enable', SCRIPT_PARAM_ONOFF, true)
+	self.Menu:addParam('type', 'Timer Type', SCRIPT_PARAM_LIST, 1, { 'Seconds', 'Minutes' })
+	self.Menu:addParam('size', 'Text Size', SCRIPT_PARAM_SLICE, 16, 2, 24)
+	self.Menu:addParam('RGB', 'Text Color', SCRIPT_PARAM_COLOR, {255,255,255,255})
+  
+	self.Menu:addParam('space', '', SCRIPT_PARAM_INFO, '')
+	self.Menu:addParam('info', '---Mini-Map---', SCRIPT_PARAM_INFO, '')
+  o_valid['---Mini-Map---']=true
+	self.Menu:addParam('mapsize', 'Minimap Text Size', SCRIPT_PARAM_SLICE, 14, 2, 24)
+	self.Menu:addParam('mapRGB', 'Minimap Text Color', SCRIPT_PARAM_COLOR, {255,255,255,255})
+	self.Menu:addParam('space', '', SCRIPT_PARAM_INFO, '')
+	self.Menu:addParam('info', '---Custom Timer Key---', SCRIPT_PARAM_INFO, '')
+  o_valid['---Custom Timer Key---']=true
+	self.Menu:addParam('modKey', 'Key (Default: Alt)', SCRIPT_PARAM_ONKEYDOWN, false, 18)
+	self.Menu:addParam('', 'Hold Key down and left click a camp.', SCRIPT_PARAM_INFO, '')
 end
 
-function TIMERS:Draw()
+function JungleTimers:Draw()
 	-- for k, v in pairs(self.Packets.SummonerRift) do
 		-- DrawText3D(('0x%02X'):format(k),v.pos.x,v.pos.y,v.pos.z,22,ARGB(255,255,255,255))
 	-- end
 	
-	if not self.tM.draw then return end
+	if not self.Menu.draw then return end
 	for i, info in ipairs(self.activeTimers) do
 		local timer = info.spawnTime-clock()
-		local text = (self.tM.type == 1) and ('%d'):format(timer) or ('%d:%.2d'):format(timer/60, timer%60)
-		DrawText3D(text, info.pos.x, info.pos.y, (info.pos.z-50), self.tM.size, ARGB(self.tM.RGB[1], self.tM.RGB[2], self.tM.RGB[3], self.tM.RGB[4]))
-		DrawText(text, self.tM.mapsize, info.minimap.x-5, info.minimap.y-5, ARGB(self.tM.mapRGB[1], self.tM.mapRGB[2], self.tM.mapRGB[3], self.tM.mapRGB[4]))
+		local text = (self.Menu.type == 1) and ('%d'):format(timer) or ('%d:%.2d'):format(timer/60, timer%60)
+		DrawText3D(text, info.pos.x, info.pos.y, (info.pos.z-50), self.Menu.size, ARGB(self.Menu.RGB[1], self.Menu.RGB[2], self.Menu.RGB[3], self.Menu.RGB[4]))
+		DrawText(text, self.Menu.mapsize, info.minimap.x-5, info.minimap.y-5, ARGB(self.Menu.mapRGB[1], self.Menu.mapRGB[2], self.Menu.mapRGB[3], self.Menu.mapRGB[4]))
 		if timer <= 1 then 
 			table.remove(self.activeTimers,i)
 		end
 	end
 end
 
-function TIMERS:RecvPacket(p)
+function JungleTimers:RecvPacket(p)
 	if p.header == self.Packets.Jungle.Header then
 		p.pos = self.Packets.Jungle.campPos
 		local camp = p:Decode1()
@@ -1971,8 +1934,8 @@ function TIMERS:RecvPacket(p)
 	end
 end
 
-function TIMERS:WndMsg(m,k)
-	if m == WM_LBUTTONDOWN and IsKeyDown(self.tM._param[7].key) then --17 ctrl
+function JungleTimers:WndMsg(m,k)
+	if m == WM_LBUTTONDOWN and IsKeyDown(self.Menu._param[7].key) then --17 ctrl
 		local cP = GetCursorPos()
 		for _, info in pairs(self.Packets[self.map]) do
 			if _ <= 0xFF then
@@ -2009,16 +1972,8 @@ function OTHER:__init()
 	end
 	
 	self.TurretRange = GetGame2().Map.Name == 'TwistedTreeline' and 775 + myHero.boundingRadius or 850 + myHero.boundingRadius
-	self.Enemies = {}
-	for i=1, heroManager.iCount do
-		local h = heroManager:getHero(i)
-		if h.team == TEAM_ENEMY then
-			self.Enemies[#self.Enemies+1] = h	
-		end
-	end
-	self:CreateMenu()
+  
 	AddDrawCallback(function() self:Draw() end)
-	-- print(GetGameVersion())
 	for i=1, heroManager.iCount do
 		local h = heroManager:getHero(i)
 		if h.team == TEAM_ALLY and not h.isMe and h.charName == 'Thresh' then
@@ -2036,9 +1991,12 @@ function OTHER:__init()
 				return
 			end
 			Print('Ally Thresh detected, AutoLantern loaded')
-			self.Menu:addParam('LanternKey', 'Thresh Lantern Key', SCRIPT_PARAM_ONKEYDOWN, false, 32)
-			self.Menu:addParam('LanternHealth', 'Lantern if Health Less than (%)', SCRIPT_PARAM_SLICE, 25, 0, 100)
-			self.Menu:addParam('LanternDelay', 'Lantern Humanizer Delay (ms)', SCRIPT_PARAM_SLICE, 250, 0, 1000)
+      MainMenu:addParam('space', '', SCRIPT_PARAM_INFO, '')
+      MainMenu:addParam('info', '---Thresh Lantern---', SCRIPT_PARAM_INFO, '')
+      o_valid['---Thresh Lantern---']=true			
+      MainMenu:addParam('LanternKey', 'Thresh Lantern Key', SCRIPT_PARAM_ONKEYDOWN, false, 32)
+			MainMenu:addParam('LanternHealth', 'Lantern if Health Less than (%)', SCRIPT_PARAM_SLICE, 25, 0, 100)
+			MainMenu:addParam('LanternDelay', 'Lantern Humanizer Delay (ms)', SCRIPT_PARAM_SLICE, 250, 0, 1000)
 			self.ReversedBytes = {}
 			for i=0, 255 do self.ReversedBytes[self.Packets.bytes[i]] = i end
 			self.LanternPacket = CLoLPacket(self.Packets.Header)
@@ -2049,12 +2007,12 @@ function OTHER:__init()
 			AddCreateObjCallback(function(o)
 				if o.valid and o.team == TEAM_ALLY and o.name == 'ThreshLantern' then
 					self.Lantern = o
-					self.LanternDelay = clock() + (self.Menu.LanternDelay / 1000)
+					self.LanternDelay = clock() + (MainMenu.LanternDelay / 1000)
 				end
 			end)
 			AddTickCallback(function()
 				if self.Lantern and self.Lantern.valid and GetDistanceSqr(self.Lantern) < 105625 and self.LanternDelay < clock() then
-					if self.Menu.LanternKey or (myHero.health * 100) / myHero.maxHealth <= self.Menu.LanternHealth then
+					if MainMenu.LanternKey or (myHero.health * 100) / myHero.maxHealth <= MainMenu.LanternHealth then
 						self.EncodePacket.pos=2
 						self.EncodePacket:EncodeF(self.Lantern.networkID)
 						self.EncodePacket.pos=2
@@ -2068,17 +2026,8 @@ function OTHER:__init()
 	end
 end
 
-function OTHER:CreateMenu()
-	MainMenu:addSubMenu('Other Stuff', 'Other')
-	self.Menu = MainMenu.Other
-	self.Menu:addParam('path', 'Draw Enemy Paths', SCRIPT_PARAM_ONOFF, true)
-	self.Menu:addParam('type', 'Path Draw Type', SCRIPT_PARAM_LIST, 1, { 'Lines', 'End Position', })
-	self.Menu:addParam('turret', 'Draw Turret Ranges', SCRIPT_PARAM_ONOFF, true)
-	self.Menu:addParam('AllyTurret', 'Draw Ally Turret Ranges', SCRIPT_PARAM_ONOFF, false)
-end
-
 function OTHER:Draw()
-	if self.Menu.turret then
+	if MainMenu.turret then
 		for i, turret in ipairs(self.Turrets) do
 			if turret and turret.valid and not turret.dead then
 				local d = GetDistance(turret)
@@ -2086,7 +2035,7 @@ function OTHER:Draw()
 					local t = d-self.TurretRange
 					if turret.team == TEAM_ENEMY then
 						DrawCircle3D(turret.x,turret.y,turret.z,self.TurretRange,1, ARGB(t>0 and 255 * ((500-t) / 500) or 255, 255, 0, 0))
-					elseif self.Menu.AllyTurret then
+					elseif MainMenu.AllyTurret then
 						local p = t>0 and ((500-t) / 500) or 1
 						DrawCircle3D(turret.x,turret.y,turret.z,self.TurretRange,1, ARGB(t>0 and 255 * ((500-t) / 500) or 255, 255, 120, 120))
 					end
@@ -2096,55 +2045,11 @@ function OTHER:Draw()
 			end
 		end
 	end	
-	if self.Menu.path then
-		for _, e in ipairs(self.Enemies) do
-			if e and e.valid and not e.dead and e.visible and e.hasMovePath then
-				local points = {}
-				local eC = WorldToScreen(D3DXVECTOR3(e.x, 50, e.z))
-				points[1] = D3DXVECTOR2(eC.x, eC.y)
-				local pathLength = 0
-				for i=e.pathIndex, e.pathCount do
-					local p1 = e:GetPath(i)
-					local p2 = e:GetPath(i-1)
-					if p1 then
-						local c = WorldToScreen(D3DXVECTOR3(p1.x, 50, p1.z))
-						points[#points + 1] = D3DXVECTOR2(c.x, c.y)
-						if p2 then
-							if (i==e.pathIndex) then
-								pathLength = pathLength + GetDistanceSqr(p1, e.pos)
-							else
-								pathLength = pathLength + GetDistanceSqr(p1, p2)
-							end
-						end
-					end
-				end			
-				if self.Menu.type == 1 then
-					local draw = false
-					for i, point in ipairs(points) do
-						if point.x > 0 and point.x < WINDOW_W and point.y > 0 and point.y < WINDOW_H then
-							draw = true
-							break
-						end
-					end
-					if draw then
-						DrawLines2(points, 1, COLOR_RED)
-						local x, y = points[#points].x, points[#points].y
-						DrawText(('%.2f'):format(sqrt(pathLength)/(e.ms))..'\n'..e.charName,12,x,y,COLOR_WHITE)
-					end
-				else
-					local x, y = points[#points].x, points[#points].y
-					if x > 0 and x < WINDOW_W and y > 0 and y < WINDOW_H then
-						DrawText(('%.2f'):format(sqrt(pathLength)/(e.ms))..'\n'..e.charName,12,x,y,COLOR_WHITE)
-					end
-				end
-			end
-		end
-	end
 end
 
-class 'TRINKET'
+class 'TrinketAssistant'
 
-function TRINKET:__init()
+function TrinketAssistant:__init()
 	if GetGame().map.shortName ~= 'summonerRift' then return end
 	self.trinketID = {
 		['TrinketTotemLvl1'] = 3340,
@@ -2161,21 +2066,32 @@ function TRINKET:__init()
 		Print('Trinket Utiltity packet is outdated!!', true)
 		return
 	end
-	self.Menu = self:Menu()
+  
+	self:CreateMenu()
+  
 	AddRecvPacketCallback2(function(p) self:RecvPacket(p) end)
 end
 
-function TRINKET:Menu()
-	MainMenu:addSubMenu('Trinket Helper', 'Trinket')
-	local Menu = MainMenu.Trinket
-	Menu:addParam('Sweeper', 'Enable Sweeper Purchase', SCRIPT_PARAM_ONOFF, true)
-	Menu:addParam('Timer', 'Buy Sweeper after x Minutes', SCRIPT_PARAM_SLICE, 10, 1, 60)
-	Menu:addParam('Upgrade', 'Upgrade Trinket after Lvl 9', SCRIPT_PARAM_ONOFF, true)
-	Menu:addParam('Sightstone', 'Buy Sweeper on Sightstone', SCRIPT_PARAM_ONOFF, true)
-	return Menu
+function TrinketAssistant:CreateMenu()
+	MainMenu:addSubMenu('Trinket Assistant', 'Trinket')
+	self.Menu = MainMenu.Trinket
+  
+	self.Menu:addParam('info', '---Purchase Sweeping Lens after Sightstone---', SCRIPT_PARAM_INFO, '')
+  o_valid['---Purchase Sweeping Lens after Sightstone---']=true  
+	self.Menu:addParam('Sightstone', 'Enable', SCRIPT_PARAM_ONOFF, true)
+	self.Menu:addParam('space', '', SCRIPT_PARAM_INFO, '')
+	self.Menu:addParam('info', '---Timed Sweeping Lens Purchase---', SCRIPT_PARAM_INFO, '')
+  o_valid['---Timed Sweeping Lens Purchase---']=true  
+	self.Menu:addParam('Sweeper', 'Enable', SCRIPT_PARAM_ONOFF, true)
+	self.Menu:addParam('Timer', 'Allow after minute: ', SCRIPT_PARAM_SLICE, 10, 1, 60)
+	self.Menu:addParam('space', '', SCRIPT_PARAM_INFO, '')
+	self.Menu:addParam('info', '---Upgrades---', SCRIPT_PARAM_INFO, '')
+  o_valid['---Upgrades---']=true  
+	self.Menu:addParam('UpgradeTotem', 'Upgrade Warding Totem after Lvl:', SCRIPT_PARAM_SLICE, 13, 9, 18)
+	self.Menu:addParam('UpgradeLens', 'Upgrade Sweeping Lens after Lvl:', SCRIPT_PARAM_SLICE, 9, 9, 18)
 end
 
-function TRINKET:RecvPacket(p)
+function TrinketAssistant:RecvPacket(p)
 	if p.header == self.Packet.Header then
 		if p:DecodeF() == myHero.networkID then
 			p.pos=self.Packet.pos      
@@ -2193,22 +2109,19 @@ function TRINKET:RecvPacket(p)
 					return
 				end
 			end
-			if myHero.level >= 9 and self.Menu.Upgrade then
-				if currentTrinket.name == 'TrinketTotemLvl1' then
-					BuyItem(3363)
-				elseif currentTrinket.name == 'TrinketSweeperLvl1' then
-					BuyItem(3364)
-				end
-			end
+      if currentTrinket.name == 'TrinketTotemLvl1' and myHero.level >= self.Menu.UpgradeTotem then
+        BuyItem(3363)
+      elseif currentTrinket.name == 'TrinketSweeperLvl1' and myHero.level >= self.Menu.UpgradeLens then
+        BuyItem(3364)
+      end
 		end
 	end
 end
 
-class 'MAGWARDS'
+class 'MagneticWarding'
 
-function MAGWARDS:__init()
+function MagneticWarding:__init()
 	if GetGame().map.shortName ~= 'summonerRift' then return end	
-	self:CreateMenu()
 	self.Positions = {
 		{['x']=6550, ['y']=49, ['z']=4789},
 		{['x']=6609, ['y']=51, ['z']=3081},
@@ -2317,15 +2230,19 @@ function MAGWARDS:__init()
 		['TrinketTotemLvl3b'] = true, 
 		['TrinketOrbLvl3'] = true,
 	}
+  
+	self:CreateMenu()
+  
 	AddCastSpellCallback(function(...) self:CastSpell(...) end)	
 	AddMsgCallback(function(m,k) self:WndMsg(m,k) end)
 	AddDrawCallback(function() self:Draw() end)
 end
 
-function MAGWARDS:CreateMenu()
-	MainMenu:addSubMenu('Warding Helper (beta)', 'MagWards')
+function MagneticWarding:CreateMenu()
+	MainMenu:addSubMenu('Magnetic Warding', 'MagWards')
 	self.Menu = MainMenu.MagWards
-	self.Menu:addParam('info', 'Match these to ingame keybindings.', SCRIPT_PARAM_INFO, '')
+	self.Menu:addParam('info', '---Keybindings---', SCRIPT_PARAM_INFO, '')
+  o_valid['---Keybindings---']=true
 	self.Menu:addParam('Item1', 'Item Slot 1', SCRIPT_PARAM_ONKEYDOWN, false, ('1'):byte())
 	self.Menu:addParam('Item2', 'Item Slot 2', SCRIPT_PARAM_ONKEYDOWN, false, ('2'):byte())
 	self.Menu:addParam('Item3', 'Item Slot 3', SCRIPT_PARAM_ONKEYDOWN, false, ('3'):byte())
@@ -2337,7 +2254,7 @@ function MAGWARDS:CreateMenu()
 	self.Menu:addParam('QuickCast', 'QuickCast', SCRIPT_PARAM_ONOFF, false)	
 end
 
-function MAGWARDS:Draw()
+function MagneticWarding:Draw()
 	if self.DrawSpots then
 		for _, p in ipairs(self.Positions) do
 			local c = WorldToScreen(D3DXVECTOR3(p.x,p.y,p.z))
@@ -2369,14 +2286,14 @@ function MAGWARDS:Draw()
 					p.cast.y, 
 					p.cast.z + ((z / nLength) * 50),
 					2,
-					isHovered and ARGB(100,0,0,255) or ARGB(100,175,225,0)
+					isHovered and 0x640000FF or 0x64AFE100
 				)
 			end
 		end
 	end
 end
 
-function MAGWARDS:WndMsg(m,k)
+function MagneticWarding:WndMsg(m,k)
 	if m==KEY_DOWN then
 		for _, param in ipairs(self.Menu._param) do
 			if param.pType == SCRIPT_PARAM_ONKEYDOWN and param.key == k then
@@ -2394,7 +2311,7 @@ function MAGWARDS:WndMsg(m,k)
 	end
 end
 
-function MAGWARDS:CastSpell(iSlot,startPos,endPos,target)
+function MagneticWarding:CastSpell(iSlot,startPos,endPos,target)
 	if self.DrawSpots == iSlot then
 		for _, p in ipairs(self.Positions) do
 			if GetDistanceSqr(mousePos, p) < 6400 then
@@ -2412,45 +2329,388 @@ function MAGWARDS:CastSpell(iSlot,startPos,endPos,target)
 	end
 end
 
-class "SxWebResulter"
+_G.PEW_UPDATE_INSTANCES_A = {}
+class "AwareUpdate"
 
-function SxWebResulter:__init(Host, Path, cbComplete, cbError)
-    self.Host = Host
-    self.Path = Path
-    self.Callback = cbComplete
-	self.Error = cbError
-    self.LuaSocket = require("socket")
+function AwareUpdate:__init(LocalVersion, SavePath, Host, VersionPath, ScriptPath, OnLoad, OnPreUpdate, OnPostUpdate, OnError)
+  self.SavePath = SavePath
+  self.Host = Host
+  self.OnLoad = OnLoad
+  self.OnPreUpdate = OnPreUpdate
+  self.OnPostUpdate = OnPostUpdate
+  self.OnError = OnError 
+  
+  local FilePath = string.split(self.SavePath, '/')
+  FilePath = string.split(FilePath[#FilePath], '\\')
+  self.FileName = FilePath[#FilePath]:gsub('/','')
+  
+  if LocalVersion == 'isDownload' then
+		self.isDownload = true
+		self.AllowDLBarDraw = true
+    table.insert(PEW_UPDATE_INSTANCES_A, self.FileName)
+    if #PEW_UPDATE_INSTANCES_A > 4 then table.remove(PEW_UPDATE_INSTANCES_A, 1) end
+    if self.Host=='raw.githubusercontent.com' then
+      self:CreateSocket('/BoL/TCPUpdater/GetScript5.php?script='..self:Base64Encode(self.Host..ScriptPath)..'&rand='..math.random(99999999))
+      AddMsgCallback(function(...) self:OnWndMsg(...) end)
+      AddDrawCallback(function()
+        self:DownloadUpdate()
+        self:DrawDownloadBar()
+      end)
+    else
+      if not self.LuaSocket then
+        self.LuaSocket = require("socket")
+      else
+        self.Socket:close()
+        self.Socket = nil
+        self.Size = nil
+        self.RecvStarted = false
+      end
 
-    self.Socket = self.LuaSocket.connect(Host, 80)
-    self.Socket:send("GET "..self.Path.." HTTP/1.0\r\nHost: "..Host.."\r\n\r\n")
-    self.Socket:settimeout(0, 'b')
-    self.Socket:settimeout(99999999, 't')
+      self.Socket = self.LuaSocket.connect(self.Host, 80)
+      if not self.Socket then
+        
+      end
+      self.Socket:send("GET "..ScriptPath.." HTTP/1.0\r\nHost: "..Host.."\r\n\r\n")
+      self.Socket:settimeout(0, 'b')
+      self.Socket:settimeout(99999999, 't')
 
-    self.LastPrint = ""
-    self.File = ""
-    AddDrawCallback(function() self:GetResult() end)
+      self.File = ''
+      AddMsgCallback(function(...) self:OnWndMsg(...) end)
+      AddDrawCallback(function() 
+        self:DownloadFile() 
+        self:DrawDownloadBar()
+      end)   
+    end
+	else
+		self.LocalVersion = LocalVersion
+		self.VersionPath = '/BoL/TCPUpdater/GetScript5.php?script='..self:Base64Encode(self.Host..VersionPath)..'&rand='..math.random(99999999)
+		self.ScriptPath = '/BoL/TCPUpdater/GetScript5.php?script='..self:Base64Encode(self.Host..ScriptPath)..'&rand='..math.random(99999999)
+		self.DownloadStatus = 'Connecting...'
+		
+    self:CreateSocket(self.VersionPath)
+		AddTickCallback(function() self:GetOnlineVersion() end)
+	end
 end
 
-function SxWebResulter:GetResult()
-    if self.Status == 'closed' then return end
-    self.Receive, self.Status, self.Snipped = self.Socket:receive(1024)
-    if self.Receive then
-        if self.LastPrint ~= self.Receive then
-            self.LastPrint = self.Receive
-            self.File = self.File .. self.Receive
-        end
+function AwareUpdate:DrawDownloadBar()  
+	if not self.AllowDLBarDraw then return end 
+  
+  local CenterX = math.floor(WINDOW_W * .175)
+  local Width = math.floor(WINDOW_W * .125)
+  local Height = math.floor(WINDOW_H * .03)
+  local Height2 = math.floor(Height * .5)
+  
+  local pos = 1  
+  for k=#PEW_UPDATE_INSTANCES_A, 1, -1 do
+    if PEW_UPDATE_INSTANCES_A[k] and PEW_UPDATE_INSTANCES_A[k]==self.FileName then
+      pos=k
     end
+  end	
+  
+  local CenterY = math.floor(WINDOW_H * .02) + (Height + 10) * pos
+  
+  DrawLine(CenterX-Width-2, CenterY, CenterX+Width+2+Height, CenterY, Height+4, 0xFF838687)
+  DrawLine(CenterX-Width, CenterY, CenterX-Width+math.floor((self.File and self.Size) and Width*2*math.round(100/self.Size*self.File:len(),2)/100 or 0), CenterY, Height, 0xFF1C1D20)
+  local Text = 'Downloading: '..self.FileName..' '..(self.DownloadStatus or 'Connecting...')	
+  local TextArea = GetTextArea(Text:find('%%') and 'Downloading: '..self.FileName..' (00.00%)' or Text, 16)
+  DrawText(Text, 16, CenterX-TextArea.x*.5, CenterY-TextArea.y*.5, 0xFFFEA900)
+  
+  local CursorPos = GetCursorPos()
+  self.CloseDLDraw = CursorPos.x > CenterX+Width+2 and CursorPos.x < CenterX+Width+6+Height and CursorPos.y > CenterY-Height*.5 and CursorPos.y < CenterY+Height*.5
+  DrawLine(CenterX+Width+10, CenterY-Height2+10, CenterX+Width+Height-10, CenterY+Height2-10, self.CloseDLDraw and 3 or 2, 0xFF1C1D20)
+  DrawLine(CenterX+Width+10, CenterY+Height2-10, CenterX+Width+Height-10, CenterY-Height2+10, self.CloseDLDraw and 3 or 2, 0xFF1C1D20)
+end
 
-    if self.Snipped ~= "" and self.Snipped then
-        self.File = self.File .. self.Snipped
-    end
-    if self.Status == 'closed' then
-        local HeaderEnd, ContentStart = self.File:find('\r\n\r\n')
-        if HeaderEnd and ContentStart then
-            self.Callback(self.File:sub(ContentStart + 1))
-        else
-            self.Error()
+function AwareUpdate:OnWndMsg(m,k) 
+	if m==WM_LBUTTONDOWN then
+    if self.CloseDLDraw and self.AllowDLBarDraw then
+			self.AllowDLBarDraw = false	
+      for k=#PEW_UPDATE_INSTANCES_A, 1, -1 do
+        if PEW_UPDATE_INSTANCES_A[k] and PEW_UPDATE_INSTANCES_A[k]==self.FileName then
+          table.remove(PEW_UPDATE_INSTANCES_A, k)
         end
+      end	
+		end
+		if self.ScrollBarHovered and self.AllowLogDraw then
+			self.ScrollBar.Offset = self.ScrollBar.y-GetCursorPos().y
+			self.ScrollBar.Dragging = true
+		end
+	elseif m==WM_LBUTTONUP and self.AllowLogDraw then
+		if self.ScrollBar and self.ScrollBar.Dragging then
+			self.ScrollBar.Dragging = false
+		end
+	end
+end
+
+function AwareUpdate:CreateSocket(url)
+  if not self.LuaSocket then
+    self.LuaSocket = require("socket")
+  else
+    self.Socket:close()
+    self.Socket = nil
+    self.Size = nil
+    self.RecvStarted = false
+  end
+  self.LuaSocket = require("socket")
+  self.Socket = self.LuaSocket.tcp()
+  if not self.Socket then    
+    if self.OnError and type(self.OnError) == 'function' then
+      self.OnError('0x01')
+      return
     end
+  end
+  self.Socket:settimeout(0, 'b')
+  self.Socket:settimeout(99999999, 't')
+  self.Socket:connect('sx-bol.eu', 80)
+  self.Url = url
+  self.Started = false
+  self.LastPrint = ""
+  self.File = ""
+end
+
+function AwareUpdate:Base64Encode(data)
+  local b='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
+  return ((data:gsub('.', function(x)
+    local r,b='',x:byte()
+    for i=8,1,-1 do r=r..(b%2^i-b%2^(i-1)>0 and '1' or '0') end
+    return r;
+  end)..'0000'):gsub('%d%d%d?%d?%d?%d?', function(x)
+    if (#x < 6) then return '' end
+    local c=0
+    for i=1,6 do c=c+(x:sub(i,i)=='1' and 2^(6-i) or 0) end
+    return b:sub(c+1,c+1)
+  end)..({ '', '==', '=' })[#data%3+1])
+end
+
+function AwareUpdate:GetOnlineVersion()
+  if self.GotScriptVersion then return end
+
+  self.Receive, self.Status, self.Snipped = self.Socket:receive(1024)
+  if self.Status == 'timeout' and not self.Started then
+    self.Started = true
+    self.Socket:send("GET "..self.Url.." HTTP/1.1\r\nHost: sx-bol.eu\r\n\r\n")
+  end
+  if (self.Receive or (#self.Snipped > 0)) and not self.RecvStarted then
+    self.RecvStarted = true
+    self.DownloadStatus = 'Checking for updates...'
+  end
+
+  self.File = self.File .. (self.Receive or self.Snipped)
+  if self.File:find('</si'..'ze>') then
+    if not self.Size then
+      self.Size = tonumber(self.File:sub(self.File:find('<si'..'ze>')+6,self.File:find('</si'..'ze>')-1) or '1')
+    end
+    if self.File:find('<scr'..'ipt>') then
+      local _,ScriptFind = self.File:find('<scr'..'ipt>')
+      local ScriptEnd = self.File:find('</scr'..'ipt>')
+      if ScriptEnd then ScriptEnd = ScriptEnd - 1 end
+      local DownloadedSize = self.File:sub(ScriptFind+1,ScriptEnd or -1):len()
+      self.DownloadStatus = 'Checking for updates...'
+    end
+  end
+  if self.File:find('</scr'..'ipt>') then
+    self.DownloadStatus = 'Checking for updates...'
+    local a,b = self.File:find('\r\n\r\n')
+    self.File = self.File:sub(a,-1)
+    self.NewFile = ''
+    for line,content in ipairs(self.File:split('\n')) do
+      if content:len() > 5 then
+        self.NewFile = self.NewFile .. content
+      end
+    end
+    local HeaderEnd, ContentStart = self.File:find('<scr'..'ipt>')
+    local ContentEnd, _ = self.File:find('</scr'..'ipt>')
+    if not ContentStart or not ContentEnd then
+      if self.OnError and type(self.OnError) == 'function' then
+        self.OnError('0x02')
+      end
+    else
+      self.OnlineVersion = (Base64Decode(self.File:sub(ContentStart + 1,ContentEnd-1)))
+      self.OnlineVersion = tonumber(self.OnlineVersion or '0')
+			if self.OnlineVersion and self.OnlineVersion > self.LocalVersion then
+				if self.OnPreUpdate and type(self.OnPreUpdate) == 'function' then
+          self.OnPreUpdate(self.OnlineVersion,self.LocalVersion)
+        end
+        self.DownloadStatus = 'Connecting...'
+        self.AllowDLBarDraw = true
+        self:CreateSocket(self.ScriptPath)          
+        AddMsgCallback(function(...) self:OnWndMsg(...) end)
+        AddDrawCallback(function()
+          self:DownloadUpdate()
+          self:DrawDownloadBar()
+        end)
+      else
+        if self.OnLoad and type(self.OnLoad) == 'function' then
+          self.OnLoad(self.LocalVersion)
+        end
+      end
+    end
+    self.GotScriptVersion = true
+  end
+end
+
+function AwareUpdate:DownloadUpdate()
+  if self.GotScriptUpdate then return end
+  self.Receive, self.Status, self.Snipped = self.Socket:receive(1024)
+  if self.Status == 'timeout' and not self.Started then
+    self.Started = true
+    self.Socket:send("GET "..self.Url.." HTTP/1.1\r\nHost: sx-bol.eu\r\n\r\n")
+  end
+  if (self.Receive or (#self.Snipped > 0)) and not self.RecvStarted then
+    self.RecvStarted = true
+    self.DownloadStatus = '(0%)'
+  end
+
+  self.File = self.File .. (self.Receive or self.Snipped)
+  if self.File:find('</si'..'ze>') then
+    if not self.Size then
+      self.Size = tonumber(self.File:sub(self.File:find('<si'..'ze>')+6,self.File:find('</si'..'ze>')-1) or '1')
+    end
+    if self.File:find('<scr'..'ipt>') then
+      local _,ScriptFind = self.File:find('<scr'..'ipt>')
+      local ScriptEnd = self.File:find('</scr'..'ipt>')
+      if ScriptEnd then ScriptEnd = ScriptEnd - 1 end
+      local DownloadedSize = self.File:sub(ScriptFind+1,ScriptEnd or -1):len()
+      self.DownloadStatus = '('..math.round(100/self.Size*DownloadedSize,2)..'%)'
+    end
+  end
+  if self.File:find('</scr'..'ipt>') then
+    self.DownloadStatus = '(100%)'
+    local a,b = self.File:find('\r\n\r\n')
+    self.File = self.File:sub(a,-1)
+    self.NewFile = ''
+    for line,content in ipairs(self.File:split('\n')) do
+      if content:len() > 6 then
+        self.NewFile = self.NewFile .. content
+      end
+    end
+    local HeaderEnd, ContentStart = self.NewFile:find('<scr'..'ipt>')
+    local ContentEnd, _ = self.NewFile:find('</scr'..'ipt>')
+    if not ContentStart or not ContentEnd then
+      if self.OnError and type(self.OnError) == 'function' then
+        self.OnError('0x05')
+      end
+    else
+      local newf = self.NewFile:sub(ContentStart+1,ContentEnd-1)
+      newf = newf:gsub('\r', ''):gsub('\n', '')
+      self.GotScriptUpdate = true
+      if newf:len() ~= self.Size then
+        if self.OnError and type(self.OnError) == 'function' then
+          self.OnError('0x06')
+        end
+        return
+      end
+      newf = Base64Decode(newf)
+      if not self.isDownload and type(load(newf)) ~= 'function' then
+        if self.OnError and type(self.OnError) == 'function' then
+          self.OnError('0x07')
+        end
+      else
+        local f = io.open(self.SavePath,"w+b")
+        f:write(newf)
+        f:close()
+        if self.OnPostUpdate and type(self.OnPostUpdate) == 'function' then
+          self.OnPostUpdate(self.OnlineVersion,self.LocalVersion)
+        end
+      end
+    end
+    self.GotScriptUpdate = true
+  end
+end
+
+function AwareUpdate:DownloadFile()
+  if self.GotScriptUpdate then return end
+  if self.Status == 'closed' then return end
+  self.Receive, self.Status, self.Snipped = self.Socket:receive(1024)
+  if self.Receive then
+    if self.LastPrint ~= self.Receive then
+      self.LastPrint = self.Receive
+      self.File = self.File .. self.Receive
+    end
+  end
+
+  if self.Snipped ~= "" and self.Snipped then
+    self.File = self.File .. self.Snipped
+  end
+  if self.File:find('Length') then
+    if not self.Size then
+      self.Size = tonumber(self.File:sub(self.File:find('Length')+8, self.File:find('Length')+12) or '1') + 602
+      self.DownloadStatus = '('..math.round(100/self.Size*self.File:len(),2)/100 or 0*100 ..'%)'
+    end
+  end
+  if self.Status == 'closed' then
+    local HeaderEnd, ContentStart = self.File:find('\r\n\r\n')
+    if HeaderEnd and ContentStart then
+      self.Size = self.File:len()
+      self.DownloadStatus = '(100%)'
+      local f = io.open(self.SavePath, 'w+b')
+      f:write(self.File:sub(ContentStart+1))
+      f:close()
+      self.GotScriptUpdate = true
+    else
+      self.OnError('0x11')
+    end
+  end
+end
+
+--scriptConfig customization
+local o_OnDraw = scriptConfig.OnDraw
+function scriptConfig:OnDraw()
+	if #self._subInstances > 0 or #self._param > 0 then
+		o_OnDraw(self)
+	end
+end
+
+local o_DT = DrawText
+local o_DSI = scriptConfig._DrawSubInstance
+local o_DP = scriptConfig._DrawParam
+local o_DL = DrawLine
+function scriptConfig:_DrawSubInstance(index)
+	if o_valid[self._subInstances[index].header] or self._subInstances[index].header == '' then
+		local m,xb = 0, 0
+		if self._subInstances[index].header ~= '' then
+			_G.DrawLine = function(x1,y1,x2,y2,width,color)
+				color = color~=1422721024 and color or 1413167931
+				m = (x2 - x1) * .5
+				xb=x2
+				o_DL(x1,y1,x2,y2,width,color)
+			end
+		else
+			_G.DrawLine = function(x1,y1,x2,y2,width,color)
+				o_DL(x1,y1,x2,y2,width,color~=1422721024 and color or 1413167931)
+			end
+		end
+		_G.DrawText = function(str,size,x,y,color) 
+			if str:find(">>") == nil then
+				local s = (size*.5)+1
+				if self._subInstances[index].header ~= '' and self._subInstances[index].header ~= 'None Available' then 
+					o_DL(x,y+s,xb,y+s,s*2,0xAA222222)
+					o_DT(str,size,x+m-(GetTextArea(str,size).x*.5),y,color)
+				else
+					o_DT(str,size,x,y,color)
+				end
+			end
+		end
+	end
+	o_DSI(self, index)
+	_G.DrawLine = o_DL
+	_G.DrawText = o_DT
+end
+
+function scriptConfig:_DrawParam(varIndex)
+	if o_valid[self._param[varIndex].text] then
+		local m = 0
+		_G.DrawLine = function(x1,y1,x2,y2,width,color)
+			local d = (x2-x1)*1.25
+			m=d*.5
+			o_DL(x1,y1,x1+d+4,y2,width,0xAA222222)
+		end
+		_G.DrawText = function(str,size,x,y,color)
+			o_DT(str,size,x+m-(GetTextArea(str,size).x*.5),y,color)
+		end
+	end
+	o_DP(self, varIndex)
+	_G.DrawLine = o_DL
+	_G.DrawText = o_DT
 end
 
