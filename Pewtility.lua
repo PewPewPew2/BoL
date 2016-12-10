@@ -1,5 +1,5 @@
 --[[
-  Pewtility - Version 0.73 - LoL Patch 6.24
+  Pewtility - Version 7.3 - LoL Patch 6.24
 ]]
 
 LoadEncryptedScript([[2hkBQgkEshDo/YBZE2RcW0nMatijuiZQIwrCgy+YmONK3B67le2qRHDkK0jUrKpCemMHpdSYIgbTnJMpF0hANlSsWLCD8Yo8NZU2vE1BiI+5EfB6Eg8+Ro6LFesPJGnOsG3ALIkS9Jv89xO6vvrHEb
