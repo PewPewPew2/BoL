@@ -1,6 +1,6 @@
 if myHero.charName~='Ivern' then return end
 
-local version = 0.01
+local version = 0.02
 
 local Menu, Daisy, HP_Q, HP
 local Enemies = {}
@@ -139,7 +139,7 @@ function Tick()
       if Menu.Orb then
         local t = _Pewalk.GetTarget(700, false, Daisy)
         if t then
-          if _Pewalk.ValidTarget(t, 300, true, Daisy) then
+          if _Pewalk.ValidTarget(t, 300, false, Daisy) then
             if DaisyNextAttack < os.clock() then
               CastSpell(_R, t)
               DaisyNextAttack = os.clock() + .25
@@ -195,7 +195,7 @@ function Animation(unit,animation, hash)
 end
 
 function Draw()
-  if Menu.PassiveCost then
+  if Menu.PassiveCost and GetInGameTimer() > 5 then
     local HC, MC = HPCost[myHero.level < 19 and myHero.level or 18], MNCost[myHero.level < 19 and myHero.level or 18]
     if HC < myHero.health and MC < myHero.mana then
       local Center = GetUnitHPBarPos(myHero)
