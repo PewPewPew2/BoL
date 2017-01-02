@@ -1,3 +1,7 @@
+--0.45@
+>'Insec' renamed to 'Shurima Shuffle' in menu@
+>E to mouse and E to target have now been combined into the same key, if your mouse is hovering close to a target, it will aim at the target, else it will just dash to your mouse@
+>Fixed some bugs with the automated jump points@
 --0.44@
 >Updated sand soldier stack recharge rate, hooray for Azir buffs :D@
 --0.43@
