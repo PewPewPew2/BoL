@@ -1,3 +1,20 @@
+--1.24@
+>Fixed hundreds of spell data errors@
+>Reworked Aatrox E@
+>Reworked all cone spells@
+>Reworked Corki W and Package@
+>Reworked Diana Q@
+>Reworked Fizz R@
+>Reworked Gangplank Barrels@
+>Reworked Heimerdinger W@
+>Reworked Jayce Q@
+>Now evades Illaois tentacles@
+>Now Evades Daisys Shockwave@
+>Reworked Yasuo Q@
+>Collision detection completely rewrote so that I can support Windwall, Braum Shield and terrain collision (not added yet, but soon)@
+>Added an option to each spells menu that allows you to choose to check for collision or not@
+>Trap removal improved (Caitlyn W, Teemo R, etc)@
+>Improved removal of toggle spells (Lux E, Gragas Q, etc)@
 --1.22@
 >Added Camille W and E to evadable spells@
 >Added Camille E as a dash@
