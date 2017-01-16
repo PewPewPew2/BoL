@@ -1,6 +1,6 @@
 --0.89@
 >Updated most of the spell data for spell farming (excluding targeted spells)@
->Fixed an error that was occuring for some users on load@
+>Fixed an error that was occurring for some users on load@
 --0.88@
 >Updated stat changes for patch 7.1@
 >Made changes to the AllowAttack API@
