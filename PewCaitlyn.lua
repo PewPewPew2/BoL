@@ -63,7 +63,7 @@ end)
 class 'Caitlyn'
  
 function Caitlyn:__init()
-	local version = 3.6
+	local version = 3.7
 	ScriptUpdate(
 		version,
 		true,
@@ -686,7 +686,7 @@ function Caitlyn:Tick()
     end
     if target then
       local bCast, CastPos = self:GetPrediction(target, 0.25)
-      if CastPos and GetDistanceSqr(CastPos) < 640000 and _Pewalk.GetCollision(t, CastPos, {length=800, width=80, delay=0.125}, myHero)  then
+      if CastPos and GetDistanceSqr(CastPos) < 640000 and _Pewalk.GetCollision(target, CastPos, {length=800, width=80, delay=0.125}, myHero)  then
         self.Combo = {
           ['Time'] = clock() + 1, 
           ['startPos'] = {['x']=myHero.x, ['z'] = myHero.z,},
