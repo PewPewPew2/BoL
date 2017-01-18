@@ -1,3 +1,10 @@
+--1.26@
+>Fixed a bug with Tibbers AoE drawing remaining in the position that he left vision at@
+>Fixed a bug with Zyras Q when cast from FoW@
+>Fixed a bug with Jhins trap removal@
+>Fixed Xeraths R from FoW@
+>Fixed a bug with Jannas Q when cast from FoW@
+>Updated Aatrox, Corki, Ekko, Ezreal and Fiora dash stats@
 --1.24@
 >Fixed hundreds of spell data errors@
 >Reworked Aatrox E@
