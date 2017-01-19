@@ -1,3 +1,7 @@
+--1.27@
+>Added collision checks for Yasuos Windwall@
+>Added collision checks for Braums Shield@
+>Added collision checks for terrain (ex. Nautilus Q)@
 --1.26@
 >Fixed a bug with Tibbers AoE drawing remaining in the position that he left vision at@
 >Fixed a bug with Zyras Q when cast from FoW@
