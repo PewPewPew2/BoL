@@ -1,3 +1,7 @@
+--1.28@
+>Added option 'Check for Auto Attack Windup' in the General menu, this will stop the script from cancelling auto attacks to evade (if enabled)@
+>Auth changes, will no longer cause a 2-3s lag/freeze on load@
+>Updated several more dashes@
 --1.27@
 >Added collision checks for Yasuos Windwall@
 >Added collision checks for Braums Shield@
