@@ -1,3 +1,9 @@
+--1.30@
+>Disable Triggers menu removed, each trigger will now have its own menu that is only visible when playing that character@
+>Lifesavers menu removed, each spell will now have its own menu created that is only visible when playing that character@
+>Zhonyas Hourglass options move to Items menu@
+>Fixed some errors with dashes and shielding@
+>Fixed some errors with the Profile Editor@
 --1.29@
 >Updated remaining dash spells@
 >Some dashes have additional options in their menu, ex. Leblanc now has an option to cast return W@
