@@ -1,3 +1,6 @@
+--1.31@
+>Updated for patch 7.2@
+>Made small changes to evasion algorithm@
 --1.30@
 >Disable Triggers menu removed, each trigger will now have its own menu that is only visible when playing that character@
 >Lifesavers menu removed, each spell will now have its own menu created that is only visible when playing that character@
