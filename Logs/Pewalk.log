@@ -1,3 +1,7 @@
+--0.92@
+>Fixed some bugs with AA resets@
+>Made changes to range checks@
+>Fixed bug with Jayce AA timing@
 --0.89@
 >Updated most of the spell data for spell farming (excluding targeted spells)@
 >Fixed an error that was occurring for some users on load@
