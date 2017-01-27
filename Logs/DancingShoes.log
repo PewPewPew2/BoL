@@ -1,3 +1,13 @@
+--1.32@
+>Reenabled Rumbles Q and R, and fixed his E@
+>Now calculates damage from Shacos Passive@
+>Added shield only polygon for Udyrs R cone attack@
+>Added Baron Nashors spells as evadable spells@
+>Aatrox E and Return type spells (Ex. Ahri Q) now properly calculate collision with Braum and Yasuo walls@
+>Fixed a bug with Dravens R drawing on the wrong side of the projectile@
+>Fixed a bug that was causing minor chat spam@
+>Fixed a potential bug splat issue@
+>More small changes to the evasion algorithm@
 --1.31@
 >Updated for patch 7.2@
 >Made small changes to evasion algorithm@
