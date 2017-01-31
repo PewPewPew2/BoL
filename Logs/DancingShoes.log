@@ -1,3 +1,13 @@
+--1.33@
+>Fixed a few spells that were not being drawn or evaded until after the windup was complete@
+>Azir auto attacks are now shield only linear spells@
+>Added Zed W and Zed W return as a dash@
+>Added Ekko R as a lifesaver spell@
+>Added Elise Rappel as a shield@
+>Added Fizz E as a shield@
+>Added Vladimir W as a shield@
+>Added Shaco R as a lifesaver@
+>Profiles can now be Imported and Exported@
 --1.32@
 >Reenabled Rumbles Q and R, and fixed his E@
 >Now calculates damage from Shacos Passive@
