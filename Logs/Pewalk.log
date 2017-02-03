@@ -1,3 +1,6 @@
+--0.95@
+>Fixed some cancel bugs@
+>Added option 'AA Cancel Prevention', if Pewalk is cancelling lots of AA's turn this on else leave it off@
 --0.94@
 >Improved AA timings@
 --0.93@
