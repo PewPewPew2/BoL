@@ -3,7 +3,7 @@ local callbacks, lastTick = {}, {}
 local namingKey, currentName, lastBlink, drawBlink = false, '', 0, false
 _G.AddMsgCallback = function(f)
 	table.insert(callbacks, f)
-	o_AddMsgCallback(f)
+  o_AddMsgCallback(f)
 end
 
 local mc_Content = {}
@@ -154,7 +154,7 @@ AddLoadCallback(function()
 						v.name = currentName
 					end
 				end
-				table.insert(mc_Content.keysAdded, {key = namingKey, name = currentName})
+				table.insert(mc_Content.keysAdded, {key = namingKey, name = currentName, delay = 0,})
 				print('Added Key: '..currentName)
 				Menu:addParam('newKey'..namingKey, currentName, SCRIPT_PARAM_INFO, tostring(namingKey))
 				Menu.reset = false
@@ -165,13 +165,19 @@ AddLoadCallback(function()
 	AddTickCallback(function()
 		for _, v in pairs(mc_Content.keysAdded) do
 			if IsKeyDown(v.key) then
-				for _, f in ipairs(callbacks) do
-					f(256, v.key)
-				end
+        if v.delay and v.delay>os.clock() then
+          return
+        end
+        for _, f in ipairs(callbacks) do
+          f(256, v.key)
+        end
+        if not lastTick[v.key] then
+          v.delay = os.clock()+0.5
+        end
 				lastTick[v.key] = true
 			elseif lastTick[v.key] then
 				for _, f in ipairs(callbacks) do
-					f(257, v.key)
+          f(257, v.key)
 				end
 				lastTick[v.key] = false
 			end
