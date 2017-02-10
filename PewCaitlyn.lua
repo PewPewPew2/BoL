@@ -63,7 +63,7 @@ end)
 class 'Caitlyn'
  
 function Caitlyn:__init()
-	local version = 3.7
+	local version = 3.8
 	ScriptUpdate(
 		version,
 		true,
@@ -217,6 +217,7 @@ function Caitlyn:__init()
 	self.LastCtrl = 0
 	self.AllowECast = {x=0,z=0}
 	self.PreventSpam = 0
+  self.IsFirstKeyDown = true
 	self.DT = 0
 	for i=1, objManager.maxObjects do
 		local o = objManager:getObject(i)
@@ -251,6 +252,7 @@ function Caitlyn:__init()
 	AddProcessSpellCallback(function(...) self:ProcessSpell(...) end)
 	AddCastSpellCallback(function(...) self:CastSpell(...) end)
   AddNewPathCallback(function(...) self:NewPath(...) end)
+  AddMsgCallback(function(...) self:WndMsg(...) end)
 	if self.Packets then AddRecvPacketCallback2(function(p) self:RecvPacket(p) end)	end
 end
 
@@ -378,12 +380,16 @@ function Caitlyn:CreateMenu()
 				MenuCheck = self.Menu.Q.Method
 			end
 		end)
-		self.Menu.Q:addParam('HitChance2', 'Cast HitChance [3==Highest]', SCRIPT_PARAM_SLICE, 0.4, 0, 3, 1)
+		self.Menu.Q:addParam('HitChance2', 'Cast HitChance [3==Highest]', SCRIPT_PARAM_SLICE, 0.2, 0, 2, 2)
 		self.Menu.Q:addParam('space', '', SCRIPT_PARAM_INFO, '')
 		self.Menu.Q:addParam('info', '---Miscellaneous---', SCRIPT_PARAM_INFO, '')
 		self.Menu.Q:addParam('Mana', 'Always Save Mana for E', SCRIPT_PARAM_ONOFF, true)
 		self.Menu.Q:addParam('Draw', 'Draw Peacemaker Range', SCRIPT_PARAM_LIST, 1, { 'Low FPS', 'Normal', 'None', })
 	self.Menu:addSubMenu('Yordle Snap Trap', 'W')
+		self.Menu.W:addParam('info', '---Keys---', SCRIPT_PARAM_INFO, '')
+    _Pewalk.AddMenuHeader('---Keys---')
+		self.Menu.W:addParam('Line', 'Line Cast', SCRIPT_PARAM_ONKEYDOWN, false, ('Z'):byte())
+		self.Menu.W:addParam('space', '', SCRIPT_PARAM_INFO, '')
 		self.Menu.W:addParam('info', '---Combat---', SCRIPT_PARAM_INFO, '')
 		self.Menu.W:addParam('Path', 'Cast on Target Path', SCRIPT_PARAM_ONOFF, true)
 		self.Menu.W:addParam('Channel', 'Trap Channel Spells', SCRIPT_PARAM_ONOFF, true)
@@ -409,7 +415,6 @@ function Caitlyn:CreateMenu()
 		self.Menu.W:addParam('Draw', 'Draw Active Trap Timers', SCRIPT_PARAM_ONOFF, true)
 	self.Menu:addSubMenu('90 Caliber Net', 'E')
 		self.Menu.E:addParam('info', '---Keys---', SCRIPT_PARAM_INFO, '')
-    _Pewalk.AddMenuHeader('---Keys---')
 		self.Menu.E:addParam('Mouse', 'Net To Mouse', SCRIPT_PARAM_ONKEYDOWN, false, ('E'):byte())
 		self.Menu.E:addParam('space', '', SCRIPT_PARAM_INFO, '')
 		self.Menu.E:addParam('info', '---Farming---', SCRIPT_PARAM_INFO, '')
@@ -446,7 +451,67 @@ function Caitlyn:CreateObj(o)
 	end
 end
 
+function Caitlyn:WndMsg(m ,k)
+  if m==257 then
+    for _, v in pairs(self.Menu.W._param) do
+      if v.var=='Line' and v.key==k then
+        if self.DrawLineCast then
+          self.CastWLine = {Vector(self.DrawLineCast), delay=0, init=clock()+.25, y=self.DrawLineCast.y}
+          local dist = math.min(GetDistance(self.DrawLineCast, mousePos), 150*myHero:GetSpellData(_W).stacks-150)
+          for i=150, dist, 150 do
+            self.CastWLine[#self.CastWLine+1] = NormalizeX(mousePos, self.DrawLineCast, i)
+          end
+          self.DrawLineCast = nil
+        end
+        self.IsFirstKeyDown=true
+      end
+    end
+  elseif m==256 and self.DrawLineCast==nil and self.wReady and self.IsFirstKeyDown then
+    for _, v in pairs(self.Menu.W._param) do
+      if v.var=='Line' and v.key==k then
+        self.IsFirstKeyDown = false
+        self.DrawLineCast = Vector(mousePos)
+      end
+    end
+  elseif m==WM_RBUTTONDOWN then
+    self.DrawLineCast = nil
+  end
+end
+
 function Caitlyn:Draw()
+  if self.DrawLineCast then
+    DrawCircle3D(self.DrawLineCast.x,self.DrawLineCast.y,self.DrawLineCast.z,50,2,0xFFFF0000)
+    local dist = math.min(GetDistance(self.DrawLineCast, mousePos), 150*myHero:GetSpellData(_W).stacks-150)
+    for i=150, dist, 150 do
+      local p = NormalizeX(mousePos, self.DrawLineCast, i)
+      DrawCircle3D(p.x,self.DrawLineCast.y,p.z,50,2,0xFFFF0000)
+    end
+  elseif self.CastWLine and self.CastWLine[1] then
+    for i, p in ipairs(self.CastWLine) do
+      DrawCircle3D(p.x,self.CastWLine.y,p.z,50,2,0xFF0000FF)
+    end
+    if self.CastWLine.delay<clock() then
+      CastSpellEx(_W, self.CastWLine[1].x+math.random(-12.5, 12.5), self.CastWLine[1].z+math.random(-12.5, 12.5))
+      self.CastWLine.delay = clock() + 0.25
+    end
+    
+    local t = 'Enable Carry Mode to cancel Line Cast'
+    local a = GetTextArea(t, 22)
+    DrawLine(WINDOW_W*.5-a.x*.5-6,WINDOW_H*.5+a.y*.5,WINDOW_W*.5+a.x*.5+6,WINDOW_H*.5+a.y*.5,28,0xAA888888)
+    DrawLine(WINDOW_W*.5-a.x*.5-3,WINDOW_H*.5+a.y*.5,WINDOW_W*.5+a.x*.5+3,WINDOW_H*.5+a.y*.5,22,0xAA444444)
+    DrawText(t,22,WINDOW_W*.5-a.x*.5,WINDOW_H*.5,0xFFFF0000)
+    local t2 = ' Enable'
+    local a2 = GetTextArea(t2, 22)
+    DrawText('Carry Mode',22, WINDOW_W*.5-a.x*.5+a2.x, WINDOW_H*.5, 0xFF00FF00)
+    
+    if _Pewalk.GetActiveMode().Carry and self.CastWLine.init<clock() then        
+      self.CastWLine = nil
+    end
+  end
+
+  if self.Menu.Q.Method==2 and self.Menu.Q.Toggle then
+    DrawCircle3D(myHero.x,myHero.y,myHero.z,85,2,0xFFFF9900,4)
+  end  
 	if self.Menu.Q.Draw == 1 then
 		local points = {}
 		for theta = 0, (pi2+(pi/24)), (pi/24) do
@@ -604,8 +669,12 @@ function Caitlyn:NewPath(unit,startPos,endPos,isDash,dashSpeed,dashGravity,dashD
 end
 
 function Caitlyn:ProcessSpell(u, s)
-	if u.valid and u.type == 'AIHeroClient' and u.team == TEAM_ENEMY and self.OnSpells[s.name] then
-		self.OnSpells[s.name](s.endPos)
+	if u.valid and u.type == 'AIHeroClient' then
+    if u.team == TEAM_ENEMY and self.OnSpells[s.name] then
+      self.OnSpells[s.name](s.endPos)
+    elseif u.isMe and s.name=='CaitlynYordleTrap' and self.CastWLine and self.CastWLine[1] then
+      table.remove(self.CastWLine, 1)
+    end
 	end
 end
 
@@ -656,14 +725,14 @@ function Caitlyn:Tick()
       if self.Combo.UseQ then
         local CastPos = self.HP:GetPredict(self.HP_Q, self.Combo.target, Vector(self.Combo.startPos.x, myHero.y, self.Combo.startPos.z))
         if CastPos then  
-          CastSpell(_Q, CastPos.x, CastPos.z)
+          CastSpellEx(_Q, CastPos.x, CastPos.z)
           self.Combo = self.qReady and self.Combo or nil
         end
       else
         local CastPos = self.HP:GetPredict(self.HP_E, self.Combo.target, Vector(self.Combo.startPos.x, myHero.y, self.Combo.startPos.z))
         if CastPos then  
           self.AllowECast = {x=CastPos.x, z=CastPos.z}
-          CastSpell(_E, CastPos.x, CastPos.z)
+          CastSpellEx(_E, CastPos.x, CastPos.z)
           self.Combo.UseQ = self.eReady==false
         end
       end
