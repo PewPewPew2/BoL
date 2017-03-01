@@ -1,3 +1,8 @@
+--1.37@
+>Updated a few more characters damage calculations@
+>Leblanc and Zed dashes can now be set as return only@
+>Temp fixed an error that was being frequently printed@
+>Added Warwick R as a evasion spell@
 --1.36@
 >Updated changes from patch 7.4@
 >Updated damage calculations for all characters between Aatrox and Jarvan, including targeted spells, effects probably won't be noticable until all the characters are done and some other small changes are made@
