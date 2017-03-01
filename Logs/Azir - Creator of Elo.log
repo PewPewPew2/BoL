@@ -1,3 +1,8 @@
+--0.46@
+>Updated authorization code, will no longer cause a short freeze on load@
+>Updated the mode indicator to match Viktor and Taliyah@
+>Improved Ult casting (including Shurima Shuffle)@
+>Made slight changes to W casting at low levels (so that it wastes less soldiers)@
 --0.45@
 >'Insec' renamed to 'Shurima Shuffle' in menu@
 >E to mouse and E to target have now been combined into the same key, if your mouse is hovering close to a target, it will aim at the target, else it will just dash to your mouse@
