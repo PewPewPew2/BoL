@@ -1,3 +1,6 @@
+--1.03@
+>Fixed a bug with retrieving masteries@
+>Fixed loading error for users on Garena server@
 --1.02@
 >Updated packet and stat changes from patch 7.6@
 >Updated Galio changes@
