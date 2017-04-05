@@ -1,3 +1,5 @@
+--0.48@
+>Fixed an error some users were experiencing with Shurima Shuffle@
 --0.46@
 >Updated authorization code, will no longer cause a short freeze on load@
 >Updated the mode indicator to match Viktor and Taliyah@
