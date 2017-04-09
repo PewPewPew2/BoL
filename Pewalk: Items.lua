@@ -1,11 +1,11 @@
 local function Print(text)
-	print('<font color=\'#0099FF\'>[Pewalk: Items] </font> <font color=\'#FF6600\'>'..text..'</font>')
+	print('<font color=\'#0099FF\'><b>[Pewalk: Items] </b></font> <font color=\'#FF6600\'>'..text..'</font>')
 end
 
 AddLoadCallback(function()
   if _Pewalk then
     PewItems()
-    ScriptUpdate_Items(1.7,
+    ScriptUpdate_Items(1.8,
       true,
       'raw.githubusercontent.com', 
       '/PewPewPew2/BoL/master/Versions/Pewalk%3A%20Items.version', 
@@ -78,13 +78,13 @@ function PewItems:__init()
 			end,
 		},
     [3030] = {
-      ['type'] = 'Linear',
+      ['type'] = 'GLP',
       ['range'] = 640000,
     }
 	}	
 	self.Offensive = {
 		[3074] = { --Ravenous Hydra (ItemTiamatCleave)
-			['type'] = 'Cleave',
+			['type'] = 'Titanic',
 			['range'] = 0, 
 			['menuHandle'] = function()
 				return self.Menu.RH
@@ -148,8 +148,8 @@ function PewItems:__init()
 		['regenerationpotion'] = true,
 		['itemminiregenpotion'] = true,
 	}	
-	self.HardCC = {[5] = 'Stun', [11] = 'Root', [24] = 'Suppress',  [8] = 'Taunt', [22] = 'Charm', }
-	self.SoftCC = {[10] = 'Slow', [21] = 'Fear',}
+	self.HardCC = {[5] = 'Stun', [11] = 'Root', [24] = 'Suppress',  [8] = 'Taunt',  [21] = 'Fear', [22] = 'Charm', }
+	self.SoftCC = {[10] = 'Slow',}
   self.StopQSS = {[29] = 'Knockup', [30] = 'Knockback',}
 	self.ALLY = myHero.team
 	self.ENEMY = 300 - self.ALLY
@@ -272,6 +272,9 @@ function PewItems:CreateMenu()
 			self.Menu.Tiamat:addParam('Farm', 'Use to Last Hit', SCRIPT_PARAM_ONOFF, true)
 		self.Menu:addSubMenu('Titanic Hydra', 'TH')
 			self.Menu.TH:addParam('Enable', 'Enable', SCRIPT_PARAM_ONOFF, true)
+			self.Menu.TH:addParam('space', '', SCRIPT_PARAM_INFO, '')
+			self.Menu.TH:addParam('Clear', 'Use in Skill Clear', SCRIPT_PARAM_ONOFF, true)
+			self.Menu.TH:addParam('Farm', 'Use to Last Hit', SCRIPT_PARAM_ONOFF, true)
 		self.Menu:addSubMenu('Ravenous Hydra', 'RH')
 			self.Menu.RH:addParam('Enable', 'Enable', SCRIPT_PARAM_ONOFF, true)
 			self.Menu.RH:addParam('space', '', SCRIPT_PARAM_INFO, '')
@@ -368,7 +371,7 @@ end
 function PewItems:IsDisplaced(unit)
   if self.Buffs[unit.networkID] then
     for k, buff in ipairs(self.Buffs[unit.networkID]) do
-      if self.StopQSS[buff.type] and buff.endTime > GT then
+      if self.StopQSS[buff.type] and buff.endTime > GetInGameTimer() then
         return true
       end
     end
@@ -376,13 +379,21 @@ function PewItems:IsDisplaced(unit)
   return false
 end
 
-function PewItems:Linear(slot)
+function PewItems:GLP(slot)
   if _Pewalk.GetActiveMode().Carry and self.Menu.GLP.Enable then
-    local t = _Pewalk.GetTarget(800)
+    local t = _Pewalk.GetTarget(1000)
     if t then
-      local cp = _Pewalk.GetCastPos(t, {delay=0, speed=1800,})
-      if cp and _Pewalk.GetCollision(t, cp, {length=800, width=50, delay=0}, myHero) then
-        CastSpell(slot, cp.x, cp.z)
+      local cp = _Pewalk.GetCastPos(t, {delay=0.25, speed=2400,})
+      if cp and _Pewalk.GetCollision(t, cp, {length=1000, width=60, delay=0.25}, myHero) then
+        
+        local origin = Vector(myHero)
+        local direction = Vector(cp.x, myHero.y, cp.z) - origin
+        direction:normalize()	
+        local phi = -30/180*math.pi
+        local rotated = direction:rotated(0, phi, 0)
+        local v2 = origin + rotated * 250        
+        
+        CastSpell(slot, v2.x, v2.z)
       end
     end
   end
@@ -444,6 +455,27 @@ function PewItems:Tick()
 			end
 		end
 	end
+end
+
+function PewItems:Titanic(slot, target, info)
+  local AM = _Pewalk.GetActiveMode()
+  if AM.Carry and self.Menu.TH.Enable and target.type == 'AIHeroClient' and myHero:CanUseSpell(slot) == READY then
+    CastSpell(slot)
+  elseif AM.SkillClear and AM.LaneClear and self.Menu.TH.Clear then
+    if target.team==300 then
+      CastSpell(slot)
+      return
+    end
+    local t = _Pewalk.GetSkillFarmTarget(.25,function() return myHero.totalDamage end, math.huge, 325, false, false)
+    if t and t ~= target then
+      CastSpell(slot)
+    end
+  elseif (AM.LaneClear or AM.Farm) and self.Menu.TH.Farm then
+    local t = _Pewalk.GetSkillFarmTarget(.25,function() return myHero.totalDamage end, math.huge, 325, false, false)
+    if t and t ~= target then
+      CastSpell(slot)
+    end    
+  end
 end
 
 function PewItems:Youmuus(slot, target, info)
