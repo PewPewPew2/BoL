@@ -1,3 +1,6 @@
+--1.47@
+>Updated stat changes for patch 7.8@
+>Added support for Xayah and Rakan@
 --1.46@
 >Will no longer cancel recalls in the last 0.5s of the channel@
 >Karmas Mantra Q now has two menus, one for the projectile and another for the AoE@
