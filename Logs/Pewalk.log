@@ -1,3 +1,7 @@
+--1.08@
+>Fixed a few bugs related to turret farming@
+>Fixed some minor farming bugs@
+>You will now be prompted to manually select your masteries if automatic retrieval fails@
 --1.07@
 >Updated packets for patch 7.8@
 >Added support for Xayah and Rakan@
