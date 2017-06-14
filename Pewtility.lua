@@ -322,7 +322,7 @@ function Print(text, isError)
 end
 
 function LoadScript()
-	local Version = 9.6
+	local Version = 9.7
 	TEAM_ALLY, TEAM_ENEMY = myHero.team, 300-myHero.team
   -- TEAM_ENEMY=myHero.team
   
@@ -385,8 +385,8 @@ function WardTracker:__init()
       ['SourcePtr'] = 0x444,
       ['NetworkIDPtr'] = 0xF0,
     },
-    ['7.10'] = {
-      ['SourcePtr'] = 0x360,
+    ['7.12'] = {
+      ['SourcePtr'] = 0x444,
       ['NetworkIDPtr'] = 0xF0,
     },
   }
@@ -727,9 +727,9 @@ function Awareness:__init()
 	self.Packets = GetGameVersion():sub(1, 4) == '7.11' and {
 		['LoseVision'] = { ['Header'] = 0x0017, ['pos'] = 2, },
 		['GainVision'] = { ['Header'] = 0x0174, ['pos'] = 2, },
-	} or GetGameVersion():sub(1,4) == '7.10' and {
-		['LoseVision'] = { ['Header'] = 0x00EC, ['pos'] = 2, },
-		['GainVision'] = { ['Header'] = 0x0173, ['pos'] = 2, },
+	} or GetGameVersion():sub(1,4) == '7.12' and {
+		['LoseVision'] = { ['Header'] = 0x0063, ['pos'] = 2, },
+		['GainVision'] = { ['Header'] = 0x0175, ['pos'] = 2, },
 	}
 	self.recallTimes = {
 		['recall'] = 7.9,
@@ -1623,9 +1623,9 @@ function JungleTimers:__init()
 			[0xFF4A20F1] = { ['pos'] = Vector(3110, -201, 3189), ['time'] = 300, ['mapPos'] = GetMinimap(Vector(3110, -201, 3189)), }, --Bottom Inhibitor
 			[0xFFFF8F1F] = { ['pos'] = Vector(9689, -190, 9524), ['time'] = 300, ['mapPos'] = GetMinimap(Vector(9689, -190, 9524)), }, --Top Inhibitor			
 		},
-	} or GetGameVersion():sub(1,4) == '7.10' and {
-		['Jungle'] = { ['Header'] = 0x0184, ['campPos'] = 6, ['idPos'] = 15, ['idZero'] = 0x71717171, }, --size 24 
-		['Inhibitor'] = { ['Header'] = 0x008C, ['pos'] = 2, },  --size 19
+	} or GetGameVersion():sub(1,4) == '7.12' and {
+		['Jungle'] = { ['Header'] = 0x0186, ['campPos'] = 6, ['idPos'] = 15, ['idZero'] = 0x71717171, }, --size 24 
+		['Inhibitor'] = { ['Header'] = 0x0160, ['pos'] = 2, },  --size 19
 		['SummonerRift'] = {
 			[0xE0] = { ['pos'] = Vector(3850, 60, 7880),  ['time'] = 300, ['spawn'] = 97, ['mapPos'] = GetMinimap(Vector(3850, 60, 7880)),  }, --Blue Side Blue Buff
 			[0x85] = { ['pos'] = Vector(3800, 60, 6500),  ['time'] = 150, ['spawn'] = 97,  ['mapPos'] = GetMinimap(Vector(3800, 60, 6500)),  }, --Blue Side Wolves
@@ -1872,8 +1872,8 @@ class 'TrinketAssistant'
 
 function TrinketAssistant:__init()
 	if GetGame().map.shortName ~= 'summonerRift' then return end
-	self.Packet = GetGameVersion():sub(1,4) == '7.10' and {
-		['Header'] = 0x00CB, ['pos'] = 11, ['ssID'] = 0x4F4F6F0F,
+	self.Packet = GetGameVersion():sub(1,4) == '7.12' and {
+		['Header'] = 0x0043, ['pos'] = 11, ['ssID'] = 0x4F4F6F0F,
 	} or GetGameVersion():sub(1,4) == '7.11' and {
 		['Header'] = 0x0061, ['pos'] = 11, ['ssID'] = 0x4F4F6F0F,
 	}
