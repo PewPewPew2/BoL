@@ -127,7 +127,7 @@ function SmiteMinions:__init()
 end
 
 function SmiteMinions:IsValid(o)
-	return o and o.valid and not o.dead and o.type == 'obj_AI_Minion' and o.team == 300
+	return o and o.valid and not o.dead and o.type == 'AIMinion' and o.team == 300
 end
 
 function SmiteMinions:IsValid2(charName)
