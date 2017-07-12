@@ -63,7 +63,7 @@ else
 end
 
 AddLoadCallback(function()
-	local version = 0.06
+	local version = 0.07
 	for i=1, heroManager.iCount do
 		local h = heroManager:getHero(i)
 		if h and h.team~=myHero.team then
@@ -84,7 +84,7 @@ AddLoadCallback(function()
 							CastSpell(_Q)
 						end
 					end
-				elseif target.type == 'obj_AI_Minion' and AM.SkillClear and Menu.ClearQ then
+				elseif target.type == 'AIMinion' and AM.SkillClear and Menu.ClearQ then
 					if myHero:CanUseSpell(_Q) == READY then
 						CastSpell(_Q)
 					end					
