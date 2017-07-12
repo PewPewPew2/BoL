@@ -1,6 +1,6 @@
 if myHero.charName~='Ivern' then return end
 
-local version = 0.02
+local version = 0.03
 
 local Menu, Daisy, HP_Q, HP
 local Enemies = {}
@@ -168,7 +168,7 @@ end
 
 function ApplyBuff(source,unit,buff)
   if Menu.CC and unit and unit.valid and unit.team==myHero.team and unit.type=='AIHeroClient' and not unit.isMe and HardCC(buff) then
-    if not Evade and myHero:CanUseSpell(_W) == READY and GetDistanceSqr(unit) < 1600*1600 then
+    if not Evade and myHero:CanUseSpell(_W) == READY and GetDistanceSqr(unit) < 800*800 then
       for _, b in pairs(_Pewalk.GetBuffs(unit)) do
         if b.type == 30 then
           return 
@@ -180,7 +180,7 @@ function ApplyBuff(source,unit,buff)
 end
 
 function CreateObj(o)
-  if o.valid and o.type == 'obj_AI_Minion' and o.team == myHero.team and o.name == 'IvernMinion' then
+  if o.valid and o.type == 'AIMinion' and o.team == myHero.team and o.name == 'IvernMinion' then
     Daisy = o
   end
 end
