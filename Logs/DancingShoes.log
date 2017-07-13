@@ -1,3 +1,9 @@
+--1.53@
+>Updated stat changes for patch 7.14@
+>Added Kayn Q and W as evadeable spells@
+>Added Kayn Q as a dash@
+>Added option 'Disable All FoW Evasion', in General Options@
+>The Draw Mode Indicator option has been changed so that it can now be set to only draw Combat and Disabled (or all, or none)@
 --1.52@
 >Updated stat changes for patch 7.13@
 --1.50@
