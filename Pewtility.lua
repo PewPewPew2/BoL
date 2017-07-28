@@ -322,7 +322,7 @@ function Print(text, isError)
 end
 
 function LoadScript()
-	local Version = 9.9
+	local Version = 10.0
 	TEAM_ALLY, TEAM_ENEMY = myHero.team, 300-myHero.team
   -- TEAM_ENEMY=myHero.team
   
@@ -381,7 +381,7 @@ class 'WardTracker'
 
 function WardTracker:__init()
   local OffsetVersions = {
-    ['7.13'] = {
+    ['7.15'] = {
       ['SourcePtr'] = 0x444,
       ['NetworkIDPtr'] = 0xF0,
     },
@@ -724,9 +724,9 @@ end
 class 'Awareness'
 
 function Awareness:__init()
-	self.Packets = GetGameVersion():sub(1, 4) == '7.13' and {
-		['LoseVision'] = { ['Header'] = 0x010A, ['pos'] = 2, },
-		['GainVision'] = { ['Header'] = 0x00C4, ['pos'] = 2, },
+	self.Packets = GetGameVersion():sub(1, 4) == '7.15' and {
+		['LoseVision'] = { ['Header'] = 0x007A, ['pos'] = 2, },
+		['GainVision'] = { ['Header'] = 0x0184, ['pos'] = 2, },
 	} or GetGameVersion():sub(1,4) == '7.14' and {
 		['LoseVision'] = { ['Header'] = 0x01A5, ['pos'] = 2, },
 		['GainVision'] = { ['Header'] = 0x0177, ['pos'] = 2, },
@@ -1574,26 +1574,26 @@ end
 class 'JungleTimers'
 
 function JungleTimers:__init()
-	self.Packets = GetGameVersion():sub(1,4) == '7.13' and {
-		['Jungle'] = { ['Header'] = 0x002D, ['campPos'] = 14, ['idPos'] = 6, ['idZero'] = 0x29292929, }, --size 24 
+	self.Packets = GetGameVersion():sub(1,4) == '7.15' and {
+		['Jungle'] = { ['Header'] = 0x0130, ['campPos'] = 20, ['idPos'] = 16, ['idZero'] = 0x5F5F5F5F, }, --size 24 
 		['Inhibitor'] = { ['Header'] = 0x0088, ['pos'] = 2, },  --size 19
 		['SummonerRift'] = {
-			[0xBC] = { ['pos'] = Vector(3850, 60, 7880),  ['time'] = 300, ['spawn'] = 97, ['mapPos'] = GetMinimap(Vector(3850, 60, 7880)),  }, --Blue Side Blue Buff
-			[0xD3] = { ['pos'] = Vector(3800, 60, 6500),  ['time'] = 150, ['spawn'] = 97,  ['mapPos'] = GetMinimap(Vector(3800, 60, 6500)),  }, --Blue Side Wolves
-			[0xF9] = { ['pos'] = Vector(7000, 60, 5400),  ['time'] = 150, ['spawn'] = 97,  ['mapPos'] = GetMinimap(Vector(7000, 60, 5400)),  }, --Blue Side Raptors
-			[0x10] = { ['pos'] = Vector(7800, 60, 4000),  ['time'] = 300, ['spawn'] = 97, ['mapPos'] = GetMinimap(Vector(7800, 60, 4000)),  }, --Blue Side Red Buff
-			[0xC0] = { ['pos'] = Vector(8400, 60, 2700),  ['time'] = 150, ['spawn'] = 110, ['mapPos'] = GetMinimap(Vector(8400, 60, 2700)),  }, --Blue Side Krugs
-			[0x5B] = { ['pos'] = Vector(9866, 60, 4414),  ['time'] = 360, ['spawn'] = 150, ['mapPos'] = GetMinimap(Vector(9866, 60, 4414)),  ['isDragon'] = true, }, --Dragon
-			[0x61] = { ['pos'] = Vector(10950, 60, 7030), ['time'] = 300, ['spawn'] = 97, ['mapPos'] = GetMinimap(Vector(10950, 60, 7030)), }, --Red Side Blue Buff
-			[0x8D] = { ['pos'] = Vector(11000, 60, 8400), ['time'] = 150, ['spawn'] = 97,  ['mapPos'] = GetMinimap(Vector(11000, 60, 8400)), }, --Red Side Wolves	
-			[0x55] = { ['pos'] = Vector(7850, 60, 9500),  ['time'] = 150, ['spawn'] = 97,  ['mapPos'] = GetMinimap(Vector(7850, 60, 9500)),  }, --Red Side Raptors
-			[0x8A] = { ['pos'] = Vector(7100, 60, 10900), ['time'] = 300, ['spawn'] = 97, ['mapPos'] = GetMinimap(Vector(7100, 60, 10900)), }, --Red Side Red Buff
-			[0x66] = { ['pos'] = Vector(6400, 60, 12250), ['time'] = 150, ['spawn'] = 110, ['mapPos'] = GetMinimap(Vector(6400, 60, 12250)), }, --Red Side Krugs
-			[0x39] = { ['pos'] = Vector(4950, 60, 10400), ['time'] = 420,                  ['mapPos'] = GetMinimap(Vector(4950, 60, 10400)), }, --Baron
-			[0xEC] = { ['pos'] = Vector(2200, 60, 8500),  ['time'] = 150, ['spawn'] = 110, ['mapPos'] = GetMinimap(Vector(2200, 60, 8500)),  }, --Blue Side Gromp
-			[0xA2] = { ['pos'] = Vector(12600, 60, 6400), ['time'] = 150, ['spawn'] = 110, ['mapPos'] = GetMinimap(Vector(12600, 60, 6400)), }, --Red Side Gromp
-			[0x6E] = { ['pos'] = Vector(10500, 60, 5170), ['time'] = 180, ['spawn'] = 145, ['mapPos'] = GetMinimap(Vector(10500, 60, 5170)), }, --Dragon Crab
-			[0x94] = { ['pos'] = Vector(4400, 60, 9600),  ['time'] = 180, ['spawn'] = 145, ['mapPos'] = GetMinimap(Vector(4400, 60, 9600)),  }, --Baron Crab
+			[0x2D] = { ['pos'] = Vector(3850, 60, 7880),  ['time'] = 300, ['spawn'] = 97, ['mapPos'] = GetMinimap(Vector(3850, 60, 7880)),  }, --Blue Side Blue Buff
+			[0x8C] = { ['pos'] = Vector(3800, 60, 6500),  ['time'] = 150, ['spawn'] = 97,  ['mapPos'] = GetMinimap(Vector(3800, 60, 6500)),  }, --Blue Side Wolves
+			[0xA2] = { ['pos'] = Vector(7000, 60, 5400),  ['time'] = 150, ['spawn'] = 97,  ['mapPos'] = GetMinimap(Vector(7000, 60, 5400)),  }, --Blue Side Raptors
+			[0xBB] = { ['pos'] = Vector(7800, 60, 4000),  ['time'] = 300, ['spawn'] = 97, ['mapPos'] = GetMinimap(Vector(7800, 60, 4000)),  }, --Blue Side Red Buff
+			[0x18] = { ['pos'] = Vector(8400, 60, 2700),  ['time'] = 150, ['spawn'] = 110, ['mapPos'] = GetMinimap(Vector(8400, 60, 2700)),  }, --Blue Side Krugs
+			[0xE1] = { ['pos'] = Vector(9866, 60, 4414),  ['time'] = 360, ['spawn'] = 150, ['mapPos'] = GetMinimap(Vector(9866, 60, 4414)),  ['isDragon'] = true, }, --Dragon
+			[0x9A] = { ['pos'] = Vector(10950, 60, 7030), ['time'] = 300, ['spawn'] = 97, ['mapPos'] = GetMinimap(Vector(10950, 60, 7030)), }, --Red Side Blue Buff
+			[0x53] = { ['pos'] = Vector(11000, 60, 8400), ['time'] = 150, ['spawn'] = 97,  ['mapPos'] = GetMinimap(Vector(11000, 60, 8400)), }, --Red Side Wolves	
+			[0x9D] = { ['pos'] = Vector(7850, 60, 9500),  ['time'] = 150, ['spawn'] = 97,  ['mapPos'] = GetMinimap(Vector(7850, 60, 9500)),  }, --Red Side Raptors
+			[0xB0] = { ['pos'] = Vector(7100, 60, 10900), ['time'] = 300, ['spawn'] = 97, ['mapPos'] = GetMinimap(Vector(7100, 60, 10900)), }, --Red Side Red Buff
+			[0x70] = { ['pos'] = Vector(6400, 60, 12250), ['time'] = 150, ['spawn'] = 110, ['mapPos'] = GetMinimap(Vector(6400, 60, 12250)), }, --Red Side Krugs
+			[0xE5] = { ['pos'] = Vector(4950, 60, 10400), ['time'] = 420,                  ['mapPos'] = GetMinimap(Vector(4950, 60, 10400)), }, --Baron --19:51
+			[0x00] = { ['pos'] = Vector(2200, 60, 8500),  ['time'] = 150, ['spawn'] = 110, ['mapPos'] = GetMinimap(Vector(2200, 60, 8500)),  }, --Blue Side Gromp
+			[0x96] = { ['pos'] = Vector(12600, 60, 6400), ['time'] = 150, ['spawn'] = 110, ['mapPos'] = GetMinimap(Vector(12600, 60, 6400)), }, --Red Side Gromp
+			[0x1F] = { ['pos'] = Vector(10500, 60, 5170), ['time'] = 180, ['spawn'] = 145, ['mapPos'] = GetMinimap(Vector(10500, 60, 5170)), }, --Dragon Crab
+			[0x69] = { ['pos'] = Vector(4400, 60, 9600),  ['time'] = 180, ['spawn'] = 145, ['mapPos'] = GetMinimap(Vector(4400, 60, 9600)),  }, --Baron Crab
 			[0xFFD23C3E] = { ['pos'] = Vector(1170, 90, 3570),   ['time'] = 300, ['mapPos'] = GetMinimap(Vector(1170, 91, 3570)),   }, --Blue Top Inhibitor
 			[0xFF4A20F1] = { ['pos'] = Vector(3203, 92, 3208),   ['time'] = 300, ['mapPos'] = GetMinimap(Vector(3203, 92, 3208)),   }, --Blue Middle Inhibitor
 			[0xFF9303E1] = { ['pos'] = Vector(3452, 89, 1236),   ['time'] = 300, ['mapPos'] = GetMinimap(Vector(3452, 89, 1236)),   }, --Blue Bottom Inhibitor
@@ -1602,24 +1602,24 @@ function JungleTimers:__init()
 			[0xFF26AC0F] = { ['pos'] = Vector(13604, 89, 11316), ['time'] = 300, ['mapPos'] = GetMinimap(Vector(13604, 89, 11316)), }, --Red Bottom Inhibitor				
 		},
 		['TwistedTreeline'] = {
-			[0xBC] = { ['pos'] =  Vector(4414, 60, 5774), ['time'] =  75, ['spawn'] = 65, ['mapPos'] = GetMinimap(Vector(4414, 60, 5774)),  },
-			[0xD3] = { ['pos'] =  Vector(5088, 60, 8065), ['time'] =  75, ['spawn'] = 65, ['mapPos'] = GetMinimap(Vector(5088, 60, 8065)),  },
-			[0xF9] = { ['pos'] =  Vector(6148, 60, 5993), ['time'] =  75, ['spawn'] = 65, ['mapPos'] = GetMinimap(Vector(6148, 60, 5993)),  },
-			[0x10] = { ['pos'] = Vector(11008, 60, 5775), ['time'] =  75, ['spawn'] = 65, ['mapPos'] = GetMinimap(Vector(11008, 60, 5775)), },
-			[0xC0] = { ['pos'] = Vector(10341, 60, 8084), ['time'] =  75, ['spawn'] = 65, ['mapPos'] = GetMinimap(Vector(10341, 60, 8084)), },
-			[0x5B] = { ['pos'] =  Vector(9239, 60, 6022), ['time'] =  75, ['spawn'] = 65, ['mapPos'] = GetMinimap(Vector(9239, 60, 6022)),  },
-			[0x61] = { ['pos'] =  Vector(7711, 60, 6722), ['time'] =  90, ['spawn'] = 150, ['mapPos'] = GetMinimap(Vector(7711, 60, 6722)), },
-			[0x8D] = { ['pos'] = Vector(7711, 60, 10080), ['time'] = 360, ['spawn'] = 600, ['mapPos'] = GetMinimap(Vector(7711, 60, 10080)),},
+			[0x2D] = { ['pos'] =  Vector(4414, 60, 5774), ['time'] =  75, ['spawn'] = 65, ['mapPos'] = GetMinimap(Vector(4414, 60, 5774)),  },
+			[0x8C] = { ['pos'] =  Vector(5088, 60, 8065), ['time'] =  75, ['spawn'] = 65, ['mapPos'] = GetMinimap(Vector(5088, 60, 8065)),  },
+			[0xA2] = { ['pos'] =  Vector(6148, 60, 5993), ['time'] =  75, ['spawn'] = 65, ['mapPos'] = GetMinimap(Vector(6148, 60, 5993)),  },
+			[0xBB] = { ['pos'] = Vector(11008, 60, 5775), ['time'] =  75, ['spawn'] = 65, ['mapPos'] = GetMinimap(Vector(11008, 60, 5775)), },
+			[0x18] = { ['pos'] = Vector(10341, 60, 8084), ['time'] =  75, ['spawn'] = 65, ['mapPos'] = GetMinimap(Vector(10341, 60, 8084)), },
+			[0xE1] = { ['pos'] =  Vector(9239, 60, 6022), ['time'] =  75, ['spawn'] = 65, ['mapPos'] = GetMinimap(Vector(9239, 60, 6022)),  },
+			[0x9A] = { ['pos'] =  Vector(7711, 60, 6722), ['time'] =  90, ['spawn'] = 150, ['mapPos'] = GetMinimap(Vector(7711, 60, 6722)), },
+			[0x53] = { ['pos'] = Vector(7711, 60, 10080), ['time'] = 360, ['spawn'] = 600, ['mapPos'] = GetMinimap(Vector(7711, 60, 10080)),},
 			[0xFFD303E1] = { ['pos'] = Vector(2126, 11, 6146),   ['time'] = 240, ['mapPos'] = GetMinimap(Vector(2126, 11, 6146)),   }, --Left Bottom Inhibitor
 			[0xFFD23C3E] = { ['pos'] = Vector(2146, 11, 8420),   ['time'] = 240, ['mapPos'] = GetMinimap(Vector(2146, 11, 8420)),   }, --Left Top Inhibitor
 			[0xFF26AC0F] = { ['pos'] = Vector(13285, 17, 6124),  ['time'] = 240, ['mapPos'] = GetMinimap(Vector(13285, 17, 6124)),  }, --Right Bottom Inhibitor
 			[0xFF6793D0] = { ['pos'] = Vector(13275, 17, 8416),  ['time'] = 240, ['mapPos'] = GetMinimap(Vector(13275, 17, 8416)),  }, --Right Top Inhibitor			
 		},
 		['HowlingAbyss'] = {
-			[0xBC] = { ['pos'] = Vector(7582, -100, 6785), ['time'] =  60, ['spawn'] = 120, ['mapPos'] = GetMinimap(Vector(7582, -100, 6785)), },
-			[0xD3] = { ['pos'] = Vector(5929, -100, 5190), ['time'] =  60, ['spawn'] = 120, ['mapPos'] = GetMinimap(Vector(5929, -100, 5190)), },
-			[0xF9] = { ['pos'] = Vector(8893, -100, 7889), ['time'] =  60, ['spawn'] = 120, ['mapPos'] = GetMinimap(Vector(8893, -100, 7889)), },
-			[0x10] = { ['pos'] = Vector(4790, -100, 3934), ['time'] =  60, ['spawn'] = 120, ['mapPos'] = GetMinimap(Vector(4790, -100, 3934)), },
+			[0x2D] = { ['pos'] = Vector(7582, -100, 6785), ['time'] =  60, ['spawn'] = 120, ['mapPos'] = GetMinimap(Vector(7582, -100, 6785)), },
+			[0x8C] = { ['pos'] = Vector(5929, -100, 5190), ['time'] =  60, ['spawn'] = 120, ['mapPos'] = GetMinimap(Vector(5929, -100, 5190)), },
+			[0xA2] = { ['pos'] = Vector(8893, -100, 7889), ['time'] =  60, ['spawn'] = 120, ['mapPos'] = GetMinimap(Vector(8893, -100, 7889)), },
+			[0xBB] = { ['pos'] = Vector(4790, -100, 3934), ['time'] =  60, ['spawn'] = 120, ['mapPos'] = GetMinimap(Vector(4790, -100, 3934)), },
 			[0xFF4A20F1] = { ['pos'] = Vector(3110, -201, 3189), ['time'] = 300, ['mapPos'] = GetMinimap(Vector(3110, -201, 3189)), }, --Bottom Inhibitor
 			[0xFFFF8F1F] = { ['pos'] = Vector(9689, -190, 9524), ['time'] = 300, ['mapPos'] = GetMinimap(Vector(9689, -190, 9524)), }, --Top Inhibitor			
 		},
@@ -1638,7 +1638,7 @@ function JungleTimers:__init()
 			[0xD0] = { ['pos'] = Vector(7850, 60, 9500),  ['time'] = 150, ['spawn'] = 97,  ['mapPos'] = GetMinimap(Vector(7850, 60, 9500)),  }, --Red Side Raptors
 			[0xA1] = { ['pos'] = Vector(7100, 60, 10900), ['time'] = 300, ['spawn'] = 97, ['mapPos'] = GetMinimap(Vector(7100, 60, 10900)), }, --Red Side Red Buff
 			[0x59] = { ['pos'] = Vector(6400, 60, 12250), ['time'] = 150, ['spawn'] = 110, ['mapPos'] = GetMinimap(Vector(6400, 60, 12250)), }, --Red Side Krugs
-			[0xA9] = { ['pos'] = Vector(4950, 60, 10400), ['time'] = 420,                  ['mapPos'] = GetMinimap(Vector(4950, 60, 10400)), }, --Baron
+			[0xA9] = { ['pos'] = Vector(4950, 60, 10400), ['time'] = 420,                  ['mapPos'] = GetMinimap(Vector(4950, 60, 10400)), }, --Baron --19:51
 			[0x4A] = { ['pos'] = Vector(2200, 60, 8500),  ['time'] = 150, ['spawn'] = 110, ['mapPos'] = GetMinimap(Vector(2200, 60, 8500)),  }, --Blue Side Gromp
 			[0xBB] = { ['pos'] = Vector(12600, 60, 6400), ['time'] = 150, ['spawn'] = 110, ['mapPos'] = GetMinimap(Vector(12600, 60, 6400)), }, --Red Side Gromp
 			[0x85] = { ['pos'] = Vector(10500, 60, 5170), ['time'] = 180, ['spawn'] = 145, ['mapPos'] = GetMinimap(Vector(10500, 60, 5170)), }, --Dragon Crab
@@ -1874,8 +1874,8 @@ function TrinketAssistant:__init()
 	if GetGame().map.shortName ~= 'summonerRift' then return end
 	self.Packet = GetGameVersion():sub(1,4) == '7.14' and {
 		['Header'] = 0x01A6, ['pos'] = 17, ['ssID'] = 0x20201022,
-	} or GetGameVersion():sub(1,4) == '7.13' and {
-		['Header'] = 0x00A6, ['pos'] = 18, ['ssID'] = 0xD9D90455,
+	} or GetGameVersion():sub(1,4) == '7.15' and {
+		['Header'] = 0x0158, ['pos'] = 13, ['ssID'] = 0x4545D379,
 	}
 	self.trinketID = {
 		['TrinketTotemLvl1'] = 3340,
