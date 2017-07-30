@@ -322,7 +322,7 @@ function Print(text, isError)
 end
 
 function LoadScript()
-	local Version = 10.0
+	local Version = 10.1
 	TEAM_ALLY, TEAM_ENEMY = myHero.team, 300-myHero.team
   -- TEAM_ENEMY=myHero.team
   
@@ -1676,6 +1676,9 @@ function JungleTimers:__init()
   
 	self.activeTimers = {}
 	self.map = GetGame2().Map.Name
+  
+  if not self.Packets[self.map] then return end
+  
 	self.checkLastDragon = false
 	self.checkLastBaron = false
 	self:CreateMenu()
