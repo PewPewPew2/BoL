@@ -1,5 +1,5 @@
 --[[
-  Dancing Shoes - Version 1.56 - LoL Patch 1.56
+  Dancing Shoes - Version 1.56 - LoL Patch 7.16
 ]]
 
 LoadEncryptedScript([[ZK26WnQF31H+ubxXLGYliPS6iU/oZUsqev+o2n6Or1y0UUJl9PtiXcp38xJGLRHwtJsh7ZCH3lzmOnpTZMVdMeDN5lmQkyAYnXzNsK95+Eq7IU9fQGTuoU5sn+g+zI4/12yU4id2LZZgcnLldkDJNj
