@@ -322,7 +322,7 @@ function Print(text, isError)
 end
 
 function LoadScript()
-	local Version = 10.6
+	local Version = 10.7
 	TEAM_ALLY, TEAM_ENEMY = myHero.team, 300-myHero.team
   -- TEAM_ENEMY=myHero.team
   
@@ -1726,9 +1726,9 @@ function JungleTimers:CreateMenu()
 end
 
 function JungleTimers:Draw()
-	for k, v in pairs(self.Packets.SummonerRift) do
-		DrawText3D(('0x%02X'):format(k),v.pos.x,v.pos.y,v.pos.z,22,ARGB(255,255,255,255))
-	end
+	-- for k, v in pairs(self.Packets.SummonerRift) do
+		-- DrawText3D(('0x%02X'):format(k),v.pos.x,v.pos.y,v.pos.z,22,ARGB(255,255,255,255))
+	-- end
 	
 	if not self.Menu.draw then return end
   
@@ -1748,7 +1748,7 @@ function JungleTimers:RecvPacket(p)
 	if p.header == self.Packets.Jungle.Header then
 		p.pos = self.Packets.Jungle.campPos
 		local camp = p:Decode1()
-		print(('0x%02X'):format(camp))
+		-- print(('0x%02X'):format(camp))
 		
 		if self.Packets[self.map][camp] then
 			p.pos = self.Packets.Jungle.idPos
