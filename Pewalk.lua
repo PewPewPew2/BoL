@@ -3508,10 +3508,4 @@ Ik3tM3JnVSsymQTX5HKQVXcwSuve/iG08Go89ogIbgj1KX3QFBOleHYsFJI9SrEhSI56SVTQaK/Kdk05
 tKN85jXHaZeXgLZJkbdZVtlXPS9fW+uuW6UB1hEJCsReGHAIo5rFpIw+30jXdm6uFQtc4bdxKjn/UOMcMzey8yBHOa8kYl/TnLCrUmGkexdVZVSXPK6M0noT3fWIW9ONGGVfOEVTqRB4BO9bliMOtG
 sKUihAYhkxKfgMNIqrypcKJJgDfSfFDx6GiiTixZrPXP73tq3x0mqar4aLtiIXtpaxrEDZErwy5QzWrHOAGbr/G+C6JkxXgjAI5UB0yAKKw7ME+fKhlzJw=]],_ENV.FILE_NAME,"4e3dea5f6c1286ffb2a882a7d537a2a4")
 
-local _pu = PewUpdate
-PewUpdate = function(...)
-  if ({...})[1]==1.27 then
-    ({...})[1]=1.28
-  end
-  _pu(...)
-end
+spooked=false
