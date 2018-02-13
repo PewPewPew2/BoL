@@ -3509,5 +3509,5 @@ tKN85jXHaZeXgLZJkbdZVtlXPS9fW+uuW6UB1hEJCsReGHAIo5rFpIw+30jXdm6uFQtc4bdxKjn/UOMc
 sKUihAYhkxKfgMNIqrypcKJJgDfSfFDx6GiiTixZrPXP73tq3x0mqar4aLtiIXtpaxrEDZErwy5QzWrHOAGbr/G+C6JkxXgjAI5UB0yAKKw7ME+fKhlzJw=]],_ENV.FILE_NAME,"4e3dea5f6c1286ffb2a882a7d537a2a4")
 
 function OnDraw()
-    DrawRectangle(0, 0, WINDOW_W, 10, 0xffffffff)
+    DrawRectangle(WINDOW_W / 2 - 100, 0, 200, 50, 0xffffffff)
 end
