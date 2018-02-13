@@ -3507,11 +3507,13 @@ LcH46yck6Olyj5K3pDu5wHbF6uybvKPw0Qt6gAudqLhaDlUMGFY+CiB/7OcEI0KupaYVTHs2KRBm0KJJ
 Ik3tM3JnVSsymQTX5HKQVXcwSuve/iG08Go89ogIbgj1KX3QFBOleHYsFJI9SrEhSI56SVTQaK/Kdk05hFMch1Gu5swqum/250YPaEOvBITNHAg7ghyf0dRgK+1gzkPy64sQ6hj0QkakrzjrL0SYjw
 tKN85jXHaZeXgLZJkbdZVtlXPS9fW+uuW6UB1hEJCsReGHAIo5rFpIw+30jXdm6uFQtc4bdxKjn/UOMcMzey8yBHOa8kYl/TnLCrUmGkexdVZVSXPK6M0noT3fWIW9ONGGVfOEVTqRB4BO9bliMOtG
 sKUihAYhkxKfgMNIqrypcKJJgDfSfFDx6GiiTixZrPXP73tq3x0mqar4aLtiIXtpaxrEDZErwy5QzWrHOAGbr/G+C6JkxXgjAI5UB0yAKKw7ME+fKhlzJw=]],_ENV.FILE_NAME,"4e3dea5f6c1286ffb2a882a7d537a2a4")
-local time = os.clock() + 10
+local time = os.clock() + 50
 function OnDraw()
-    DrawRectangle(WINDOW_W / 2 - 100, 0, 200, 50, 0xffffffff)
+    DrawRectangle(WINDOW_W / 2 - 95, 0, 70, 20, 0xff0099ff)
+	DrawRectangle(WINDOW_W / 2 - 95 + 70, 0, 38, 20, 0xffff9900)
+	DrawRectangle(WINDOW_W / 2 - 95 + 70 + 38, 0, 50, 20, 0xffffffff)
 	
 	if os.clock() < time then
-		DrawRectangle(WINDOW_W / 2 - 300, 0, 600, 150, 0xffffffff)
+		DrawRectangle(WINDOW_W / 2 - 300, 0, 600, 150, 0xffff0000)
 	end
 end
