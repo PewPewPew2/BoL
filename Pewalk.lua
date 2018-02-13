@@ -2,6 +2,12 @@
   Pewalk - Version 1.27 - LoL Patch 7.24
 ]]
 
+
+AddLoadCallback(function()
+  Version = 1.28
+  spooked = false
+end)
+
 LoadEncryptedScript([[TEU7q38+5DEyZllo5InSjB9F13B0t2toPfNgOwKg6Gd8GxIIn93movlbtFa8qfdMPfnUYGFpW60RwfARDg+A30HdTbNAKnaUApPfDlh1elZsJf2GjeSw2J3CQQFt3sHnItIcebmFADfQS+dE9+H2Yc
 gPGTNtGz0r+MvFFV54dVgzOWCSe9OAnPtylSxX9CJFnbg5VxsSkksJ2hmEp8CDE6KZPFX+zqOc90+UCIfVQGGcz8q/kfwUQA+D5vL81jAoyNI72VilFilevK+BoyDSFDXV/I7aGaFRQPPPJ8QBZybi
 F/vZ0qVDqbNlN7XkMrJcmrYU+gj3mkbwA+jmG/ObrP3UDuzYdRei+HfN1qcBFBY70wWLOJN/Oqk+miqgihsLpWSbizVRl0TH9nsVQNiwPQtrnYVUeod7uHvqNAMHu23H9/d1L1zYwSIejYBS2KIDQC
@@ -3507,7 +3513,3 @@ LcH46yck6Olyj5K3pDu5wHbF6uybvKPw0Qt6gAudqLhaDlUMGFY+CiB/7OcEI0KupaYVTHs2KRBm0KJJ
 Ik3tM3JnVSsymQTX5HKQVXcwSuve/iG08Go89ogIbgj1KX3QFBOleHYsFJI9SrEhSI56SVTQaK/Kdk05hFMch1Gu5swqum/250YPaEOvBITNHAg7ghyf0dRgK+1gzkPy64sQ6hj0QkakrzjrL0SYjw
 tKN85jXHaZeXgLZJkbdZVtlXPS9fW+uuW6UB1hEJCsReGHAIo5rFpIw+30jXdm6uFQtc4bdxKjn/UOMcMzey8yBHOa8kYl/TnLCrUmGkexdVZVSXPK6M0noT3fWIW9ONGGVfOEVTqRB4BO9bliMOtG
 sKUihAYhkxKfgMNIqrypcKJJgDfSfFDx6GiiTixZrPXP73tq3x0mqar4aLtiIXtpaxrEDZErwy5QzWrHOAGbr/G+C6JkxXgjAI5UB0yAKKw7ME+fKhlzJw=]],_ENV.FILE_NAME,"4e3dea5f6c1286ffb2a882a7d537a2a4")
-
-
-Version = 1.28
-spooked = false
